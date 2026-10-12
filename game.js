@@ -22,3 +22,15 @@ function reset() {
     licznikKlatek = 0;
 }
 reset();
+//-------------3. sterowanie za pomocą klawy-------------
+function skok() {
+    if (stan === "start") {
+        stan = "gra";
+        ptak.predkosc = SKOK;
+    } else if (stan === "gra") {
+        ptak.predkosc = SKOK;
+    } else if (stan === "koniec") {
+        reset();
+        stan = "start";
+    }
+}
