@@ -214,3 +214,9 @@ function rysujTrawe() {
         ctx.fill();
     }
 }
+// KOLIZJA PTAKA Z TRAWĄ
+if (ptak.y + ptak.h > canvas.height - WYSOKOSC_TRAWY || ptak.y < 0) {
+    koniecGry();
+}
+canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY
+let gora = 50 + Math.random() * (canvas.height - PRZERWA - WYSOKOSC_TRAWY - 100);
