@@ -16,6 +16,7 @@ let rekord = 0;      // rekord AKTUALNEGO gracza
 let stan = "start";  // "start", "gra", "koniec"
 let chmury = [];
 let przesuniecieTrawy = 0;
+let animacja = 0;    // licznik do machania skrzydłem gołębia
 
 // Elementy strony (logowanie i tabela)
 const loginEkran = document.getElementById("login-ekran");
@@ -201,6 +202,10 @@ function aktualizuj() {
         }
     }
 
+    // Skrzydło macha: szybko w grze, wolno na starcie, stoi po śmierci
+    if (stan === "gra") animacja += 0.3;
+    else if (stan === "start") animacja += 0.12;
+
     if (stan !== "gra") return;
 
     // Trawa jedzie razem z rurami
@@ -299,6 +304,109 @@ function rysujTrawe() {
     }
 }
 
+function rysujGolebia() {
+    // środek hitboxa ptaka = punkt, wokół którego rysujemy gołębia
+    let cx = ptak.x + ptak.w / 2;
+    let cy = ptak.y + ptak.h / 2;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    // Przechył: w górę gdy leci w górę, dziobem w dół gdy spada
+    let kat = Math.max(-0.45, Math.min(0.9, ptak.predkosc * 0.08));
+    ctx.rotate(kat);
+
+    // ogon
+    ctx.fillStyle = "#5d6470";
+    ctx.beginPath();
+    ctx.moveTo(-12, -2);
+    ctx.lineTo(-22, -4);
+    ctx.lineTo(-22, 5);
+    ctx.lineTo(-12, 4);
+    ctx.closePath();
+    ctx.fill();
+
+    // nóżki (różowe)
+    ctx.strokeStyle = "#d9667a";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-2, 9);
+    ctx.lineTo(-4, 13);
+    ctx.moveTo(3, 9);
+    ctx.lineTo(5, 13);
+    ctx.stroke();
+
+    // ciało (szare)
+    ctx.fillStyle = "#8e97a6";
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // jaśniejszy brzuch
+    ctx.fillStyle = "#aab2be";
+    ctx.beginPath();
+    ctx.ellipse(2, 5, 10, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // opalizująca szyja (zielono-fioletowa, jak u prawdziwego gołębia)
+    let szyja = ctx.createLinearGradient(4, -6, 12, 2);
+    szyja.addColorStop(0, "#2fa37a");
+    szyja.addColorStop(1, "#8e4bb5");
+    ctx.fillStyle = szyja;
+    ctx.beginPath();
+    ctx.arc(8, -2, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // głowa
+    ctx.fillStyle = "#7d8695";
+    ctx.beginPath();
+    ctx.arc(11, -7, 6.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // oko (pomarańczowe z czarną źrenicą)
+    ctx.fillStyle = "#ff8a1f";
+    ctx.beginPath();
+    ctx.arc(14, -8, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(14.4, -8, 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // dziób z białą woskówką
+    ctx.fillStyle = "#d6cfc2";
+    ctx.beginPath();
+    ctx.moveTo(16.5, -9);
+    ctx.lineTo(22.5, -6.5);
+    ctx.lineTo(16.5, -5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(17, -8.5, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // skrzydło (macha góra-dół) z dwoma czarnymi pasami
+    ctx.save();
+    ctx.translate(-2, -1);
+    ctx.rotate(Math.sin(animacja) * 0.6 - 0.1);
+    ctx.fillStyle = "#6c7584";
+    ctx.beginPath();
+    ctx.ellipse(-5, 1, 11, 5.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#2b2f36";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-8, -3);
+    ctx.lineTo(-8, 5);
+    ctx.moveTo(-3, -3);
+    ctx.lineTo(-3, 5);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.restore();
+}
+
 function rysuj() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -319,8 +427,7 @@ function rysuj() {
 
     rysujTrawe();
 
-    ctx.fillStyle = "yellow";
-    ctx.fillRect(ptak.x, ptak.y, ptak.w, ptak.h);
+    rysujGolebia();
 
     if (stan === "start") {
         napis("FLAPPY", canvas.width / 2, 200, 48);
