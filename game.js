@@ -14,3 +14,11 @@ const CO_ILE_KLATEK = 90;
 let ptak, rury, punkty, licznikKlatek;
 let rekord = Number(localStorage.getItem("rekord")) || 0; 
 let stan = "start"; 
+//-------------2. RESTART GRY -------------
+function reset() {
+    ptak = { x: 80, y: 250, w: 34, h: 26, predkosc: 0 };
+    rury = [];
+    punkty = 0;
+    licznikKlatek = 0;
+}
+reset();
