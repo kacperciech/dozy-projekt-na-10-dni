@@ -98,3 +98,44 @@ function aktualizuj() {
         koniecGry();
     }
 }
+// ---------- 6. RYSOWANIE ----------
+function napis(tekst, x, y, rozmiar) {
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.font = "bold " + rozmiar + "px Arial";
+    ctx.textAlign = "center";
+    ctx.strokeText(tekst, x, y); // czarny obrys
+    ctx.fillText(tekst, x, y);   // biały środek
+}
+
+function rysuj() {
+    // Wyczyść poprzednią klatkę
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Rury
+    ctx.fillStyle = "green";
+    for (let i = 0; i < rury.length; i++) {
+        let r = rury[i];
+        ctx.fillRect(r.x, 0, SZEROKOSC_RURY, r.gora); // górna
+        ctx.fillRect(r.x, r.gora + PRZERWA, SZEROKOSC_RURY,
+                     canvas.height - r.gora - PRZERWA); // dolna
+    }
+
+    // Ptak
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(ptak.x, ptak.y, ptak.w, ptak.h);
+
+    // Napisy zależne od stanu
+    if (stan === "start") {
+        napis("FLAPPY", canvas.width / 2, 200, 48);
+        napis("Kliknij lub spacja", canvas.width / 2, 260, 24);
+    } else if (stan === "gra") {
+        napis(punkty, canvas.width / 2, 70, 48);
+    } else if (stan === "koniec") {
+        napis("KONIEC GRY", canvas.width / 2, 200, 40);
+        napis("Punkty: " + punkty, canvas.width / 2, 260, 28);
+        napis("Rekord: " + rekord, canvas.width / 2, 300, 28);
+        napis("Kliknij, aby zagrać", canvas.width / 2, 360, 22);
+    }
+}
