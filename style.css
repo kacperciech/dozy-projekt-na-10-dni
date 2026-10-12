@@ -4,10 +4,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #222;
+    background: #00f8f8;
 }
 
 canvas {
     border: 3px solid white;
     background: skyblue;
+}
+
+.prawo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin: 0;
 }
