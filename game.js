@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 
 const GRAWITACJA = 0.25;
 const SKOK = -4.6;
-const SZEROKOSC_RURY = 100;
+const SZEROKOSC_RURY = 67;
 const PRZERWA = 150;
 const PREDKOSC_RUR = 2;
 const CO_ILE_KLATEK = 150;
@@ -12,12 +12,125 @@ const WYSOKOSC_TRAWY = 60;
 
 // Zmienne gry
 let ptak, rury, punkty, licznikKlatek;
-let rekord = Number(localStorage.getItem("rekord")) || 0;
-let stan = "start"; // "start", "gra", "koniec"
+let rekord = 0;      // rekord AKTUALNEGO gracza
+let stan = "start";  // "start", "gra", "koniec"
 let chmury = [];
 let przesuniecieTrawy = 0;
 
-// ---------- 2. CHMURY: tworzenie ----------
+// Elementy strony (logowanie i tabela)
+const loginEkran = document.getElementById("login-ekran");
+const graKontener = document.getElementById("gra-kontener");
+const nickInput = document.getElementById("nick-input");
+const zalogujBtn = document.getElementById("zaloguj-btn");
+const wylogujBtn = document.getElementById("wyloguj-btn");
+const loginBlad = document.getElementById("login-blad");
+const nickWyswietl = document.getElementById("nick-wyswietl");
+const tabelaEl = document.getElementById("tabela");
+
+// Aktualny gracz (pusty tekst = nikt nie jest zalogowany)
+let nick = localStorage.getItem("nick") || "";
+
+// ---------- 2. WYNIKI (localStorage) ----------
+// Wyniki trzymamy jako obiekt: { "Ania": 12, "Kuba": 7 }
+// czyli jeden najlepszy wynik na gracza.
+function wczytajWyniki() {
+    try {
+        return JSON.parse(localStorage.getItem("wyniki")) || {};
+    } catch (e) {
+        return {}; // jeśli dane są uszkodzone, zaczynamy od pustych
+    }
+}
+
+function zapiszWynik() {
+    let wyniki = wczytajWyniki();
+    // zapisz, jeśli gracza jeszcze nie ma albo pobił swój rekord
+    if (wyniki[nick] === undefined || punkty > wyniki[nick]) {
+        wyniki[nick] = punkty;
+        localStorage.setItem("wyniki", JSON.stringify(wyniki));
+    }
+    rekord = wyniki[nick];
+}
+
+function odswiezTabele() {
+    let wyniki = wczytajWyniki();
+
+    // zamień obiekt na tablicę par [nick, punkty] i posortuj malejąco
+    let lista = Object.entries(wyniki);
+    lista.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+    lista = lista.slice(0, 10); // tylko TOP 10
+
+    tabelaEl.innerHTML = "";
+    if (lista.length === 0) {
+        tabelaEl.textContent = "Brak wyników. Zagraj pierwszy!";
+        return;
+    }
+
+    for (let i = 0; i < lista.length; i++) {
+        let li = document.createElement("li");
+        let imie = document.createElement("span");
+        let pkt = document.createElement("span");
+
+        // textContent (a nie innerHTML), żeby nick nie mógł wstrzyknąć kodu
+        imie.textContent = lista[i][0];
+        pkt.textContent = lista[i][1];
+        pkt.className = "pkt";
+
+        if (lista[i][0] === nick) li.className = "ja";
+
+        li.appendChild(imie);
+        li.appendChild(pkt);
+        tabelaEl.appendChild(li);
+    }
+}
+
+// ---------- 3. LOGOWANIE ----------
+function zaloguj() {
+    let wpisany = nickInput.value.trim();
+
+    if (wpisany.length < 2) {
+        loginBlad.textContent = "Nick musi mieć co najmniej 2 znaki.";
+        return;
+    }
+
+    nick = wpisany;
+    localStorage.setItem("nick", nick);
+    loginBlad.textContent = "";
+    pokazGre();
+    document.activeElement.blur(); // żeby spacja nie "klikała" przycisku
+}
+
+function wyloguj() {
+    nick = "";
+    localStorage.removeItem("nick");
+    nickInput.value = "";
+    loginEkran.classList.remove("hidden");
+    graKontener.classList.add("hidden");
+    document.activeElement.blur();
+    nickInput.focus();
+}
+
+function pokazGre() {
+    loginEkran.classList.add("hidden");
+    graKontener.classList.remove("hidden");
+    nickWyswietl.textContent = nick;
+
+    let wyniki = wczytajWyniki();
+    rekord = wyniki[nick] || 0; // wczytaj rekord tego gracza
+
+    reset();
+    stan = "start";
+    odswiezTabele();
+}
+
+zalogujBtn.addEventListener("click", zaloguj);
+wylogujBtn.addEventListener("click", wyloguj);
+nickInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") zaloguj();
+});
+
+// ---------- 4. CHMURY: tworzenie ----------
 function stworzChmury() {
     chmury = [];
     for (let i = 0; i < 5; i++) {
@@ -30,7 +143,7 @@ function stworzChmury() {
     }
 }
 
-// ---------- 3. RESET GRY ----------
+// ---------- 5. RESET GRY ----------
 function reset() {
     ptak = { x: 80, y: 250, w: 34, h: 26, predkosc: 0 };
     rury = [];
@@ -41,8 +154,10 @@ function reset() {
 reset();
 stworzChmury();
 
-// ---------- 4. STEROWANIE ----------
+// ---------- 6. STEROWANIE ----------
 function skok() {
+    if (nick === "") return; // bez logowania nie da się grać
+
     if (stan === "start") {
         stan = "gra";
         ptak.predkosc = SKOK;
@@ -56,6 +171,8 @@ function skok() {
 
 document.addEventListener("keydown", function (e) {
     if (e.code === "Space") {
+        // jeśli gracz pisze nick, spacja ma działać normalnie
+        if (e.target.tagName === "INPUT") return;
         e.preventDefault();
         skok();
     }
@@ -66,18 +183,16 @@ canvas.addEventListener("touchstart", function (e) {
     skok();
 });
 
-// ---------- 5. KONIEC GRY ----------
+// ---------- 7. KONIEC GRY ----------
 function koniecGry() {
     stan = "koniec";
-    if (punkty > rekord) {
-        rekord = punkty;
-        localStorage.setItem("rekord", rekord);
-    }
+    zapiszWynik();
+    odswiezTabele();
 }
 
-// ---------- 6. AKTUALIZACJA (logika) ----------
+// ---------- 8. AKTUALIZACJA (logika) ----------
 function aktualizuj() {
-    // Chmury płyną zawsze, także na ekranie startu i końca
+    // Chmury płyną zawsze
     for (let i = 0; i < chmury.length; i++) {
         chmury[i].x -= chmury[i].predkosc;
         if (chmury[i].x < -100) {
@@ -86,7 +201,7 @@ function aktualizuj() {
         }
     }
 
-    if (stan !== "gra") return; // poza grą reszta stoi
+    if (stan !== "gra") return;
 
     // Trawa jedzie razem z rurami
     przesuniecieTrawy = (przesuniecieTrawy + PREDKOSC_RUR) % 24;
@@ -131,7 +246,7 @@ function aktualizuj() {
     }
 }
 
-// ---------- 7. RYSOWANIE ----------
+// ---------- 9. RYSOWANIE ----------
 function napis(tekst, x, y, rozmiar) {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -163,19 +278,15 @@ function rysujChmure(x, y, s) {
 function rysujTrawe() {
     let y = canvas.height - WYSOKOSC_TRAWY;
 
-    // ziemia
     ctx.fillStyle = "#8B5A2B";
     ctx.fillRect(0, y, canvas.width, WYSOKOSC_TRAWY);
 
-    // pasek trawy na wierzchu
     ctx.fillStyle = "#5CBF2A";
     ctx.fillRect(0, y, canvas.width, 15);
 
-    // ciemniejsza krawędź
     ctx.fillStyle = "#3E8E1C";
     ctx.fillRect(0, y + 12, canvas.width, 4);
 
-    // ukośne paski, które jadą w lewo
     ctx.fillStyle = "#4CA71F";
     for (let x = -24; x < canvas.width + 24; x += 24) {
         ctx.beginPath();
@@ -189,38 +300,32 @@ function rysujTrawe() {
 }
 
 function rysuj() {
-    // 1. czyszczenie
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 2. niebo
     rysujNiebo();
 
-    // 3. chmury
     for (let i = 0; i < chmury.length; i++) {
         let c = chmury[i];
         rysujChmure(c.x, c.y, c.rozmiar);
     }
 
-    // 4. rury
     ctx.fillStyle = "green";
     for (let i = 0; i < rury.length; i++) {
         let r = rury[i];
-        ctx.fillRect(r.x, 0, SZEROKOSC_RURY, r.gora); // górna
+        ctx.fillRect(r.x, 0, SZEROKOSC_RURY, r.gora);
         ctx.fillRect(r.x, r.gora + PRZERWA, SZEROKOSC_RURY,
-                     canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY); // dolna
+                     canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY);
     }
 
-    // 5. trawa
     rysujTrawe();
 
-    // 6. ptak
     ctx.fillStyle = "yellow";
     ctx.fillRect(ptak.x, ptak.y, ptak.w, ptak.h);
 
-    // 7. napisy
     if (stan === "start") {
         napis("FLAPPY", canvas.width / 2, 200, 48);
-        napis("Kliknij lub spacja", canvas.width / 2, 260, 24);
+        napis("Gracz: " + nick, canvas.width / 2, 250, 22);
+        napis("Kliknij lub spacja", canvas.width / 2, 290, 24);
     } else if (stan === "gra") {
         napis(punkty, canvas.width / 2, 70, 48);
     } else if (stan === "koniec") {
@@ -231,7 +336,15 @@ function rysuj() {
     }
 }
 
-// ---------- 8. PĘTLA GRY (zawsze na samym końcu) ----------
+// ---------- 10. START PROGRAMU ----------
+// Jeśli gracz był już zalogowany (nick zapisany), od razu pokaż grę
+if (nick !== "") {
+    pokazGre();
+} else {
+    nickInput.focus();
+}
+
+// Pętla gry zawsze na samym końcu
 function petla() {
     aktualizuj();
     rysuj();
