@@ -3,12 +3,12 @@ const canvas = document.getElementById("gra");
 const ctx = canvas.getContext("2d"); 
 
 
-const GRAWITACJA = 0.5;       
-const SKOK = -8;              
+const GRAWITACJA = 0.50;       
+const SKOK = -7;              
 const SZEROKOSC_RURY = 60;
 const PRZERWA = 150;         
 const PREDKOSC_RUR = 2.5;     
-const CO_ILE_KLATEK = 90;    
+const CO_ILE_KLATEK = 150;    
 
 // Zmienne gry
 let ptak, rury, punkty, licznikKlatek;
@@ -146,3 +146,18 @@ function petla() {
     requestAnimationFrame(petla); // zaplanuj następną klatkę
 }
 petla();
+//Dane hmur
+let chmury = [];
+
+function stworzChmury() {
+    chmury = [];
+    for (let i = 0; i < 5; i++) {
+        chmury.push({
+            x: Math.random() * canvas.width,
+            y: 30 + Math.random() * 200,
+            rozmiar: 0.6 + Math.random() * 0.8,   // 0.6 do 1.4
+            predkosc: 0.2 + Math.random() * 0.3   // wolniejsze niż rury
+        });
+    }
+}
+stworzChmury();
