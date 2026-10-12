@@ -179,3 +179,38 @@ function rysujChmure(x, y, s) {
     ctx.arc(x + 25 * s, y + 8 * s, 25 * s, 0, Math.PI * 2);
     ctx.fill();
 }
+for (let i = 0; i < chmury.length; i++) {
+    let c = chmury[i];
+    rysujChmure(c.x, c.y, c.rozmiar);
+}
+//-------TRAWSKO--------
+const WYSOKOSC_TRAWY = 60;
+let przesuniecieTrawy = 0;
+przesuniecieTrawy = (przesuniecieTrawy + PREDKOSC_RUR) % 24;
+function rysujTrawe() {
+    let y = canvas.height - WYSOKOSC_TRAWY;
+
+    // ziemia
+    ctx.fillStyle = "#8B5A2B";
+    ctx.fillRect(0, y, canvas.width, WYSOKOSC_TRAWY);
+
+    // pasek trawy na wierzchu
+    ctx.fillStyle = "#5CBF2A";
+    ctx.fillRect(0, y, canvas.width, 15);
+
+    // ciemniejsza krawędź
+    ctx.fillStyle = "#3E8E1C";
+    ctx.fillRect(0, y + 12, canvas.width, 4);
+
+    // ukośne paski, które jadą w lewo
+    ctx.fillStyle = "#4CA71F";
+    for (let x = -24; x < canvas.width + 24; x += 24) {
+        ctx.beginPath();
+        ctx.moveTo(x - przesuniecieTrawy, y);
+        ctx.lineTo(x - przesuniecieTrawy + 12, y);
+        ctx.lineTo(x - przesuniecieTrawy + 4, y + 12);
+        ctx.lineTo(x - przesuniecieTrawy - 8, y + 12);
+        ctx.closePath();
+        ctx.fill();
+    }
+}
