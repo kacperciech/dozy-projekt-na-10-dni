@@ -22,7 +22,6 @@ function reset() {
     licznikKlatek = 0;
 }
 reset();
-//-------------3. sterowanie za pomocą klawy-------------
 function skok() {
     if (stan === "start") {
         stan = "gra";
@@ -34,3 +33,15 @@ function skok() {
         stan = "start";
     }
 }
+
+document.addEventListener("keydown", function (e) {
+    if (e.code === "Space") {
+        e.preventDefault(); // spacja nie przewija strony
+        skok();
+    }
+});
+canvas.addEventListener("click", skok);
+canvas.addEventListener("touchstart", function (e) {
+    e.preventDefault();
+    skok();
+});
