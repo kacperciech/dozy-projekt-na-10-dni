@@ -161,3 +161,11 @@ function stworzChmury() {
     }
 }
 stworzChmury();
+// ruch chmur
+for (let i = 0; i < chmury.length; i++) {
+    chmury[i].x -= chmury[i].predkosc;
+    if (chmury[i].x < -100) {
+        chmury[i].x = canvas.width + 50;           // wraca z prawej
+        chmury[i].y = 30 + Math.random() * 200;    // w nowej wysokości
+    }
+}
