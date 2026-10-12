@@ -2,11 +2,11 @@
 const canvas = document.getElementById("gra");
 const ctx = canvas.getContext("2d");
 
-const GRAWITACJA = 0.5;
-const SKOK = -7;
-const SZEROKOSC_RURY = 60;
+const GRAWITACJA = 0.25;
+const SKOK = -4.6;
+const SZEROKOSC_RURY = 100;
 const PRZERWA = 150;
-const PREDKOSC_RUR = 2.5;
+const PREDKOSC_RUR = 2;
 const CO_ILE_KLATEK = 150;
 const WYSOKOSC_TRAWY = 60;
 
