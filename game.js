@@ -45,3 +45,11 @@ canvas.addEventListener("touchstart", function (e) {
     e.preventDefault();
     skok();
 });
+// ---------- 4. KONIEC GRY ----------
+function koniecGry() {
+    stan = "koniec";
+    if (punkty > rekord) {
+        rekord = punkty;
+        localStorage.setItem("rekord", rekord);
+    }
+}
