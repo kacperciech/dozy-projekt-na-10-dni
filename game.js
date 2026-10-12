@@ -169,3 +169,13 @@ for (let i = 0; i < chmury.length; i++) {
         chmury[i].y = 30 + Math.random() * 200;    // w nowej wysokości
     }
 }
+// rysowanie 1 chmury
+function rysujChmure(x, y, s) {
+    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.beginPath();
+    ctx.arc(x, y, 25 * s, 0, Math.PI * 2);
+    ctx.arc(x + 25 * s, y - 10 * s, 30 * s, 0, Math.PI * 2);
+    ctx.arc(x + 55 * s, y, 25 * s, 0, Math.PI * 2);
+    ctx.arc(x + 25 * s, y + 8 * s, 25 * s, 0, Math.PI * 2);
+    ctx.fill();
+}
