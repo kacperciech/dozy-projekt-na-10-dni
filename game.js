@@ -139,3 +139,10 @@ function rysuj() {
         napis("Kliknij, aby zagrać", canvas.width / 2, 360, 22);
     }
 }
+// ---------- 7. PĘTLA GRY ----------
+function petla() {
+    aktualizuj();
+    rysuj();
+    requestAnimationFrame(petla); // zaplanuj następną klatkę
+}
+petla();
