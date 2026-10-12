@@ -220,3 +220,9 @@ if (ptak.y + ptak.h > canvas.height - WYSOKOSC_TRAWY || ptak.y < 0) {
 }
 canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY
 let gora = 50 + Math.random() * (canvas.height - PRZERWA - WYSOKOSC_TRAWY - 100);
+// gradient niebba
+let niebo = ctx.createLinearGradient(0, 0, 0, canvas.height);
+niebo.addColorStop(0, "#4EC0CA");   // góra: ciemniejszy błękit
+niebo.addColorStop(1, "#C8F0F5");   // dół: jasny, przy horyzoncie
+ctx.fillStyle = niebo;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
