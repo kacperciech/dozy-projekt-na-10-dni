@@ -221,3 +221,9 @@ canvas.addEventListener("touchend", function (e) {
         ustawKierunek(0, dy > 0 ? 1 : -1);
     }
 }, { passive: false });
+// ---------- 6. KONIEC GRY ----------
+function koniecGry() {
+    stan = "koniec";
+    zapiszWynik();
+    odswiezTabele();
+}
