@@ -74,3 +74,77 @@ function odswiezTabele() {
         tabelaEl.appendChild(li);
     }
 }
+// ---------- 3. LOGOWANIE ----------
+function zaloguj() {
+    let wpisany = nickInput.value.trim();
+
+    if (wpisany.length < 2) {
+        loginBlad.textContent = "Nick musi mieć co najmniej 2 znaki.";
+        return;
+    }
+
+    nick = wpisany;
+    localStorage.setItem("nick", nick);
+    loginBlad.textContent = "";
+    pokazGre();
+    document.activeElement.blur(); // żeby spacja nie "klikała" przycisku
+}
+
+function wyloguj() {
+    nick = "";
+    localStorage.removeItem("nick");
+    nickInput.value = "";
+    loginEkran.classList.remove("hidden");
+    graKontener.classList.add("hidden");
+    document.activeElement.blur();
+    nickInput.focus();
+}
+
+function pokazGre() {
+    loginEkran.classList.add("hidden");
+    graKontener.classList.remove("hidden");
+    nickWyswietl.textContent = nick;
+
+    rekord = wczytajWyniki()[nick] || 0;
+
+    reset();
+    stan = "start";
+    odswiezTabele();
+}
+
+zalogujBtn.addEventListener("click", zaloguj);
+wylogujBtn.addEventListener("click", wyloguj);
+nickInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") zaloguj();
+});
+
+// ---------- 4. RESET GRY ----------
+// Wąż to TABLICA pól. Pierwszy element (waz[0]) to głowa.
+function reset() {
+    waz = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 }
+    ];
+    kierunek = { x: 1, y: 0 };  // ostatni wykonany ruch (w prawo)
+    nastepny = { x: 1, y: 0 };  // kierunek, który wąż przyjmie w następnym kroku
+    punkty = 0;
+    krok = KROK_START;
+    losujJedzenie();
+}
+
+// Losuje jedzenie tylko na polach, na których nie ma węża
+function losujJedzenie() {
+    let wolne = [];
+    for (let x = 0; x < SIATKA; x++) {
+        for (let y = 0; y < SIATKA; y++) {
+            let zajete = waz.some(function (s) {
+                return s.x === x && s.y === y;
+            });
+            if (!zajete) wolne.push({ x: x, y: y });
+        }
+    }
+    jedzenie = wolne[Math.floor(Math.random() * wolne.length)];
+}
+
+reset();
