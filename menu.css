@@ -1,0 +1,347 @@
+:root {
+    --tlo: #14141f;
+    --panel: #1f2233;
+    --panel-jasny: #2a2e45;
+    --zolty: #f9d71c;
+    --zielony: #5CBF2A;
+    --niebieski: #4EC0CA;
+    --tekst: #f2f2f7;
+    --tekst-przygaszony: #a9adc4;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px;
+    background:
+        radial-gradient(circle at 15% 10%, rgba(78, 192, 202, 0.18), transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(142, 204, 57, 0.15), transparent 40%),
+        var(--tlo);
+    color: var(--tekst);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ---------- NAGŁÓWEK ---------- */
+.naglowek {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.naglowek h1 {
+    margin: 0;
+    font-size: 56px;
+    letter-spacing: 6px;
+    background: linear-gradient(90deg, var(--niebieski), var(--zolty), var(--zielony));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.podtytul {
+    margin: 8px 0 0;
+    color: var(--tekst-przygaszony);
+    font-size: 18px;
+}
+
+main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ---------- PRZYCISKI ---------- */
+.przycisk, .graj {
+    display: inline-block;
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background: var(--zielony);
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.przycisk:hover, .graj:hover {
+    background: #4CA71F;
+    transform: scale(1.04);
+}
+
+button.maly {
+    padding: 5px 14px;
+    font-size: 13px;
+    border: 1px solid var(--tekst-przygaszony);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--tekst);
+    cursor: pointer;
+}
+
+button.maly:hover {
+    border-color: var(--zolty);
+    color: var(--zolty);
+}
+
+/* ---------- LOGOWANIE ---------- */
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: var(--panel);
+    padding: 36px 44px;
+    border-radius: 18px;
+    border: 2px solid var(--panel-jasny);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+.panel h2 {
+    margin: 0;
+}
+
+.panel p {
+    margin: 0;
+    color: var(--tekst-przygaszony);
+}
+
+#nick-input {
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 2px solid var(--niebieski);
+    background: var(--tlo);
+    color: var(--tekst);
+    text-align: center;
+    width: 220px;
+    outline: none;
+}
+
+#nick-input:focus {
+    border-color: var(--zolty);
+}
+
+#login-blad {
+    color: #ff6b6b !important;
+    min-height: 20px;
+}
+
+/* ---------- PASEK GRACZA ---------- */
+.gracz-pasek {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 26px;
+    font-size: 18px;
+}
+
+/* ---------- KARTY GIER ---------- */
+.karty {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.karta {
+    width: 340px;
+    background: var(--panel);
+    border-radius: 20px;
+    border: 2px solid var(--panel-jasny);
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+.karta:hover {
+    transform: translateY(-8px);
+    border-color: var(--zolty);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* grafika na górze karty */
+.obrazek {
+    position: relative;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.flappy-tlo {
+    background: linear-gradient(to bottom, #4EC0CA, #C8F0F5);
+}
+
+.snake-tlo {
+    background: repeating-conic-gradient(#a7d948 0% 25%, #8ecc39 0% 50%) 0 0 / 40px 40px;
+}
+
+.postac {
+    font-size: 72px;
+    filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.3));
+    animation: unoszenie 2.4s ease-in-out infinite;
+}
+
+.chmurka {
+    position: absolute;
+    font-size: 40px;
+    opacity: 0.85;
+    animation: plyniecie 14s linear infinite;
+}
+
+.c1 { top: 12px; left: -60px; }
+.c2 { top: 80px; left: -60px; animation-delay: -7s; font-size: 28px; }
+
+.jablko {
+    position: absolute;
+    right: 40px;
+    bottom: 22px;
+    font-size: 34px;
+    animation: pulsowanie 1.6s ease-in-out infinite;
+}
+
+@keyframes unoszenie {
+    0%, 100% { transform: translateY(-8px) rotate(-4deg); }
+    50%      { transform: translateY(8px) rotate(4deg); }
+}
+
+@keyframes plyniecie {
+    from { transform: translateX(0); }
+    to   { transform: translateX(460px); }
+}
+
+@keyframes pulsowanie {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+}
+
+/* treść karty */
+.tresc {
+    padding: 20px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tresc h2 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.opis {
+    margin: 0;
+    color: var(--tekst-przygaszony);
+    line-height: 1.5;
+}
+
+.sterowanie {
+    margin: 0;
+    font-size: 14px;
+    color: var(--niebieski);
+}
+
+/* statystyki */
+.statystyki {
+    background: var(--panel-jasny);
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.rekord {
+    margin: 0 0 6px;
+}
+
+.rekord strong {
+    color: var(--zolty);
+    font-size: 20px;
+}
+
+.statystyki h3 {
+    margin: 8px 0 4px;
+    font-size: 15px;
+    color: var(--zolty);
+}
+
+.statystyki ol {
+    margin: 0;
+    padding-left: 22px;
+    min-height: 66px;
+    font-size: 15px;
+}
+
+.statystyki li {
+    padding: 3px 0;
+}
+
+.statystyki li .pkt {
+    float: right;
+    font-weight: bold;
+}
+
+.statystyki li.ja {
+    color: var(--zolty);
+}
+
+/* ciekawostka */
+.ciekawostka {
+    border-left: 4px solid var(--zolty);
+    background: rgba(249, 215, 28, 0.07);
+    border-radius: 0 12px 12px 0;
+    padding: 12px 14px;
+}
+
+.etykieta {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--zolty);
+}
+
+.ciekawostka p {
+    margin: 6px 0 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 84px;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--niebieski);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.link-btn:hover {
+    text-decoration: underline;
+}
+
+/* ---------- STOPKA ---------- */
+footer {
+    margin-top: 40px;
+    color: var(--tekst-przygaszony);
+    font-size: 13px;
+}
+
+@media (max-width: 420px) {
+    .naglowek h1 { font-size: 40px; }
+    .karta { width: 100%; }
+    .panel { padding: 28px 20px; }
+}
