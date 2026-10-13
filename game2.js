@@ -148,3 +148,76 @@ function losujJedzenie() {
 }
 
 reset();
+// ---------- 5. STEROWANIE ----------
+function ustawKierunek(dx, dy) {
+    // zakaz zawrócenia o 180 stopni (wąż wjechałby sam w siebie)
+    if (dx === -kierunek.x && dy === -kierunek.y) return;
+    nastepny = { x: dx, y: dy };
+}
+
+// Spacja / klik: start, wznowienie po pauzie albo nowa gra po przegranej
+function akcja() {
+    if (nick === "") return;
+    if (stan === "start" || stan === "pauza") {
+        stan = "gra";
+    } else if (stan === "koniec") {
+        reset();
+        stan = "start";
+    }
+}
+
+const KLAWISZE = {
+    ArrowUp: [0, -1],    KeyW: [0, -1],
+    ArrowDown: [0, 1],   KeyS: [0, 1],
+    ArrowLeft: [-1, 0],  KeyA: [-1, 0],
+    ArrowRight: [1, 0],  KeyD: [1, 0]
+};
+
+document.addEventListener("keydown", function (e) {
+    if (e.target.tagName === "INPUT") return; // pisanie nicku
+    if (nick === "") return;
+
+    if (KLAWISZE[e.code]) {
+        e.preventDefault(); // strzałki nie przewijają strony
+        if (stan === "koniec") return;
+        if (stan === "start" || stan === "pauza") stan = "gra";
+        ustawKierunek(KLAWISZE[e.code][0], KLAWISZE[e.code][1]);
+    } else if (e.code === "Space") {
+        e.preventDefault();
+        akcja();
+    } else if (e.code === "KeyP") {
+        if (stan === "gra") stan = "pauza";
+        else if (stan === "pauza") stan = "gra";
+    }
+});
+
+canvas.addEventListener("click", akcja);
+
+// Telefon: przesunięcie palcem zmienia kierunek, samo stuknięcie = akcja
+let dotykX = 0;
+let dotykY = 0;
+
+canvas.addEventListener("touchstart", function (e) {
+    e.preventDefault();
+    dotykX = e.touches[0].clientX;
+    dotykY = e.touches[0].clientY;
+}, { passive: false });
+
+canvas.addEventListener("touchend", function (e) {
+    e.preventDefault();
+    let dx = e.changedTouches[0].clientX - dotykX;
+    let dy = e.changedTouches[0].clientY - dotykY;
+
+    if (Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+        akcja();
+        return;
+    }
+    if (stan === "koniec") return;
+    if (stan === "start" || stan === "pauza") stan = "gra";
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+        ustawKierunek(dx > 0 ? 1 : -1, 0);
+    } else {
+        ustawKierunek(0, dy > 0 ? 1 : -1);
+    }
+}, { passive: false });
