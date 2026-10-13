@@ -391,3 +391,24 @@ function rysuj() {
         napis("Spacja lub klik: jeszcze raz", canvas.width / 2, 300, 20);
     }
 }
+// ---------- 9. START PROGRAMU ----------
+if (nick !== "") {
+    pokazGre();
+} else {
+    nickInput.focus();
+}
+
+// Pętla: rysuje w każdej klatce, ale wąż rusza się tylko co "krok" milisekund
+function petla(czas) {
+    if (stan === "gra") {
+        if (czas - ostatniKrok >= krok) {
+            ostatniKrok = czas;
+            aktualizuj();
+        }
+    } else {
+        ostatniKrok = czas; // poza grą zerujemy licznik, żeby po wznowieniu nie skoczył
+    }
+    rysuj();
+    requestAnimationFrame(petla);
+}
+requestAnimationFrame(petla);
