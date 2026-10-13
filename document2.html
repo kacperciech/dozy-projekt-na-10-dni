@@ -7,3 +7,30 @@
     <link rel="stylesheet" href="style2.css">
 </head>
 <body>
+    <!-- EKRAN LOGOWANIA -->
+    <div id="login-ekran">
+        <h1>SNAKE</h1>
+        <p>Podaj swój nick, żeby zagrać</p>
+        <input id="nick-input" type="text" maxlength="12" placeholder="Twój nick" autocomplete="off">
+        <button id="zaloguj-btn">Graj</button>
+        <p id="login-blad"></p>
+    </div>
+
+    <!-- EKRAN GRY + TABELA -->
+    <div id="gra-kontener" class="hidden">
+        <canvas id="gra" width="400" height="400"></canvas>
+
+        <aside id="panel">
+            <p>Gracz: <strong id="nick-wyswietl"></strong></p>
+            <button id="wyloguj-btn">Zmień gracza</button>
+
+            <p class="opis">Sterowanie: strzałki lub WASD<br>P: pauza<br>Telefon: przesuń palcem</p>
+
+            <h2>Tabela wyników</h2>
+            <ol id="tabela"></ol>
+        </aside>
+    </div>
+
+    <script src="game2.js"></script>
+</body>
+</html>
