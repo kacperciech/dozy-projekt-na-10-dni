@@ -227,3 +227,47 @@ function koniecGry() {
     zapiszWynik();
     odswiezTabele();
 }
+// ---------- 7. JEDEN KROK GRY (logika) ----------
+function aktualizuj() {
+    kierunek = nastepny;
+
+    // nowa głowa = stara głowa przesunięta o kierunek
+    let glowa = {
+        x: waz[0].x + kierunek.x,
+        y: waz[0].y + kierunek.y
+    };
+
+    // uderzenie w ścianę
+    if (glowa.x < 0 || glowa.x >= SIATKA || glowa.y < 0 || glowa.y >= SIATKA) {
+        koniecGry();
+        return;
+    }
+
+    let zjada = jedzenie && glowa.x === jedzenie.x && glowa.y === jedzenie.y;
+
+    // Uderzenie w siebie. Jeśli wąż nie rośnie, jego ogon zaraz zniknie,
+    // więc ostatnie pole nie jest przeszkodą.
+    let przeszkody = zjada ? waz : waz.slice(0, -1);
+    for (let i = 0; i < przeszkody.length; i++) {
+        if (przeszkody[i].x === glowa.x && przeszkody[i].y === glowa.y) {
+            koniecGry();
+            return;
+        }
+    }
+
+    waz.unshift(glowa); // dodaj nową głowę z przodu
+
+    if (zjada) {
+        // wąż rośnie (nie usuwamy ogona), +1 punkt, gra przyspiesza
+        punkty++;
+        krok = Math.max(KROK_MIN, KROK_START - punkty * 3);
+
+        if (waz.length === SIATKA * SIATKA) { // plansza cała zapełniona
+            koniecGry();
+            return;
+        }
+        losujJedzenie();
+    } else {
+        waz.pop(); // usuń ogon, wąż tylko się przesuwa
+    }
+}
