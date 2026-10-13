@@ -271,3 +271,123 @@ function aktualizuj() {
         waz.pop(); // usuń ogon, wąż tylko się przesuwa
     }
 }
+// ---------- 8. RYSOWANIE ----------
+function napis(tekst, x, y, rozmiar, wyrownanie) {
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.font = "bold " + rozmiar + "px Arial";
+    ctx.textAlign = wyrownanie || "center";
+    ctx.strokeText(tekst, x, y);
+    ctx.fillText(tekst, x, y);
+}
+
+// prostokąt z zaokrąglonymi rogami
+function zaokraglony(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+
+function rysujPlansze() {
+    for (let x = 0; x < SIATKA; x++) {
+        for (let y = 0; y < SIATKA; y++) {
+            ctx.fillStyle = (x + y) % 2 === 0 ? "#a7d948" : "#8ecc39";
+            ctx.fillRect(x * POLE, y * POLE, POLE, POLE);
+        }
+    }
+}
+
+function rysujJedzenie() {
+    if (!jedzenie) return;
+    let cx = jedzenie.x * POLE + POLE / 2;
+    let cy = jedzenie.y * POLE + POLE / 2 + 1;
+
+    // jabłko
+    ctx.fillStyle = "#e53935";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // połysk
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.beginPath();
+    ctx.arc(cx - 2.5, cy - 2.5, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // listek
+    ctx.fillStyle = "#2e7d32";
+    ctx.beginPath();
+    ctx.ellipse(cx + 3, cy - 7, 3.5, 1.7, -0.5, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function rysujWaza() {
+    // od ogona do głowy, żeby głowa była na wierzchu
+    for (let i = waz.length - 1; i >= 0; i--) {
+        let s = waz[i];
+        // głowa ciemniejsza, ogon jaśniejszy
+        let jasnosc = 38 + (i / waz.length) * 22;
+        ctx.fillStyle = "hsl(215, 70%, " + jasnosc + "%)";
+        zaokraglony(s.x * POLE + 1, s.y * POLE + 1, POLE - 2, POLE - 2, 6);
+        ctx.fill();
+    }
+
+    // oczy na głowie, zwrócone w stronę ruchu
+    let g = waz[0];
+    let cx = g.x * POLE + POLE / 2;
+    let cy = g.y * POLE + POLE / 2;
+    let px = -kierunek.y; // wektor prostopadły do kierunku
+    let py = kierunek.x;
+
+    for (let strona = -1; strona <= 1; strona += 2) {
+        let ex = cx + kierunek.x * 3 + px * 4 * strona;
+        let ey = cy + kierunek.y * 3 + py * 4 * strona;
+
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(ex + kierunek.x, ey + kierunek.y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function rysuj() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    rysujPlansze();
+    rysujJedzenie();
+    rysujWaza();
+
+    if (stan === "gra") {
+        napis("Wynik: " + punkty, 10, 28, 20, "left");
+        return;
+    }
+
+    // ciemna nakładka, żeby napisy były czytelne
+    ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (stan === "start") {
+        napis("SNAKE", canvas.width / 2, 150, 48);
+        napis("Gracz: " + nick, canvas.width / 2, 200, 22);
+        napis("Strzałki lub WASD", canvas.width / 2, 245, 22);
+        napis("Spacja lub klik, aby zacząć", canvas.width / 2, 285, 20);
+    } else if (stan === "pauza") {
+        napis("PAUZA", canvas.width / 2, 190, 48);
+        napis("Naciśnij P lub spację", canvas.width / 2, 235, 22);
+    } else if (stan === "koniec") {
+        napis("KONIEC GRY", canvas.width / 2, 150, 40);
+        napis("Wynik: " + punkty, canvas.width / 2, 205, 28);
+        napis("Rekord: " + rekord, canvas.width / 2, 245, 28);
+        napis("Spacja lub klik: jeszcze raz", canvas.width / 2, 300, 20);
+    }
+}
