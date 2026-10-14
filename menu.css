@@ -345,3 +345,32 @@ footer {
     .karta { width: 100%; }
     .panel { padding: 28px 20px; }
 }
+.jezyk-przelacznik {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    border: 2px solid #2a2e45;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #1f2233;
+}
+
+.jezyk-przelacznik button {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: #a9adc4;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.jezyk-przelacznik button:hover {
+    color: #f9d71c;
+}
+
+.jezyk-przelacznik button.aktywny {
+    background: #f9d71c;
+    color: #222;
+}
