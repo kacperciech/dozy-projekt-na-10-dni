@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade | Wybierz grę</title>
+    <title data-i18n="tytul_strony">Arcade | Wybierz grę</title>
     <link rel="stylesheet" href="menu.css">
 </head>
 <body>
-    <body>
 
     <!-- PRZEŁĄCZNIK JĘZYKA -->
     <div class="jezyk-przelacznik">
@@ -17,24 +16,24 @@
 
     <header class="naglowek">
         <h1>🎮ARCADE</h1>
-        <p class="podtytul">Dwie gry. Jeden gracz. Wybierz i pobij rekord!</p>
+        <p class="podtytul" data-i18n="podtytul">Dwie gry. Jeden gracz. Wybierz i pobij rekord!</p>
     </header>
 
     <main>
         <!-- LOGOWANIE -->
         <section id="login-box" class="panel">
-            <h2>Kim jesteś?</h2>
-            <p>Podaj nick, żeby Twoje wyniki trafiły do rankingu</p>
-            <input id="nick-input" type="text" maxlength="12" placeholder="Twój nick" autocomplete="off">
-            <button id="zaloguj-btn" class="przycisk">Wchodzę</button>
+            <h2 data-i18n="login_tytul">Kim jesteś?</h2>
+            <p data-i18n="login_opis">Podaj nick, żeby Twoje wyniki trafiły do rankingu</p>
+            <input id="nick-input" type="text" maxlength="12" data-i18n-placeholder="nick_placeholder" placeholder="Twój nick" autocomplete="off">
+            <button id="zaloguj-btn" class="przycisk" data-i18n="wchodze">Wchodzę</button>
             <p id="login-blad"></p>
         </section>
 
         <!-- WYBÓR GRY -->
         <section id="wybor" class="hidden">
             <div class="gracz-pasek">
-                <span>👤 Gracz: <strong id="nick-wyswietl"></strong></span>
-                <button id="wyloguj-btn" class="maly">Zmień gracza</button>
+                <span>👤 <span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></span>
+                <button id="wyloguj-btn" class="maly" data-i18n="zmien_gracza">Zmień gracza</button>
             </div>
 
             <div class="karty">
@@ -48,22 +47,22 @@
                     </div>
                     <div class="tresc">
                         <h2>PIGEON</h2>
-                        <p class="opis">Leć między rurami i nie dotknij niczego. Proste zasady, trudne wykonanie.</p>
-                        <p class="sterowanie">⌨️ Spacja, klik lub dotyk</p>
+                        <p class="opis" data-i18n="flappy_opis">Leć między rurami i nie dotknij niczego. Proste zasady, trudne wykonanie.</p>
+                        <p class="sterowanie" data-i18n="flappy_ster">⌨️ Spacja, klik lub dotyk</p>
 
                         <div class="statystyki">
-                            <p class="rekord">Twój rekord: <strong id="rekord-flappy">0</strong></p>
-                            <h3>🏆 TOP 3</h3>
+                            <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-flappy">0</strong></p>
+                            <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-flappy"></ol>
                         </div>
 
                         <div class="ciekawostka">
-                            <span class="etykieta">💡 Czy wiesz, że...</span>
+                            <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-flappy"></p>
-                            <button class="link-btn" data-gra="flappy">Kolejna ciekawostka ↻</button>
+                            <button class="link-btn" data-gra="flappy" data-i18n="kolejna">Kolejna ciekawostka ↻</button>
                         </div>
 
-                        <a class="graj" href="document.html">▶ Graj we Flappy</a>
+                        <a class="graj" href="document.html" data-i18n="graj_flappy">▶ Graj we Flappy</a>
                     </div>
                 </article>
 
@@ -75,22 +74,22 @@
                     </div>
                     <div class="tresc">
                         <h2>SNAKE</h2>
-                        <p class="opis">Zjadaj jabłka, rośnij i nie wjedź w siebie. Z każdym punktem jest szybciej.</p>
-                        <p class="sterowanie">⌨️ Strzałki lub WASD, P to pauza</p>
+                        <p class="opis" data-i18n="snake_opis">Zjadaj jabłka, rośnij i nie wjedź w siebie. Z każdym punktem jest szybciej.</p>
+                        <p class="sterowanie" data-i18n="snake_ster">⌨️ Strzałki lub WASD, P to pauza</p>
 
                         <div class="statystyki">
-                            <p class="rekord">Twój rekord: <strong id="rekord-snake">0</strong></p>
-                            <h3>🏆 TOP 3</h3>
+                            <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-snake">0</strong></p>
+                            <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-snake"></ol>
                         </div>
 
                         <div class="ciekawostka">
-                            <span class="etykieta">💡 Czy wiesz, że...</span>
+                            <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-snake"></p>
-                            <button class="link-btn" data-gra="snake">Kolejna ciekawostka ↻</button>
+                            <button class="link-btn" data-gra="snake" data-i18n="kolejna">Kolejna ciekawostka ↻</button>
                         </div>
 
-                        <a class="graj" href="document2.html">▶ Graj w Snake</a>
+                        <a class="graj" href="document2.html" data-i18n="graj_snake">▶ Graj w Snake</a>
                     </div>
                 </article>
 
@@ -98,9 +97,9 @@
         </section>
     </main>
 
-    <footer>Projekt na 10 dni · HTML + CSS + JavaScript</footer>
-        <script src="rowerek.js"></script>
-        <script src="menu.js"></script>
-</body>
+    <footer data-i18n="stopka">Projekt na 10 dni · HTML + CSS + JavaScript</footer>
+
+    <script src="rowerek.js"></script>
+    <script src="menu.js"></script>
 </body>
 </html>
