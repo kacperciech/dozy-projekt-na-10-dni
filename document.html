@@ -11,9 +11,9 @@
     <!-- EKRAN LOGOWANIA -->
     <div id="login-ekran">
         <h1>GOŁOMP</h1>
-        <p>Podaj swój nick, żeby zagrać</p>
-        <input id="nick-input" type="text" maxlength="12" placeholder="Twój nick" autocomplete="off">
-        <button id="zaloguj-btn">Graj</button>
+        <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
+        <input id="nick-input" type="text" maxlength="12" data-i18n-placeholder="nick_placeholder" placeholder="Twój nick" autocomplete="off">
+        <button id="zaloguj-btn" data-i18n="graj_btn">Graj</button>
         <p id="login-blad"></p>
     </div>
 
@@ -22,13 +22,15 @@
         <canvas id="gra" width="400" height="600"></canvas>
 
         <aside id="panel">
-            <p>Gracz: <strong id="nick-wyswietl"></strong></p>
-            <button id="wyloguj-btn">Zmień gracza</button>
+            <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>
+            <button id="wyloguj-btn" data-i18n="zmien_gracza">Zmień gracza</button>
+            <a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
 
-            <h2>Tabela wyników</h2>
+            <h2 data-i18n="tabela">Tabela wyników</h2>
             <ol id="tabela"></ol>
         </aside>
     </div>
+
     <script src="rowerek.js"></script>
     <script src="game.js"></script>
 </body>

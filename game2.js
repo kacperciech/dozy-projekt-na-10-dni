@@ -27,6 +27,7 @@ const tabelaEl = document.getElementById("tabela");
 
 // Aktualny gracz (pusty tekst = nikt nie jest zalogowany)
 let nick = localStorage.getItem("nick") || "";
+
 // ---------- 2. WYNIKI (localStorage) ----------
 function wczytajWyniki() {
     try {
@@ -54,7 +55,7 @@ function odswiezTabele() {
 
     tabelaEl.innerHTML = "";
     if (lista.length === 0) {
-        tabelaEl.textContent = "Brak wyników. Zagraj pierwszy!";
+        tabelaEl.textContent = t("brak_wynikow");
         return;
     }
 
@@ -74,12 +75,13 @@ function odswiezTabele() {
         tabelaEl.appendChild(li);
     }
 }
+
 // ---------- 3. LOGOWANIE ----------
 function zaloguj() {
     let wpisany = nickInput.value.trim();
 
     if (wpisany.length < 2) {
-        loginBlad.textContent = "Nick musi mieć co najmniej 2 znaki.";
+        loginBlad.textContent = t("blad_nick");
         return;
     }
 
@@ -148,6 +150,7 @@ function losujJedzenie() {
 }
 
 reset();
+
 // ---------- 5. STEROWANIE ----------
 function ustawKierunek(dx, dy) {
     // zakaz zawrócenia o 180 stopni (wąż wjechałby sam w siebie)
@@ -221,12 +224,14 @@ canvas.addEventListener("touchend", function (e) {
         ustawKierunek(0, dy > 0 ? 1 : -1);
     }
 }, { passive: false });
+
 // ---------- 6. KONIEC GRY ----------
 function koniecGry() {
     stan = "koniec";
     zapiszWynik();
     odswiezTabele();
 }
+
 // ---------- 7. JEDEN KROK GRY (logika) ----------
 function aktualizuj() {
     kierunek = nastepny;
@@ -271,6 +276,7 @@ function aktualizuj() {
         waz.pop(); // usuń ogon, wąż tylko się przesuwa
     }
 }
+
 // ---------- 8. RYSOWANIE ----------
 function napis(tekst, x, y, rozmiar, wyrownanie) {
     ctx.fillStyle = "white";
@@ -368,7 +374,7 @@ function rysuj() {
     rysujWaza();
 
     if (stan === "gra") {
-        napis("Wynik: " + punkty, 10, 28, 20, "left");
+        napis(t("wynik") + " " + punkty, 10, 28, 20, "left");
         return;
     }
 
@@ -378,19 +384,20 @@ function rysuj() {
 
     if (stan === "start") {
         napis("SNAKE", canvas.width / 2, 150, 48);
-        napis("Gracz: " + nick, canvas.width / 2, 200, 22);
-        napis("Strzałki lub WASD", canvas.width / 2, 245, 22);
-        napis("Spacja lub klik, aby zacząć", canvas.width / 2, 285, 20);
+        napis(t("gracz") + " " + nick, canvas.width / 2, 200, 22);
+        napis(t("snake_ster_canvas"), canvas.width / 2, 245, 22);
+        napis(t("snake_start"), canvas.width / 2, 285, 20);
     } else if (stan === "pauza") {
-        napis("PAUZA", canvas.width / 2, 190, 48);
-        napis("Naciśnij P lub spację", canvas.width / 2, 235, 22);
+        napis(t("pauza"), canvas.width / 2, 190, 48);
+        napis(t("pauza_info"), canvas.width / 2, 235, 22);
     } else if (stan === "koniec") {
-        napis("KONIEC GRY", canvas.width / 2, 150, 40);
-        napis("Wynik: " + punkty, canvas.width / 2, 205, 28);
-        napis("Rekord: " + rekord, canvas.width / 2, 245, 28);
-        napis("Spacja lub klik: jeszcze raz", canvas.width / 2, 300, 20);
+        napis(t("koniec_gry"), canvas.width / 2, 150, 40);
+        napis(t("wynik") + " " + punkty, canvas.width / 2, 205, 28);
+        napis(t("rekord") + " " + rekord, canvas.width / 2, 245, 28);
+        napis(t("snake_ponownie"), canvas.width / 2, 300, 20);
     }
 }
+
 // ---------- 9. START PROGRAMU ----------
 if (nick !== "") {
     pokazGre();

@@ -64,7 +64,7 @@ function odswiezTabele() {
 
     tabelaEl.innerHTML = "";
     if (lista.length === 0) {
-        tabelaEl.textContent = "Brak wyników. Zagraj pierwszy!";
+        tabelaEl.textContent = t("brak_wynikow");
         return;
     }
 
@@ -91,7 +91,7 @@ function zaloguj() {
     let wpisany = nickInput.value.trim();
 
     if (wpisany.length < 2) {
-        loginBlad.textContent = "Nick musi mieć co najmniej 2 znaki.";
+        loginBlad.textContent = t("blad_nick");
         return;
     }
 
@@ -431,15 +431,15 @@ function rysuj() {
 
     if (stan === "start") {
         napis("FLAPPY", canvas.width / 2, 200, 48);
-        napis("Gracz: " + nick, canvas.width / 2, 250, 22);
-        napis("Kliknij lub spacja", canvas.width / 2, 290, 24);
+        napis(t("gracz") + " " + nick, canvas.width / 2, 250, 22);
+        napis(t("flappy_start"), canvas.width / 2, 290, 24);
     } else if (stan === "gra") {
         napis(punkty, canvas.width / 2, 70, 48);
     } else if (stan === "koniec") {
-        napis("KONIEC GRY", canvas.width / 2, 200, 40);
-        napis("Punkty: " + punkty, canvas.width / 2, 260, 28);
-        napis("Rekord: " + rekord, canvas.width / 2, 300, 28);
-        napis("Kliknij, aby zagrać", canvas.width / 2, 360, 22);
+        napis(t("koniec_gry"), canvas.width / 2, 200, 40);
+        napis(t("punkty") + " " + punkty, canvas.width / 2, 260, 28);
+        napis(t("rekord") + " " + rekord, canvas.width / 2, 300, 28);
+        napis(t("flappy_ponownie"), canvas.width / 2, 360, 22);
     }
 }
 
