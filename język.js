@@ -47,4 +47,90 @@ const TLUMACZENIA = {
         snake_ponownie: "Spacja lub klik: jeszcze raz"
     },
 
-   
+   en: {
+        tytul_strony: "Arcade | Choose a game",
+        podtytul: "Two games. One player. Pick one and beat the record!",
+        login_tytul: "Who are you?",
+        login_opis: "Enter a nickname so your scores go on the leaderboard",
+        nick_placeholder: "Your nickname",
+        wchodze: "Let's go",
+        gracz: "Player:",
+        zmien_gracza: "Change player",
+        flappy_nazwa: "Flappy Pigeon",
+        flappy_opis: "Fly between the pipes and don't touch anything. Simple rules, hard to master.",
+        flappy_ster: "⌨️ Space, click or tap",
+        twoj_rekord: "Your record:",
+        top3: "🏆 TOP 3",
+        czy_wiesz: "💡 Did you know...",
+        kolejna: "Next fact ↻",
+        graj_flappy: "▶ Play Flappy",
+        snake_opis: "Eat apples, grow longer and don't run into yourself. Every point makes it faster.",
+        snake_ster: "⌨️ Arrow keys or WASD, P to pause",
+        graj_snake: "▶ Play Snake",
+        stopka: "10-day project · HTML + CSS + JavaScript",
+        blad_nick: "Nickname must be at least 2 characters long.",
+        brak_wynikow: "No scores yet. Be the first to play!",
+
+        login_gra_opis: "Enter your nickname to play",
+        graj_btn: "Play",
+        tabela: "Leaderboard",
+        menu: "← Menu",
+        snake_panel_1: "Controls: arrow keys or WASD",
+        snake_panel_2: "P: pause",
+        snake_panel_3: "Phone: swipe",
+
+        flappy_start: "Click or press Space",
+        flappy_ponownie: "Click to play again",
+        koniec_gry: "GAME OVER",
+        punkty: "Points:",
+        rekord: "Record:",
+        wynik: "Score:",
+        snake_ster_canvas: "Arrow keys or WASD",
+        snake_start: "Space or click to start",
+        pauza: "PAUSED",
+        pauza_info: "Press P or Space",
+        snake_ponownie: "Space or click: play again"
+    }
+};
+
+// Aktualny język (zapisany w przeglądarce, domyślnie polski)
+let jezyk = localStorage.getItem("jezyk");
+if (!TLUMACZENIA[jezyk]) jezyk = "pl";
+
+// Zwraca tekst w aktualnym języku. Gdy brakuje tłumaczenia, bierze polski.
+function t(klucz) {
+    return TLUMACZENIA[jezyk][klucz] || TLUMACZENIA.pl[klucz] || klucz;
+}
+
+// Podmienia wszystkie teksty oznaczone data-i18n na stronie
+function przetlumaczStrone() {
+    document.documentElement.lang = jezyk;
+
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    // podświetl aktywny przycisk języka (jeśli strona go ma)
+    document.querySelectorAll("[data-jezyk]").forEach(function (b) {
+        b.classList.toggle("aktywny", b.dataset.jezyk === jezyk);
+    });
+}
+
+function ustawJezyk(nowy) {
+    jezyk = nowy;
+    localStorage.setItem("jezyk", nowy);
+    przetlumaczStrone();
+    // strona główna odświeża dzięki temu ciekawostki i ranking
+    if (typeof poZmianieJezyka === "function") poZmianieJezyka();
+}
+
+// Przyciski PL / EN (istnieją tylko na stronie głównej)
+document.querySelectorAll("[data-jezyk]").forEach(function (b) {
+    b.addEventListener("click", function () {
+        ustawJezyk(b.dataset.jezyk);
+    });
+});
+
+przetlumaczStrone();
