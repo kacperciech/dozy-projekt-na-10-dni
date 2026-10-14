@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- EKRAN LOGOWANIA -->
+    <!-- EKRAN LOGOWANIA: Formularz wprowadzania nicku przed rozpoczęciem gry -->
     <div id="login-ekran">
         <h1>GOŁOMP</h1>
         <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
@@ -17,10 +17,12 @@
         <p id="login-blad"></p>
     </div>
 
-    <!-- EKRAN GRY + TABELA -->
+    <!-- EKRAN GRY + TABELA WYNIKÓW -->
     <div id="gra-kontener" class="hidden">
+        <!-- Główna plansza gry renderowana w technologii HTML5 Canvas -->
         <canvas id="gra" width="400" height="600"></canvas>
 
+        <!-- Panel boczny z informacjami o graczu i tabelą TOP wyników -->
         <aside id="panel">
             <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>
             <button id="wyloguj-btn" data-i18n="zmien_gracza">Zmień gracza</button>
@@ -31,6 +33,7 @@
         </aside>
     </div>
 
+    <!-- Dołączenie skryptu tłumaczeń oraz głównej logiki gry Flappy -->
     <script src="rowerek.js"></script>
     <script src="game.js"></script>
 </body>

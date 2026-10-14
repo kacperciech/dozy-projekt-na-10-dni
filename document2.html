@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- EKRAN LOGOWANIA -->
+    <!-- EKRAN LOGOWANIA DO GRY SNAKE -->
     <div id="login-ekran">
         <h1>SNAKE</h1>
         <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
@@ -16,8 +16,9 @@
         <p id="login-blad"></p>
     </div>
 
-    <!-- EKRAN GRY + TABELA -->
+    <!-- EKRAN AKTYWNEJ GRY I PANEL BOCZNY -->
     <div id="gra-kontener" class="hidden">
+        <!-- Plansza węża -->
         <canvas id="gra" width="400" height="400"></canvas>
 
         <aside id="panel">
@@ -25,6 +26,7 @@
             <button id="wyloguj-btn" data-i18n="zmien_gracza">Zmień gracza</button>
             <a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
 
+            <!-- Podpowiedzi dotyczące sterowania -->
             <p class="opis">
                 <span data-i18n="snake_panel_1">Sterowanie: strzałki lub WASD</span><br>
                 <span data-i18n="snake_panel_2">P: pauza</span><br>
@@ -36,6 +38,7 @@
         </aside>
     </div>
 
+    <!-- Skrypty systemu tłumaczeń oraz logiki gry Snake -->
     <script src="rowerek.js"></script>
     <script src="game2.js"></script>
 </body>

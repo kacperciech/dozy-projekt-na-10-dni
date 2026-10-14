@@ -2,20 +2,19 @@
 const canvas = document.getElementById("gra");
 const ctx = canvas.getContext("2d");
 
-const POLE = 20;                    // rozmiar jednego pola w pikselach
-const SIATKA = canvas.width / POLE; // 400 / 20 = 20 pól w poziomie i pionie
-const KROK_START = 140;             // co ile ms wąż robi ruch na początku
-const KROK_MIN = 60;                // najszybciej, jak może się poruszać
+const POLE = 20;                    // Rozmiar pojedynczego pola w pikselach
+const SIATKA = canvas.width / POLE; // Liczba pól w poziomie i pionie (20x20)
+const KROK_START = 140;             // Czas w ms między ruchami węża na starcie
+const KROK_MIN = 60;                // Minimalny czas (maksymalna prędkość węża)
 
 // Zmienne gry
 let waz, kierunek, nastepny, jedzenie;
 let punkty = 0;
-let rekord = 0;                     // rekord AKTUALNEGO gracza
+let rekord = 0;
 let krok = KROK_START;
-let stan = "start";                 // "start", "gra", "pauza", "koniec"
+let stan = "start";                 // Stan gry: "start", "gra", "pauza", "koniec"
 let ostatniKrok = 0;
 
-// Elementy strony (logowanie i tabela)
 const loginEkran = document.getElementById("login-ekran");
 const graKontener = document.getElementById("gra-kontener");
 const nickInput = document.getElementById("nick-input");
@@ -25,7 +24,6 @@ const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEl = document.getElementById("tabela");
 
-// Aktualny gracz (pusty tekst = nikt nie jest zalogowany)
 let nick = localStorage.getItem("nick") || "";
 
 // ---------- 2. WYNIKI (localStorage) ----------
@@ -48,9 +46,7 @@ function zapiszWynik() {
 
 function odswiezTabele() {
     let lista = Object.entries(wczytajWyniki());
-    lista.sort(function (a, b) {
-        return b[1] - a[1];
-    });
+    lista.sort(function (a, b) { return b[1] - a[1]; });
     lista = lista.slice(0, 10);
 
     tabelaEl.innerHTML = "";
@@ -79,17 +75,15 @@ function odswiezTabele() {
 // ---------- 3. LOGOWANIE ----------
 function zaloguj() {
     let wpisany = nickInput.value.trim();
-
     if (wpisany.length < 2) {
         loginBlad.textContent = t("blad_nick");
         return;
     }
-
     nick = wpisany;
     localStorage.setItem("nick", nick);
     loginBlad.textContent = "";
     pokazGre();
-    document.activeElement.blur(); // żeby spacja nie "klikała" przycisku
+    document.activeElement.blur();
 }
 
 function wyloguj() {
@@ -106,9 +100,7 @@ function pokazGre() {
     loginEkran.classList.add("hidden");
     graKontener.classList.remove("hidden");
     nickWyswietl.textContent = nick;
-
     rekord = wczytajWyniki()[nick] || 0;
-
     reset();
     stan = "start";
     odswiezTabele();
@@ -120,29 +112,27 @@ nickInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") zaloguj();
 });
 
-// ---------- 4. RESET GRY ----------
-// Wąż to TABLICA pól. Pierwszy element (waz[0]) to głowa.
+// ---------- 4. RESET GRY I LOSOWANIE JEDZENIA ----------
+// Wąż reprezentowany jest jako tablica współrzędnych segmentów (waz[0] to głowa)
 function reset() {
     waz = [
         { x: 10, y: 10 },
         { x: 9, y: 10 },
         { x: 8, y: 10 }
     ];
-    kierunek = { x: 1, y: 0 };  // ostatni wykonany ruch (w prawo)
-    nastepny = { x: 1, y: 0 };  // kierunek, który wąż przyjmie w następnym kroku
+    kierunek = { x: 1, y: 0 };
+    nastepny = { x: 1, y: 0 };
     punkty = 0;
     krok = KROK_START;
     losujJedzenie();
 }
 
-// Losuje jedzenie tylko na polach, na których nie ma węża
+// Losuje pozycję jedzenia w miejscach wolnych od ciała węża
 function losujJedzenie() {
     let wolne = [];
     for (let x = 0; x < SIATKA; x++) {
         for (let y = 0; y < SIATKA; y++) {
-            let zajete = waz.some(function (s) {
-                return s.x === x && s.y === y;
-            });
+            let zajete = waz.some(function (s) { return s.x === x && s.y === y; });
             if (!zajete) wolne.push({ x: x, y: y });
         }
     }
@@ -153,12 +143,11 @@ reset();
 
 // ---------- 5. STEROWANIE ----------
 function ustawKierunek(dx, dy) {
-    // zakaz zawrócenia o 180 stopni (wąż wjechałby sam w siebie)
+    // Blokada nagłego zawrócenia o 180 stopni w przeciwnym kierunku
     if (dx === -kierunek.x && dy === -kierunek.y) return;
     nastepny = { x: dx, y: dy };
 }
 
-// Spacja / klik: start, wznowienie po pauzie albo nowa gra po przegranej
 function akcja() {
     if (nick === "") return;
     if (stan === "start" || stan === "pauza") {
@@ -177,11 +166,11 @@ const KLAWISZE = {
 };
 
 document.addEventListener("keydown", function (e) {
-    if (e.target.tagName === "INPUT") return; // pisanie nicku
+    if (e.target.tagName === "INPUT") return;
     if (nick === "") return;
 
     if (KLAWISZE[e.code]) {
-        e.preventDefault(); // strzałki nie przewijają strony
+        e.preventDefault();
         if (stan === "koniec") return;
         if (stan === "start" || stan === "pauza") stan = "gra";
         ustawKierunek(KLAWISZE[e.code][0], KLAWISZE[e.code][1]);
@@ -196,35 +185,6 @@ document.addEventListener("keydown", function (e) {
 
 canvas.addEventListener("click", akcja);
 
-// Telefon: przesunięcie palcem zmienia kierunek, samo stuknięcie = akcja
-let dotykX = 0;
-let dotykY = 0;
-
-canvas.addEventListener("touchstart", function (e) {
-    e.preventDefault();
-    dotykX = e.touches[0].clientX;
-    dotykY = e.touches[0].clientY;
-}, { passive: false });
-
-canvas.addEventListener("touchend", function (e) {
-    e.preventDefault();
-    let dx = e.changedTouches[0].clientX - dotykX;
-    let dy = e.changedTouches[0].clientY - dotykY;
-
-    if (Math.abs(dx) < 20 && Math.abs(dy) < 20) {
-        akcja();
-        return;
-    }
-    if (stan === "koniec") return;
-    if (stan === "start" || stan === "pauza") stan = "gra";
-
-    if (Math.abs(dx) > Math.abs(dy)) {
-        ustawKierunek(dx > 0 ? 1 : -1, 0);
-    } else {
-        ustawKierunek(0, dy > 0 ? 1 : -1);
-    }
-}, { passive: false });
-
 // ---------- 6. KONIEC GRY ----------
 function koniecGry() {
     stan = "koniec";
@@ -232,17 +192,16 @@ function koniecGry() {
     odswiezTabele();
 }
 
-// ---------- 7. JEDEN KROK GRY (logika) ----------
+// ---------- 7. AKTUALIZACJA (Logika kroku węża) ----------
 function aktualizuj() {
     kierunek = nastepny;
 
-    // nowa głowa = stara głowa przesunięta o kierunek
     let glowa = {
         x: waz[0].x + kierunek.x,
         y: waz[0].y + kierunek.y
     };
 
-    // uderzenie w ścianę
+    // Sprawdzenie kolizji ze ścianą
     if (glowa.x < 0 || glowa.x >= SIATKA || glowa.y < 0 || glowa.y >= SIATKA) {
         koniecGry();
         return;
@@ -250,8 +209,7 @@ function aktualizuj() {
 
     let zjada = jedzenie && glowa.x === jedzenie.x && glowa.y === jedzenie.y;
 
-    // Uderzenie w siebie. Jeśli wąż nie rośnie, jego ogon zaraz zniknie,
-    // więc ostatnie pole nie jest przeszkodą.
+    // Sprawdzenie kolizji z samym sobą
     let przeszkody = zjada ? waz : waz.slice(0, -1);
     for (let i = 0; i < przeszkody.length; i++) {
         if (przeszkody[i].x === glowa.x && przeszkody[i].y === glowa.y) {
@@ -260,24 +218,22 @@ function aktualizuj() {
         }
     }
 
-    waz.unshift(glowa); // dodaj nową głowę z przodu
+    waz.unshift(glowa); // Dodanie nowej głowy z przodu
 
     if (zjada) {
-        // wąż rośnie (nie usuwamy ogona), +1 punkt, gra przyspiesza
         punkty++;
-        krok = Math.max(KROK_MIN, KROK_START - punkty * 3);
-
-        if (waz.length === SIATKA * SIATKA) { // plansza cała zapełniona
+        krok = Math.max(KROK_MIN, KROK_START - punkty * 3); // Zwiększanie prędkości
+        if (waz.length === SIATKA * SIATKA) {
             koniecGry();
             return;
         }
         losujJedzenie();
     } else {
-        waz.pop(); // usuń ogon, wąż tylko się przesuwa
+        waz.pop(); // Usunięcie ogona, jeśli wąż nie zjadł jedzenia
     }
 }
 
-// ---------- 8. RYSOWANIE ----------
+// ---------- 8. RYSOWANIE PLANSZY I WĘŻA ----------
 function napis(tekst, x, y, rozmiar, wyrownanie) {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -288,7 +244,6 @@ function napis(tekst, x, y, rozmiar, wyrownanie) {
     ctx.fillText(tekst, x, y);
 }
 
-// prostokąt z zaokrąglonymi rogami
 function zaokraglony(x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -313,62 +268,24 @@ function rysujJedzenie() {
     let cx = jedzenie.x * POLE + POLE / 2;
     let cy = jedzenie.y * POLE + POLE / 2 + 1;
 
-    // jabłko
     ctx.fillStyle = "#e53935";
     ctx.beginPath();
     ctx.arc(cx, cy, 7, 0, Math.PI * 2);
     ctx.fill();
-
-    // połysk
-    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    ctx.beginPath();
-    ctx.arc(cx - 2.5, cy - 2.5, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // listek
-    ctx.fillStyle = "#2e7d32";
-    ctx.beginPath();
-    ctx.ellipse(cx + 3, cy - 7, 3.5, 1.7, -0.5, 0, Math.PI * 2);
-    ctx.fill();
 }
 
 function rysujWaza() {
-    // od ogona do głowy, żeby głowa była na wierzchu
     for (let i = waz.length - 1; i >= 0; i--) {
         let s = waz[i];
-        // głowa ciemniejsza, ogon jaśniejszy
         let jasnosc = 38 + (i / waz.length) * 22;
         ctx.fillStyle = "hsl(215, 70%, " + jasnosc + "%)";
         zaokraglony(s.x * POLE + 1, s.y * POLE + 1, POLE - 2, POLE - 2, 6);
-        ctx.fill();
-    }
-
-    // oczy na głowie, zwrócone w stronę ruchu
-    let g = waz[0];
-    let cx = g.x * POLE + POLE / 2;
-    let cy = g.y * POLE + POLE / 2;
-    let px = -kierunek.y; // wektor prostopadły do kierunku
-    let py = kierunek.x;
-
-    for (let strona = -1; strona <= 1; strona += 2) {
-        let ex = cx + kierunek.x * 3 + px * 4 * strona;
-        let ey = cy + kierunek.y * 3 + py * 4 * strona;
-
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(ex, ey, 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.arc(ex + kierunek.x, ey + kierunek.y, 1.5, 0, Math.PI * 2);
         ctx.fill();
     }
 }
 
 function rysuj() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     rysujPlansze();
     rysujJedzenie();
     rysujWaza();
@@ -378,7 +295,6 @@ function rysuj() {
         return;
     }
 
-    // ciemna nakładka, żeby napisy były czytelne
     ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -398,14 +314,13 @@ function rysuj() {
     }
 }
 
-// ---------- 9. START PROGRAMU ----------
+// ---------- 9. URUCHOMIENIE I PĘTLA GRY ----------
 if (nick !== "") {
     pokazGre();
 } else {
     nickInput.focus();
 }
 
-// Pętla: rysuje w każdej klatce, ale wąż rusza się tylko co "krok" milisekund
 function petla(czas) {
     if (stan === "gra") {
         if (czas - ostatniKrok >= krok) {
@@ -413,7 +328,7 @@ function petla(czas) {
             aktualizuj();
         }
     } else {
-        ostatniKrok = czas; // poza grą zerujemy licznik, żeby po wznowieniu nie skoczył
+        ostatniKrok = czas;
     }
     rysuj();
     requestAnimationFrame(petla);

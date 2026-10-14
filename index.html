@@ -8,19 +8,20 @@
 </head>
 <body>
 
-    <!-- PRZEŁĄCZNIK JĘZYKA -->
+    <!-- PRZEŁĄCZNIK JĘZYKA (PL / EN) -->
     <div class="jezyk-przelacznik">
         <button data-jezyk="pl">PL</button>
         <button data-jezyk="en">EN</button>
     </div>
 
+    <!-- NAGŁÓWEK STRONY GŁÓWNEJ -->
     <header class="naglowek">
         <h1>🎮ARCADE</h1>
         <p class="podtytul" data-i18n="podtytul">Dwie gry. Jeden gracz. Wybierz i pobij rekord!</p>
     </header>
 
     <main>
-        <!-- LOGOWANIE -->
+        <!-- SEKCJA LOGOWANIA / PODANIA NICKU -->
         <section id="login-box" class="panel">
             <h2 data-i18n="login_tytul">Kim jesteś?</h2>
             <p data-i18n="login_opis">Podaj nick, żeby Twoje wyniki trafiły do rankingu</p>
@@ -29,8 +30,9 @@
             <p id="login-blad"></p>
         </section>
 
-        <!-- WYBÓR GRY -->
+        <!-- SEKCJA WYBORU GIER (widoczna po zalogowaniu) -->
         <section id="wybor" class="hidden">
+            <!-- Pasek aktywnego gracza -->
             <div class="gracz-pasek">
                 <span>👤 <span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></span>
                 <button id="wyloguj-btn" class="maly" data-i18n="zmien_gracza">Zmień gracza</button>
@@ -38,7 +40,7 @@
 
             <div class="karty">
 
-                <!-- FLAPPY -->
+                <!-- KARTA 1: FLAPPY PIGEON -->
                 <article class="karta">
                     <div class="obrazek flappy-tlo">
                         <span class="chmurka c1">☁️</span>
@@ -50,12 +52,14 @@
                         <p class="opis" data-i18n="flappy_opis">Leć między rurami i nie dotknij niczego. Proste zasady, trudne wykonanie.</p>
                         <p class="sterowanie" data-i18n="flappy_ster">⌨️ Spacja, klik lub dotyk</p>
 
+                        <!-- Statystyki i ranking dla Flappy -->
                         <div class="statystyki">
                             <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-flappy">0</strong></p>
                             <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-flappy"></ol>
                         </div>
 
+                        <!-- Ciekawostki -->
                         <div class="ciekawostka">
                             <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-flappy"></p>
@@ -66,7 +70,7 @@
                     </div>
                 </article>
 
-                <!-- SNAKE -->
+                <!-- KARTA 2: SNAKE -->
                 <article class="karta">
                     <div class="obrazek snake-tlo">
                         <span class="jablko">🍎</span>
@@ -77,12 +81,14 @@
                         <p class="opis" data-i18n="snake_opis">Zjadaj jabłka, rośnij i nie wjedź w siebie. Z każdym punktem jest szybciej.</p>
                         <p class="sterowanie" data-i18n="snake_ster">⌨️ Strzałki lub WASD, P to pauza</p>
 
+                        <!-- Statystyki i ranking dla Snake -->
                         <div class="statystyki">
                             <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-snake">0</strong></p>
                             <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-snake"></ol>
                         </div>
 
+                        <!-- Ciekawostki -->
                         <div class="ciekawostka">
                             <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-snake"></p>
@@ -97,8 +103,10 @@
         </section>
     </main>
 
+    <!-- STOPKA -->
     <footer data-i18n="stopka">Projekt na 10 dni · HTML + CSS + JavaScript</footer>
 
+    <!-- Skrypty zarządzające menu -->
     <script src="rowerek.js"></script>
     <script src="menu.js"></script>
 </body>

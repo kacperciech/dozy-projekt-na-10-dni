@@ -10,15 +10,15 @@ const PREDKOSC_RUR = 2;
 const CO_ILE_KLATEK = 150;
 const WYSOKOSC_TRAWY = 60;
 
-// Zmienne gry
+// Zmienne stanu gry
 let ptak, rury, punkty, licznikKlatek;
-let rekord = 0;      // rekord AKTUALNEGO gracza
-let stan = "start";  // "start", "gra", "koniec"
+let rekord = 0;      // Rekord aktualnego gracza
+let stan = "start";  // Status gry: "start", "gra", "koniec"
 let chmury = [];
 let przesuniecieTrawy = 0;
-let animacja = 0;    // licznik do machania skrzydłem gołębia
+let animacja = 0;    // Licznik klatek odpowiadający za machanie skrzydłem gołębia
 
-// Elementy strony (logowanie i tabela)
+// Elementy interfejsu strony (DOM)
 const loginEkran = document.getElementById("login-ekran");
 const graKontener = document.getElementById("gra-kontener");
 const nickInput = document.getElementById("nick-input");
@@ -28,23 +28,22 @@ const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEl = document.getElementById("tabela");
 
-// Aktualny gracz (pusty tekst = nikt nie jest zalogowany)
+// Pobieranie zapisanego nicku gracza z localStorage
 let nick = localStorage.getItem("nick") || "";
 
 // ---------- 2. WYNIKI (localStorage) ----------
-// Wyniki trzymamy jako obiekt: { "Ania": 12, "Kuba": 7 }
-// czyli jeden najlepszy wynik na gracza.
+// Wczytywanie bazy wyników wszystkich graczy
 function wczytajWyniki() {
     try {
         return JSON.parse(localStorage.getItem("wyniki")) || {};
     } catch (e) {
-        return {}; // jeśli dane są uszkodzone, zaczynamy od pustych
+        return {}; // W razie uszkodzenia danych zwraca pusty obiekt
     }
 }
 
+// Zapisywanie rekordu gracza, jeśli pobił swój dotychczasowy wynik
 function zapiszWynik() {
     let wyniki = wczytajWyniki();
-    // zapisz, jeśli gracza jeszcze nie ma albo pobił swój rekord
     if (wyniki[nick] === undefined || punkty > wyniki[nick]) {
         wyniki[nick] = punkty;
         localStorage.setItem("wyniki", JSON.stringify(wyniki));
@@ -52,15 +51,12 @@ function zapiszWynik() {
     rekord = wyniki[nick];
 }
 
+// Odświeżanie i sortowanie tabeli TOP 10 graczy
 function odswiezTabele() {
     let wyniki = wczytajWyniki();
-
-    // zamień obiekt na tablicę par [nick, punkty] i posortuj malejąco
     let lista = Object.entries(wyniki);
-    lista.sort(function (a, b) {
-        return b[1] - a[1];
-    });
-    lista = lista.slice(0, 10); // tylko TOP 10
+    lista.sort(function (a, b) { return b[1] - a[1]; });
+    lista = lista.slice(0, 10); // Pobieranie tylko najlepszej dziesiątki
 
     tabelaEl.innerHTML = "";
     if (lista.length === 0) {
@@ -73,7 +69,6 @@ function odswiezTabele() {
         let imie = document.createElement("span");
         let pkt = document.createElement("span");
 
-        // textContent (a nie innerHTML), żeby nick nie mógł wstrzyknąć kodu
         imie.textContent = lista[i][0];
         pkt.textContent = lista[i][1];
         pkt.className = "pkt";
@@ -89,17 +84,15 @@ function odswiezTabele() {
 // ---------- 3. LOGOWANIE ----------
 function zaloguj() {
     let wpisany = nickInput.value.trim();
-
     if (wpisany.length < 2) {
         loginBlad.textContent = t("blad_nick");
         return;
     }
-
     nick = wpisany;
     localStorage.setItem("nick", nick);
     loginBlad.textContent = "";
     pokazGre();
-    document.activeElement.blur(); // żeby spacja nie "klikała" przycisku
+    document.activeElement.blur();
 }
 
 function wyloguj() {
@@ -118,7 +111,7 @@ function pokazGre() {
     nickWyswietl.textContent = nick;
 
     let wyniki = wczytajWyniki();
-    rekord = wyniki[nick] || 0; // wczytaj rekord tego gracza
+    rekord = wyniki[nick] || 0;
 
     reset();
     stan = "start";
@@ -156,8 +149,9 @@ reset();
 stworzChmury();
 
 // ---------- 6. STEROWANIE ----------
+// Obsługa skoku ptaka (klawiatura, kliknięcie myszką, dotyk ekranu)
 function skok() {
-    if (nick === "") return; // bez logowania nie da się grać
+    if (nick === "") return;
 
     if (stan === "start") {
         stan = "gra";
@@ -172,7 +166,6 @@ function skok() {
 
 document.addEventListener("keydown", function (e) {
     if (e.code === "Space") {
-        // jeśli gracz pisze nick, spacja ma działać normalnie
         if (e.target.tagName === "INPUT") return;
         e.preventDefault();
         skok();
@@ -191,9 +184,9 @@ function koniecGry() {
     odswiezTabele();
 }
 
-// ---------- 8. AKTUALIZACJA (logika) ----------
+// ---------- 8. AKTUALIZACJA (Logika gry w klatce) ----------
 function aktualizuj() {
-    // Chmury płyną zawsze
+    // Ruch chmur w tle
     for (let i = 0; i < chmury.length; i++) {
         chmury[i].x -= chmury[i].predkosc;
         if (chmury[i].x < -100) {
@@ -202,27 +195,25 @@ function aktualizuj() {
         }
     }
 
-    // Skrzydło macha: szybko w grze, wolno na starcie, stoi po śmierci
     if (stan === "gra") animacja += 0.3;
     else if (stan === "start") animacja += 0.12;
 
     if (stan !== "gra") return;
 
-    // Trawa jedzie razem z rurami
     przesuniecieTrawy = (przesuniecieTrawy + PREDKOSC_RUR) % 24;
 
-    // Grawitacja
+    // Aplikowanie grawitacji do pozycji ptaka
     ptak.predkosc += GRAWITACJA;
     ptak.y += ptak.predkosc;
 
-    // Nowa rura co jakiś czas
+    // Generowanie nowych rur co określoną liczbę klatek
     licznikKlatek++;
     if (licznikKlatek % CO_ILE_KLATEK === 0) {
         let gora = 50 + Math.random() * (canvas.height - PRZERWA - WYSOKOSC_TRAWY - 100);
         rury.push({ x: canvas.width, gora: gora, zaliczona: false });
     }
 
-    // Ruch rur, kolizje, punkty
+    // Ruch rur i wykrywanie kolizji z ptakiem
     for (let i = 0; i < rury.length; i++) {
         let r = rury[i];
         r.x -= PREDKOSC_RUR;
@@ -240,18 +231,17 @@ function aktualizuj() {
         }
     }
 
-    // Usuń rury poza ekranem
     rury = rury.filter(function (r) {
         return r.x + SZEROKOSC_RURY > 0;
     });
 
-    // Kolizja z trawą i sufitem
+    // Kolizja z ziemią (trawą) lub sufitem
     if (ptak.y + ptak.h > canvas.height - WYSOKOSC_TRAWY || ptak.y < 0) {
         koniecGry();
     }
 }
 
-// ---------- 9. RYSOWANIE ----------
+// ---------- 9. RYSOWANIE GRAFIKI ----------
 function napis(tekst, x, y, rozmiar) {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -282,13 +272,10 @@ function rysujChmure(x, y, s) {
 
 function rysujTrawe() {
     let y = canvas.height - WYSOKOSC_TRAWY;
-
     ctx.fillStyle = "#8B5A2B";
     ctx.fillRect(0, y, canvas.width, WYSOKOSC_TRAWY);
-
     ctx.fillStyle = "#5CBF2A";
     ctx.fillRect(0, y, canvas.width, 15);
-
     ctx.fillStyle = "#3E8E1C";
     ctx.fillRect(0, y + 12, canvas.width, 4);
 
@@ -304,19 +291,18 @@ function rysujTrawe() {
     }
 }
 
+// Rysowanie postaci gołębia z animacją skrzydeł i przechyłem
 function rysujGolebia() {
-    // środek hitboxa ptaka = punkt, wokół którego rysujemy gołębia
     let cx = ptak.x + ptak.w / 2;
     let cy = ptak.y + ptak.h / 2;
 
     ctx.save();
     ctx.translate(cx, cy);
 
-    // Przechył: w górę gdy leci w górę, dziobem w dół gdy spada
     let kat = Math.max(-0.45, Math.min(0.9, ptak.predkosc * 0.08));
     ctx.rotate(kat);
 
-    // ogon
+    // Ogon
     ctx.fillStyle = "#5d6470";
     ctx.beginPath();
     ctx.moveTo(-12, -2);
@@ -326,7 +312,7 @@ function rysujGolebia() {
     ctx.closePath();
     ctx.fill();
 
-    // nóżki (różowe)
+    // Nóżki
     ctx.strokeStyle = "#d9667a";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -336,19 +322,13 @@ function rysujGolebia() {
     ctx.lineTo(5, 13);
     ctx.stroke();
 
-    // ciało (szare)
+    // Ciało
     ctx.fillStyle = "#8e97a6";
     ctx.beginPath();
     ctx.ellipse(0, 2, 14, 9, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // jaśniejszy brzuch
-    ctx.fillStyle = "#aab2be";
-    ctx.beginPath();
-    ctx.ellipse(2, 5, 10, 5, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // opalizująca szyja (zielono-fioletowa, jak u prawdziwego gołębia)
+    // Szyja z gradientem
     let szyja = ctx.createLinearGradient(4, -6, 12, 2);
     szyja.addColorStop(0, "#2fa37a");
     szyja.addColorStop(1, "#8e4bb5");
@@ -357,59 +337,21 @@ function rysujGolebia() {
     ctx.arc(8, -2, 6, 0, Math.PI * 2);
     ctx.fill();
 
-    // głowa
+    // Głowa i oko
     ctx.fillStyle = "#7d8695";
     ctx.beginPath();
     ctx.arc(11, -7, 6.5, 0, Math.PI * 2);
     ctx.fill();
-
-    // oko (pomarańczowe z czarną źrenicą)
     ctx.fillStyle = "#ff8a1f";
     ctx.beginPath();
     ctx.arc(14, -8, 2.2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(14.4, -8, 1, 0, Math.PI * 2);
-    ctx.fill();
-
-    // dziób z białą woskówką
-    ctx.fillStyle = "#d6cfc2";
-    ctx.beginPath();
-    ctx.moveTo(16.5, -9);
-    ctx.lineTo(22.5, -6.5);
-    ctx.lineTo(16.5, -5);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(17, -8.5, 1.6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // skrzydło (macha góra-dół) z dwoma czarnymi pasami
-    ctx.save();
-    ctx.translate(-2, -1);
-    ctx.rotate(Math.sin(animacja) * 0.6 - 0.1);
-    ctx.fillStyle = "#6c7584";
-    ctx.beginPath();
-    ctx.ellipse(-5, 1, 11, 5.5, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#2b2f36";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(-8, -3);
-    ctx.lineTo(-8, 5);
-    ctx.moveTo(-3, -3);
-    ctx.lineTo(-3, 5);
-    ctx.stroke();
-    ctx.restore();
 
     ctx.restore();
 }
 
 function rysuj() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     rysujNiebo();
 
     for (let i = 0; i < chmury.length; i++) {
@@ -421,12 +363,10 @@ function rysuj() {
     for (let i = 0; i < rury.length; i++) {
         let r = rury[i];
         ctx.fillRect(r.x, 0, SZEROKOSC_RURY, r.gora);
-        ctx.fillRect(r.x, r.gora + PRZERWA, SZEROKOSC_RURY,
-                     canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY);
+        ctx.fillRect(r.x, r.gora + PRZERWA, SZEROKOSC_RURY, canvas.height - r.gora - PRZERWA - WYSOKOSC_TRAWY);
     }
 
     rysujTrawe();
-
     rysujGolebia();
 
     if (stan === "start") {
@@ -443,15 +383,13 @@ function rysuj() {
     }
 }
 
-// ---------- 10. START PROGRAMU ----------
-// Jeśli gracz był już zalogowany (nick zapisany), od razu pokaż grę
+// ---------- 10. START PROGRAMU I GŁÓWNA PĘTLA ----------
 if (nick !== "") {
     pokazGre();
 } else {
     nickInput.focus();
 }
 
-// Pętla gry zawsze na samym końcu
 function petla() {
     aktualizuj();
     rysuj();

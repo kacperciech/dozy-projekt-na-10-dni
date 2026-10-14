@@ -1,4 +1,3 @@
-// Wspólny plik tłumaczeń. Musi być ładowany PIERWSZY na każdej stronie.
 const TLUMACZENIA = {
     pl: {
         tytul_strony: "Arcade | Wybierz grę",
