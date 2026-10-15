@@ -484,3 +484,6 @@ document.addEventListener("keydown", function (e) {
     }
     if (e.code === "KeyR") reset();
 });
+document.addEventListener("keyup", function (e) {
+    klawisze[e.code] = false;
+});
