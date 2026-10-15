@@ -14,22 +14,65 @@
 }
 
 body {
+    position: relative;
+    isolation: isolate;
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 30px 16px;
-    background:
-        radial-gradient(circle at 15% 10%, rgba(78, 192, 202, 0.18), transparent 40%),
-        radial-gradient(circle at 85% 90%, rgba(142, 204, 57, 0.15), transparent 40%),
-        var(--tlo);
+    background: var(--tlo);
     color: var(--tekst);
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
+body::before,
+body::after {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: "";
+}
+
+body::before {
+    background:
+        radial-gradient(ellipse at 15% 10%, rgba(78, 192, 202, 0.2), transparent 42%),
+        radial-gradient(ellipse at 85% 85%, rgba(142, 204, 57, 0.16), transparent 42%),
+        radial-gradient(ellipse at 75% 15%, rgba(117, 91, 207, 0.14), transparent 38%),
+        linear-gradient(135deg, #14141f, #191a2b 52%, #111923);
+    background-size: 160% 160%;
+    animation: pozywajace-sie-swiatla 22s ease-in-out infinite alternate;
+}
+
+body::after {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.34) 1px, transparent 1.5px);
+    background-size: 44px 44px;
+    opacity: 0.16;
+    mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    animation: przesuwajaca-sie-siatka 45s linear infinite;
+}
+
 .hidden {
     display: none !important;
+}
+
+@keyframes pozywajace-sie-swiatla {
+    from { background-position: 0% 0%; }
+    to   { background-position: 100% 100%; }
+}
+
+@keyframes przesuwajaca-sie-siatka {
+    from { transform: translateY(0); }
+    to   { transform: translateY(44px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before,
+    body::after {
+        animation: none;
+    }
 }
 
 /* ---------- NAGŁÓWEK ---------- */
