@@ -50,3 +50,27 @@ const nick = localStorage.getItem("nick") || "";
 if (nick === "") location.replace("index.html");
 
 document.title = t("rajd_nazwa");
+// ---------- 1. USTAWIENIA ----------
+const canvas = document.getElementById("gra");
+const ctx = canvas.getContext("2d");
+const W = canvas.width;
+const H = canvas.height;
+
+const SWIAT_W = 1600;
+const SWIAT_H = 1000;
+const CX = 800;            // środek trasy
+const CY = 500;
+const N = 120;             // ile punktów ma trasa
+const PULA = 42;           // połowa szerokości asfaltu
+const ZWIR = 34;           // pas żwiru po bokach asfaltu
+const OKRAZEN = 3;         // ile okrążeń w wyścigu
+const CP_R = 75;           // promień punktu kontrolnego
+const KLUCZ = "wyniki_rajd";   // tak samo czyta to strona główna
+
+// Nawierzchnie: przyczepność (grip) i maksymalna prędkość
+const MAT = {
+    asfalt: { nazwa: "nawierz_asfalt", przyczepnosc: 1.0,  vmax: 520 },
+    zwir:   { nazwa: "nawierz_zwir",   przyczepnosc: 0.6,  vmax: 400 },
+    trawa:  { nazwa: "nawierz_trawa",  przyczepnosc: 0.45, vmax: 280 },
+    blato:  { nazwa: "nawierz_blato",  przyczepnosc: 0.25, vmax: 220 }
+};
