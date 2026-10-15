@@ -74,3 +74,24 @@ const MAT = {
     trawa:  { nazwa: "nawierz_trawa",  przyczepnosc: 0.45, vmax: 280 },
     blato:  { nazwa: "nawierz_blato",  przyczepnosc: 0.25, vmax: 220 }
 };
+// ---------- 2. TRASA ----------
+// Zamknięta pętla: punkty na elipsie z falami, żeby zakręty były różne.
+const trasa = [];
+for (let i = 0; i < N; i++) {
+    const th = (i / N) * Math.PI * 2;
+    const r = 330 + 80 * Math.sin(3 * th) + 40 * Math.cos(5 * th);
+    trasa.push({ x: CX + r * Math.cos(th), y: CY + r * Math.sin(th) * 0.85 });
+}
+
+// Błoto leży na trasie w wybranych miejscach
+const BLOTA = [
+    { x: trasa[20].x, y: trasa[20].y, r: 55 },
+    { x: trasa[70].x, y: trasa[70].y, r: 50 },
+    { x: trasa[98].x, y: trasa[98].y, r: 45 }
+];
+
+// Punkty kontrolne w kolejności: indeksy punktów trasy.
+// Ostatni (0) to meta, czyli punkt startu.
+const PUNKTY_CP = [30, 60, 90, 0];
+
+const startAng = Math.atan2(trasa[1].y - trasa[0].y, trasa[1].x - trasa[0].x);
