@@ -103,3 +103,23 @@ function wczytajWyniki() {
         return {};
     }
 }
+// ---------- 4. STAN GRY ----------
+let auto, czas, running, finished, okrazenie, nastepnyCP, lapStart, lapTimes, slad;
+let top3 = [];
+let kamera = { x: 0, y: 0 };
+const klawisze = {};
+
+let najlepszy = wczytajWyniki()[nick];
+if (najlepszy === undefined) najlepszy = null;
+
+function reset() {
+    auto = { x: trasa[0].x, y: trasa[0].y, ang: startAng, vx: 0, vy: 0 };
+    czas = 0;
+    running = false;   // zegar rusza po pierwszym wciśnięciu klawisza
+    finished = false;
+    okrazenie = 0;
+    nastepnyCP = 0;
+    lapStart = 0;
+    lapTimes = [];
+    slad = [];
+}
