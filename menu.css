@@ -374,3 +374,6 @@ footer {
     background: #f9d71c;
     color: #222;
 }
+.rajd-tlo {
+    background: linear-gradient(to bottom, #8b6b43, #c9a874);
+}

@@ -8,20 +8,19 @@
 </head>
 <body>
 
-    <!-- PRZEŁĄCZNIK JĘZYKA (PL / EN) -->
+    <!-- PRZEŁĄCZNIK JĘZYKA -->
     <div class="jezyk-przelacznik">
         <button data-jezyk="pl">PL</button>
         <button data-jezyk="en">EN</button>
     </div>
 
-    <!-- NAGŁÓWEK STRONY GŁÓWNEJ -->
     <header class="naglowek">
         <h1>🎮ARCADE</h1>
-        <p class="podtytul" data-i18n="podtytul">Dwie gry. Jeden gracz. Wybierz i pobij rekord!</p>
+        <p class="podtytul" data-i18n="podtytul">Trzy gry. Jeden gracz. Wybierz i pobij rekord!</p>
     </header>
 
     <main>
-        <!-- SEKCJA LOGOWANIA / PODANIA NICKU -->
+        <!-- LOGOWANIE -->
         <section id="login-box" class="panel">
             <h2 data-i18n="login_tytul">Kim jesteś?</h2>
             <p data-i18n="login_opis">Podaj nick, żeby Twoje wyniki trafiły do rankingu</p>
@@ -30,9 +29,8 @@
             <p id="login-blad"></p>
         </section>
 
-        <!-- SEKCJA WYBORU GIER (widoczna po zalogowaniu) -->
+        <!-- WYBÓR GRY -->
         <section id="wybor" class="hidden">
-            <!-- Pasek aktywnego gracza -->
             <div class="gracz-pasek">
                 <span>👤 <span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></span>
                 <button id="wyloguj-btn" class="maly" data-i18n="zmien_gracza">Zmień gracza</button>
@@ -40,7 +38,7 @@
 
             <div class="karty">
 
-                <!-- KARTA 1: FLAPPY PIGEON -->
+                <!-- FLAPPY -->
                 <article class="karta">
                     <div class="obrazek flappy-tlo">
                         <span class="chmurka c1">☁️</span>
@@ -52,14 +50,12 @@
                         <p class="opis" data-i18n="flappy_opis">Leć między rurami i nie dotknij niczego. Proste zasady, trudne wykonanie.</p>
                         <p class="sterowanie" data-i18n="flappy_ster">⌨️ Spacja, klik lub dotyk</p>
 
-                        <!-- Statystyki i ranking dla Flappy -->
                         <div class="statystyki">
                             <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-flappy">0</strong></p>
                             <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-flappy"></ol>
                         </div>
 
-                        <!-- Ciekawostki -->
                         <div class="ciekawostka">
                             <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-flappy"></p>
@@ -70,7 +66,7 @@
                     </div>
                 </article>
 
-                <!-- KARTA 2: SNAKE -->
+                <!-- SNAKE -->
                 <article class="karta">
                     <div class="obrazek snake-tlo">
                         <span class="jablko">🍎</span>
@@ -81,14 +77,12 @@
                         <p class="opis" data-i18n="snake_opis">Zjadaj jabłka, rośnij i nie wjedź w siebie. Z każdym punktem jest szybciej.</p>
                         <p class="sterowanie" data-i18n="snake_ster">⌨️ Strzałki lub WASD, P to pauza</p>
 
-                        <!-- Statystyki i ranking dla Snake -->
                         <div class="statystyki">
                             <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-snake">0</strong></p>
                             <h3 data-i18n="top3">🏆 TOP 3</h3>
                             <ol id="top-snake"></ol>
                         </div>
 
-                        <!-- Ciekawostki -->
                         <div class="ciekawostka">
                             <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
                             <p id="fakt-snake"></p>
@@ -99,14 +93,38 @@
                     </div>
                 </article>
 
+                <!-- RAJD -->
+                <article class="karta">
+                    <div class="obrazek rajd-tlo">
+                        <span class="postac">🏎️</span>
+                    </div>
+                    <div class="tresc">
+                        <h2 data-i18n="rajd_nazwa">Rajd</h2>
+                        <p class="opis" data-i18n="rajd_opis">Przejedź 3 okrążenia jak najszybciej. Uważaj na żwir i błoto!</p>
+                        <p class="sterowanie" data-i18n="rajd_ster">⌨️ Strzałki lub WASD, spacja to hamulec ręczny</p>
+
+                        <div class="statystyki">
+                            <p class="rekord"><span data-i18n="twoj_czas">Twój najlepszy czas:</span> <strong id="rekord-rajd">--</strong></p>
+                            <h3 data-i18n="top3_czasy">🏆 Najlepsze czasy</h3>
+                            <ol id="top-rajd"></ol>
+                        </div>
+
+                        <div class="ciekawostka">
+                            <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
+                            <p id="fakt-rajd"></p>
+                            <button class="link-btn" data-gra="rajd" data-i18n="kolejna">Kolejna ciekawostka ↻</button>
+                        </div>
+
+                        <a class="graj" href="rajd.html" data-i18n="graj_rajd">▶ Jedź w Rajdzie</a>
+                    </div>
+                </article>
+
             </div>
         </section>
     </main>
 
-    <!-- STOPKA -->
     <footer data-i18n="stopka">Projekt na 10 dni · HTML + CSS + JavaScript</footer>
 
-    <!-- Skrypty zarządzające menu -->
     <script src="rowerek.js"></script>
     <script src="menu.js"></script>
 </body>

@@ -1,32 +1,71 @@
 // ---------- USTAWIENIA ----------
-// Mapowanie kluczy w localStorage dla poszczególnych gier
-const KLUCZE = {
-    flappy: "wyniki",
-    snake: "wyniki_snake"
+// Każda gra: pod jakim kluczem w localStorage trzyma wyniki
+// i czy lepszy jest wynik MNIEJSZY (rosnaco: true, np. czas w rajdzie).
+const GRY = {
+    flappy: { klucz: "wyniki",       rosnaco: false },
+    snake:  { klucz: "wyniki_snake", rosnaco: false },
+    rajd:   { klucz: "wyniki_rajd",  rosnaco: true }
 };
+const LISTA_GIER = Object.keys(GRY);
 
-// Baza ciekawostek w języku polskim i angielskim
+// Ciekawostki w obu językach. Kolejność musi być taka sama w PL i EN,
+// wtedy po zmianie języka zostaje ta sama ciekawostka.
 const FAKTY = {
     pl: {
         flappy: [
-            "Flappy Bird stworzył w 2013 roku wietnamski programista Dong Nguyen.",
-            "W lutym 2014 autor sam wycofał grę ze sklepów, mimo ogromnej popularności."
+            "Flappy Bird stworzył w 2013 roku wietnamski programista Dong Nguyen. Na pierwszą wersję podobno wystarczyło mu kilka dni.",
+            "Na początku 2014 roku gra stała się światowym hitem i podobno zarabiała około 50 tysięcy dolarów dziennie z reklam.",
+            "W lutym 2014 autor sam wycofał grę ze sklepów, mimo ogromnej popularności. Twierdził, że stała się zbyt uzależniająca.",
+            "Zielone rury we Flappy Birdzie przypominają słynne rury z Super Mario.",
+            "Fizyka w tej grze jest banalna: skok ustawia prędkość w górę, a resztą zajmuje się grawitacja. Dokładnie tak działa też Twoja wersja!",
+            "W oryginale grało się żółtym ptaszkiem, a w Twojej wersji bohaterem jest gołąb z opalizującą szyją."
         ],
         snake: [
-            "Wersję Snake'a znaną każdemu zaprogramował Taneli Armanto dla Nokii w 1997 roku.",
-            "W tej wersji idealny wynik to 397 punktów – wtedy wąż wypełnia całą planszę."
+            "Pierwowzorem Snake'a był automat Blockade z 1976 roku. Grało w niego dwóch graczy, którzy zostawiali za sobą ściany.",
+            "Wersję znaną każdemu zaprogramował Taneli Armanto dla Nokii. Trafiła do telefonu Nokia 6110 w 1997 roku.",
+            "Snake był preinstalowany podobno na ponad 350 milionach telefonów Nokia, więc to jedna z najczęściej uruchamianych gier w historii.",
+            "W tej wersji idealny wynik to 397 punktów. Wtedy wąż wypełnia całą planszę 20 na 20 pól.",
+            "Wąż w kodzie to zwykła tablica: nowa głowa dodawana jest na początek, a ogon usuwany z końca.",
+            "W tej wersji wąż osiąga maksymalną prędkość po około 27 punktach. Każdy punkt skraca czas jednego kroku o 3 milisekundy."
+        ],
+        rajd: [
+            "W rajdach załogi nie ścigają się obok siebie. Jadą pojedynczo na czas po zamkniętych odcinkach specjalnych, a wygrywa najkrótszy łączny czas.",
+            "Obok kierowcy siedzi pilot, który czyta mu opis trasy, tzw. pacenotes, zanim kierowca zobaczy zakręt.",
+            "Mistrzostwa Świata w Rajdach (WRC) rozgrywane są od 1973 roku.",
+            "Na żwirze i w błocie auto ma o wiele mniejszą przyczepność niż na asfalcie. W Twojej grze każda nawierzchnia ma własną przyczepność i limit prędkości.",
+            "Hamulec ręczny w rajdach pomaga wprowadzić auto w poślizg w ciasnym zakręcie. W tej grze też: spacja zmniejsza przyczepność tylnych kół.",
+            "W tej wersji o miejscu w rankingu decyduje łączny czas trzech okrążeń, liczony co do setnej części sekundy."
         ]
     },
     en: {
         flappy: [
-            "Flappy Bird was created in 2013 by Vietnamese developer Dong Nguyen."
+            "Flappy Bird was created in 2013 by Vietnamese developer Dong Nguyen. The first version reportedly took him just a few days.",
+            "In early 2014 the game became a worldwide hit, reportedly earning around $50,000 a day from ads.",
+            "In February 2014 the author pulled the game from the app stores despite its huge popularity, saying it had become too addictive.",
+            "The green pipes in Flappy Bird look a lot like the famous pipes from Super Mario.",
+            "The physics is very simple: a flap sets the upward speed and gravity does the rest. That's exactly how your version works too!",
+            "In the original you played a yellow bird, but in your version the hero is a pigeon with an iridescent neck."
         ],
         snake: [
-            "The version everyone knows was programmed by Taneli Armanto for Nokia in 1997."
+            "Snake's predecessor was the 1976 arcade game Blockade, where two players left walls behind them as they moved.",
+            "The version everyone knows was programmed by Taneli Armanto for Nokia. It shipped on the Nokia 6110 in 1997.",
+            "Snake was reportedly preinstalled on over 350 million Nokia phones, making it one of the most-launched games in history.",
+            "In this version a perfect score is 397 points. At that point the snake fills the whole 20 by 20 board.",
+            "In code the snake is just an array: a new head is added to the front and the tail is removed from the end.",
+            "In this version the snake reaches top speed at around 27 points. Each point shortens one step by 3 milliseconds."
+        ],
+        rajd: [
+            "Rally crews don't race side by side. They drive one at a time against the clock on closed special stages, and the shortest total time wins.",
+            "Next to the driver sits a co-driver who reads out a description of the road, called pace notes, before the driver sees the corner.",
+            "The World Rally Championship (WRC) has been held since 1973.",
+            "On gravel and mud a car has far less grip than on asphalt. In your game every surface has its own grip and speed limit.",
+            "In rallying the handbrake helps throw the car into a slide in a tight corner. It works that way here too: Space reduces grip.",
+            "In this version your ranking depends on the total time of three laps, measured to a hundredth of a second."
         ]
     }
 };
 
+// ---------- ELEMENTY STRONY ----------
 const loginBox = document.getElementById("login-box");
 const wybor = document.getElementById("wybor");
 const nickInput = document.getElementById("nick-input");
@@ -35,23 +74,36 @@ const wylogujBtn = document.getElementById("wyloguj-btn");
 const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 
-// ---------- WYNIKI I RANKING TOP 3 ----------
+// ---------- WYNIKI ----------
 function wczytajWyniki(gra) {
     try {
-        return JSON.parse(localStorage.getItem(KLUCZE[gra])) || {};
+        return JSON.parse(localStorage.getItem(GRY[gra].klucz)) || {};
     } catch (e) {
-        return {};
+        return {}; // uszkodzone dane = pusta tabela
     }
 }
 
-// Generowanie listy TOP 3 graczy na karcie danej gry
+// Czas w sekundach jako m:ss.cc (tylko dla rajdu)
+function fmtCzas(s) {
+    const min = Math.floor(s / 60);
+    const sek = (s % 60).toFixed(2).padStart(5, "0");
+    return min + ":" + sek;
+}
+
+function formatuj(gra, wartosc) {
+    return gra === "rajd" ? fmtCzas(wartosc) : wartosc;
+}
+
+// Wypełnia listę TOP 3 dla danej gry
 function pokazTop(gra) {
     let ol = document.getElementById("top-" + gra);
     let nick = localStorage.getItem("nick") || "";
     ol.innerHTML = "";
 
     let lista = Object.entries(wczytajWyniki(gra))
-        .sort(function (a, b) { return b[1] - a[1]; })
+        .sort(function (a, b) {
+            return GRY[gra].rosnaco ? a[1] - b[1] : b[1] - a[1];
+        })
         .slice(0, 3);
 
     if (lista.length === 0) {
@@ -64,8 +116,9 @@ function pokazTop(gra) {
         let imie = document.createElement("span");
         let pkt = document.createElement("span");
 
+        // textContent (nie innerHTML), żeby nick nie mógł wstrzyknąć kodu
         imie.textContent = lista[i][0];
-        pkt.textContent = lista[i][1];
+        pkt.textContent = formatuj(gra, lista[i][1]);
         pkt.className = "pkt";
 
         if (lista[i][0] === nick) li.className = "ja";
@@ -76,20 +129,27 @@ function pokazTop(gra) {
     }
 }
 
+// Pokazuje rekord zalogowanego gracza
 function pokazRekord(gra) {
     let nick = localStorage.getItem("nick") || "";
     let wyniki = wczytajWyniki(gra);
-    document.getElementById("rekord-" + gra).textContent = wyniki[nick] || 0;
+    let el = document.getElementById("rekord-" + gra);
+
+    if (gra === "rajd") {
+        el.textContent = wyniki[nick] !== undefined ? fmtCzas(wyniki[nick]) : "--";
+    } else {
+        el.textContent = wyniki[nick] || 0;
+    }
 }
 
 // ---------- CIEKAWOSTKI ----------
-let numerFaktu = {
-    flappy: Math.floor(Math.random() * FAKTY.pl.flappy.length),
-    snake: Math.floor(Math.random() * FAKTY.pl.snake.length)
-};
+let numerFaktu = {};
+LISTA_GIER.forEach(function (gra) {
+    numerFaktu[gra] = Math.floor(Math.random() * FAKTY.pl[gra].length);
+});
 
 function pokazFakt(gra) {
-    let lista = FAKTY[jezyk][gra];
+    let lista = FAKTY[jezyk][gra]; // jezyk pochodzi z rowerek.js
     document.getElementById("fakt-" + gra).textContent = lista[numerFaktu[gra] % lista.length];
 }
 
@@ -101,7 +161,7 @@ document.querySelectorAll(".link-btn").forEach(function (przycisk) {
     });
 });
 
-// ---------- LOGOWANIE I ODŚWIEŻANIE WIDOKU ----------
+// ---------- LOGOWANIE ----------
 function odswiez() {
     let nick = localStorage.getItem("nick") || "";
 
@@ -116,23 +176,26 @@ function odswiez() {
     wybor.classList.remove("hidden");
     nickWyswietl.textContent = nick;
 
-    ["flappy", "snake"].forEach(function (gra) {
+    LISTA_GIER.forEach(function (gra) {
         pokazTop(gra);
         pokazRekord(gra);
         pokazFakt(gra);
     });
 }
 
+// rowerek.js wywołuje tę funkcję po kliknięciu PL / EN
 function poZmianieJezyka() {
     odswiez();
 }
 
 function zaloguj() {
     let wpisany = nickInput.value.trim();
+
     if (wpisany.length < 2) {
         loginBlad.textContent = t("blad_nick");
         return;
     }
+
     loginBlad.textContent = "";
     localStorage.setItem("nick", wpisany);
     odswiez();
