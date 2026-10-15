@@ -476,3 +476,11 @@ function rysujHUD() {
     }
     ctx.textAlign = "left";
 }
+// ---------- 8. STEROWANIE ----------
+document.addEventListener("keydown", function (e) {
+    klawisze[e.code] = true;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) {
+        e.preventDefault();
+    }
+    if (e.code === "KeyR") reset();
+});
