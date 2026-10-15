@@ -56,13 +56,15 @@ const ctx = canvas.getContext("2d");
 const W = canvas.width;
 const H = canvas.height;
 
-const SWIAT_W = 1600;
-const SWIAT_H = 1000;
-const CX = 800;            // środek trasy
-const CY = 500;
-const N = 120;             // ile punktów ma trasa
-const PULA = 42;           // połowa szerokości asfaltu
-const ZWIR = 34;           // pas żwiru po bokach asfaltu
+const SWIAT_W = 2400;
+const SWIAT_H = 1600;
+const CX = 1200;           // środek trasy
+const CY = 800;
+const N = 180;             // liczba punktów na trasie
+const PULA = 48;           // połowa szerokości jezdni
+const ZWIR = 40;           // pas żwiru po bokach jezdni
+const PLOT_ODLEGLOSC = PULA + ZWIR + 22;
+const PROMIEN_AUTA = 18;
 const OKRAZEN = 3;         // ile okrążeń w wyścigu
 const CP_R = 75;           // promień punktu kontrolnego
 const KLUCZ = "wyniki_rajd";   // tak samo czyta to strona główna
@@ -70,31 +72,66 @@ const KLUCZ = "wyniki_rajd";   // tak samo czyta to strona główna
 // Nawierzchnie: przyczepność (grip) i maksymalna prędkość
 const MAT = {
     asfalt: { nazwa: "nawierz_asfalt", przyczepnosc: 1.0,  vmax: 520 },
+    piasek: { nazwa: "nawierz_piasek", przyczepnosc: 0.4,  vmax: 300 },
     zwir:   { nazwa: "nawierz_zwir",   przyczepnosc: 0.6,  vmax: 400 },
     trawa:  { nazwa: "nawierz_trawa",  przyczepnosc: 0.45, vmax: 280 },
     blato:  { nazwa: "nawierz_blato",  przyczepnosc: 0.25, vmax: 220 }
 };
 // ---------- 2. TRASA ----------
-// Zamknięta pętla: punkty na elipsie z falami, żeby zakręty były różne.
-const trasa = [];
-for (let i = 0; i < N; i++) {
-    const th = (i / N) * Math.PI * 2;
-    const r = 330 + 80 * Math.sin(3 * th) + 40 * Math.cos(5 * th);
-    trasa.push({ x: CX + r * Math.cos(th), y: CY + r * Math.sin(th) * 0.85 });
+const MAPY = [
+    {
+        nazwa: "rajd_mapa_lesna",
+        baza: 560, fala1: 65, czest1: 3, fala2: 12, czest2: 5, faza: 0, skalaY: 0.9,
+        nawierzchnie: [[18, 34, "piasek"], [48, 58, "blato"], [78, 96, "piasek"], [112, 125, "blato"], [148, 164, "piasek"]]
+    },
+    {
+        nazwa: "rajd_mapa_pustynna",
+        baza: 560, fala1: 70, czest1: 2, fala2: 18, czest2: 3, faza: 0.8, skalaY: 0.82,
+        nawierzchnie: [[10, 30, "piasek"], [42, 54, "blato"], [68, 84, "piasek"], [102, 118, "blato"], [138, 160, "piasek"]]
+    },
+    {
+        nazwa: "rajd_mapa_gorska",
+        baza: 560, fala1: 65, czest1: 3, fala2: 15, czest2: 4, faza: 1.3, skalaY: 0.88,
+        nawierzchnie: [[22, 38, "blato"], [56, 76, "piasek"], [96, 108, "blato"], [128, 148, "piasek"], [164, 176, "blato"]]
+    },
+    {
+        nazwa: "rajd_mapa_nadrzeczna",
+        baza: 560, fala1: 70, czest1: 2, fala2: 20, czest2: 3, faza: 2.1, skalaY: 0.8,
+        nawierzchnie: [[14, 28, "piasek"], [38, 56, "blato"], [82, 100, "piasek"], [120, 134, "blato"], [154, 172, "piasek"]]
+    }
+];
+let wybranaMapa = 0;
+let trasa = [];
+let startAng;
+
+function wczytajMape(indeks) {
+    wybranaMapa = indeks;
+    const mapa = MAPY[wybranaMapa];
+    trasa = [];
+    for (let i = 0; i < N; i++) {
+        const th = (i / N) * Math.PI * 2;
+        const r = mapa.baza +
+            mapa.fala1 * Math.sin(mapa.czest1 * th + mapa.faza) +
+            mapa.fala2 * Math.cos(mapa.czest2 * th - mapa.faza);
+        trasa.push({ x: CX + r * Math.cos(th), y: CY + r * Math.sin(th) * mapa.skalaY });
+    }
+    startAng = Math.atan2(trasa[1].y - trasa[0].y, trasa[1].x - trasa[0].x);
 }
 
-// Błoto leży na trasie w wybranych miejscach
-const BLOTA = [
-    { x: trasa[20].x, y: trasa[20].y, r: 55 },
-    { x: trasa[70].x, y: trasa[70].y, r: 50 },
-    { x: trasa[98].x, y: trasa[98].y, r: 45 }
-];
+function nawierzchniaTrasy(indeks) {
+    const punkt = ((indeks % N) + N) % N;
+    const odcinki = MAPY[wybranaMapa].nawierzchnie;
+    for (let i = 0; i < odcinki.length; i++) {
+        if (punkt >= odcinki[i][0] && punkt < odcinki[i][1]) return MAT[odcinki[i][2]];
+    }
+    return MAT.asfalt;
+}
 
 // Punkty kontrolne w kolejności: indeksy punktów trasy.
 // Ostatni (0) to meta, czyli punkt startu.
 const PUNKTY_CP = [30, 60, 90, 0];
 
-const startAng = Math.atan2(trasa[1].y - trasa[0].y, trasa[1].x - trasa[0].x);
+wczytajMape(wybranaMapa);
 // ---------- 3. WYNIKI (czas w sekundach, im mniej tym lepiej) ----------
 function wczytajWyniki() {
     try {
@@ -125,25 +162,26 @@ function reset() {
 }
 // ---------- 5. POMOCNICZE ----------
 function najblizszyPunkt(x, y) {
-    let best = Infinity;
+    let best = { odleglosc: Infinity, x: 0, y: 0, indeks: 0 };
     for (let i = 0; i < trasa.length; i++) {
-        const d = Math.hypot(trasa[i].x - x, trasa[i].y - y);
-        if (d < best) best = d;
+        const a = trasa[i];
+        const b = trasa[(i + 1) % trasa.length];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dlugosc2 = dx * dx + dy * dy;
+        const udzial = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / dlugosc2));
+        const px = a.x + dx * udzial, py = a.y + dy * udzial;
+        const odleglosc = Math.hypot(px - x, py - y);
+        if (odleglosc < best.odleglosc) {
+            best = { odleglosc: odleglosc, x: px, y: py, indeks: i + udzial };
+        }
     }
     return best;
 }
 
-function wBlocie(x, y) {
-    return BLOTA.some(function (b) {
-        return Math.hypot(b.x - x, b.y - y) < b.r;
-    });
-}
-
 function powierzchnia(x, y) {
-    if (wBlocie(x, y)) return MAT.blato;
-    const d = najblizszyPunkt(x, y);
-    if (d <= PULA) return MAT.asfalt;
-    if (d <= PULA + ZWIR) return MAT.zwir;
+    const najblizszy = najblizszyPunkt(x, y);
+    if (najblizszy.odleglosc <= PULA) return nawierzchniaTrasy(najblizszy.indeks);
+    if (najblizszy.odleglosc <= PULA + ZWIR) return MAT.zwir;
     return MAT.trawa;
 }
 
@@ -244,6 +282,21 @@ function aktualizuj(dt) {
     auto.x += auto.vx * dt;
     auto.y += auto.vy * dt;
 
+    // Płoty biegną po obu stronach trasy i nie pozwalają jej skracać.
+    const najblizszy = najblizszyPunkt(auto.x, auto.y);
+    const granicaPlotu = PLOT_ODLEGLOSC - PROMIEN_AUTA;
+    if (najblizszy.odleglosc > granicaPlotu) {
+        const nx = (auto.x - najblizszy.x) / najblizszy.odleglosc;
+        const ny = (auto.y - najblizszy.y) / najblizszy.odleglosc;
+        auto.x = najblizszy.x + nx * granicaPlotu;
+        auto.y = najblizszy.y + ny * granicaPlotu;
+        const predkoscProstopadla = auto.vx * nx + auto.vy * ny;
+        if (predkoscProstopadla > 0) {
+            auto.vx -= nx * predkoscProstopadla;
+            auto.vy -= ny * predkoscProstopadla;
+        }
+    }
+
     // granice świata
     if (auto.x < 20) { auto.x = 20; auto.vx = 0; }
     if (auto.x > SWIAT_W - 20) { auto.x = SWIAT_W - 20; auto.vx = 0; }
@@ -312,19 +365,54 @@ function rysujTrawe(cx, cy) {
     }
 }
 
-function rysujBloto(cx, cy) {
-    for (let i = 0; i < BLOTA.length; i++) {
-        const b = BLOTA[i];
-        ctx.fillStyle = "rgba(90, 59, 30, 0.85)";
+function rysujOdcinkiNawierzchni(cx, cy) {
+    const odcinki = MAPY[wybranaMapa].nawierzchnie;
+    for (let i = 0; i < odcinki.length; i++) {
+        const poczatek = odcinki[i][0], koniec = odcinki[i][1];
         ctx.beginPath();
-        ctx.arc(b.x - cx, b.y - cy, b.r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "rgba(50, 30, 15, 0.6)";
+        ctx.moveTo(trasa[poczatek].x - cx, trasa[poczatek].y - cy);
+        for (let j = poczatek + 1; j <= koniec; j++) {
+            ctx.lineTo(trasa[j % N].x - cx, trasa[j % N].y - cy);
+        }
+        ctx.lineWidth = PULA * 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = odcinki[i][2] === "blato" ? "#5a3b1e" : "#c5a66e";
+        ctx.stroke();
+    }
+}
+
+function rysujPloty(cx, cy) {
+    for (let strona = -1; strona <= 1; strona += 2) {
         ctx.beginPath();
-        ctx.arc(b.x - cx - 15, b.y - cy + 10, 8, 0, Math.PI * 2);
-        ctx.arc(b.x - cx + 18, b.y - cy - 12, 6, 0, Math.PI * 2);
-        ctx.arc(b.x - cx + 5, b.y - cy + 22, 5, 0, Math.PI * 2);
-        ctx.fill();
+        for (let i = 0; i < N; i++) {
+            const przed = trasa[(i + N - 1) % N];
+            const po = trasa[(i + 1) % N];
+            const dx = po.x - przed.x, dy = po.y - przed.y;
+            const dlugosc = Math.hypot(dx, dy);
+            const x = trasa[i].x - (dy / dlugosc) * PLOT_ODLEGLOSC * strona;
+            const y = trasa[i].y + (dx / dlugosc) * PLOT_ODLEGLOSC * strona;
+            if (i === 0) ctx.moveTo(x - cx, y - cy);
+            else ctx.lineTo(x - cx, y - cy);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = "#4b2e1b";
+        ctx.lineWidth = 7;
+        ctx.stroke();
+        ctx.strokeStyle = "#c59a62";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = "#3b2618";
+        for (let i = 0; i < N; i += 2) {
+            const przed = trasa[(i + N - 1) % N];
+            const po = trasa[(i + 1) % N];
+            const dx = po.x - przed.x, dy = po.y - przed.y;
+            const dlugosc = Math.hypot(dx, dy);
+            const x = trasa[i].x - (dy / dlugosc) * PLOT_ODLEGLOSC * strona - cx;
+            const y = trasa[i].y + (dx / dlugosc) * PLOT_ODLEGLOSC * strona - cy;
+            ctx.fillRect(x - 3, y - 5, 6, 10);
+        }
     }
 }
 
@@ -363,11 +451,11 @@ function rysuj() {
     // trasa: najpierw żwir, potem asfalt, na wierzchu przerywana linia
     sciezka(2 * (PULA + ZWIR), "#b89b72", cx, cy);
     sciezka(2 * PULA, "#4a4a4a", cx, cy);
+    rysujOdcinkiNawierzchni(cx, cy);
     ctx.setLineDash([18, 18]);
     sciezka(3, "#f5f5f5", cx, cy);
     ctx.setLineDash([]);
-
-    rysujBloto(cx, cy);
+    rysujPloty(cx, cy);
 
     // ślad po poślizgu (im starszy, tym bledszy)
     for (let i = 0; i < slad.length; i++) {
@@ -409,17 +497,18 @@ function rysujHUD() {
 
     // panel z danymi
     ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-    ctx.fillRect(10, 50, 260, 172);
+    ctx.fillRect(10, 50, 280, 194);
     ctx.textAlign = "left";
     ctx.fillStyle = "white";
     ctx.font = "bold 18px Arial";
     ctx.fillText(t("rajd_nazwa").toUpperCase() + " · " + nick, 20, 74);
     ctx.font = "15px Arial";
-    ctx.fillText(t("rajd_czas") + " " + fmtCzas(czas), 20, 98);
-    ctx.fillText(t("rajd_okrazenie") + " " + Math.min(okrazenie + 1, OKRAZEN) + "/" + OKRAZEN, 20, 120);
-    ctx.fillText(t("rajd_predkosc") + " " + kmh + " km/h", 20, 142);
-    ctx.fillText(t("rajd_nawierzchnia") + " " + t(mat.nazwa), 20, 164);
-    ctx.fillText(t("rajd_najlepszy") + " " + (najlepszy !== null ? fmtCzas(najlepszy) : "--"), 20, 186);
+    ctx.fillText(t("rajd_mapa") + " " + t(MAPY[wybranaMapa].nazwa), 20, 98);
+    ctx.fillText(t("rajd_czas") + " " + fmtCzas(czas), 20, 120);
+    ctx.fillText(t("rajd_okrazenie") + " " + Math.min(okrazenie + 1, OKRAZEN) + "/" + OKRAZEN, 20, 142);
+    ctx.fillText(t("rajd_predkosc") + " " + kmh + " km/h", 20, 164);
+    ctx.fillText(t("rajd_nawierzchnia") + " " + t(mat.nazwa), 20, 186);
+    ctx.fillText(t("rajd_najlepszy") + " " + (najlepszy !== null ? fmtCzas(najlepszy) : "--"), 20, 208);
 
     // lista czasów okrążeń
     if (lapTimes.length > 0) {
@@ -436,10 +525,10 @@ function rysujHUD() {
 
     // sterowanie na dole
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fillRect(10, H - 34, 600, 24);
+    ctx.fillRect(10, H - 40, 760, 30);
     ctx.fillStyle = "white";
     ctx.font = "13px Arial";
-    ctx.fillText(t("rajd_sterowanie"), 18, H - 17);
+    ctx.fillText(t("rajd_sterowanie"), 18, H - 20);
 
     // komunikaty na środku
     ctx.textAlign = "center";
@@ -447,6 +536,8 @@ function rysujHUD() {
         ctx.font = "bold 22px Arial";
         ctx.fillStyle = "white";
         ctx.fillText(t("rajd_ruszaj"), W / 2, 80);
+        ctx.font = "16px Arial";
+        ctx.fillText(t("rajd_wybor_mapy"), W / 2, 106);
     }
     if (finished) {
         const wysokosc = 230 + top3.length * 22;
@@ -483,6 +574,11 @@ document.addEventListener("keydown", function (e) {
         e.preventDefault();
     }
     if (e.code === "KeyR") reset();
+    if (!running && !finished && (e.code === "KeyQ" || e.code === "KeyE")) {
+        const kierunek = e.code === "KeyE" ? 1 : -1;
+        wczytajMape((wybranaMapa + kierunek + MAPY.length) % MAPY.length);
+        reset();
+    }
 });
 document.addEventListener("keyup", function (e) {
     klawisze[e.code] = false;
