@@ -487,3 +487,27 @@ document.addEventListener("keydown", function (e) {
 document.addEventListener("keyup", function (e) {
     klawisze[e.code] = false;
 });
+// ---------- 9. PĘTLA ----------
+let ostatni = 0;
+
+function petla(tCzas) {
+    const dt = ostatni ? Math.min((tCzas - ostatni) / 1000, 0.05) : 0;
+    ostatni = tCzas;
+
+    if (!finished) {
+        if (running) czas += dt;
+        aktualizuj(dt);
+    }
+
+    kamera.x = Math.max(0, Math.min(SWIAT_W - W, auto.x - W / 2));
+    kamera.y = Math.max(0, Math.min(SWIAT_H - H, auto.y - H / 2));
+
+    rysuj();
+    requestAnimationFrame(petla);
+}
+
+reset();
+requestAnimationFrame(petla);
+</script>
+</body>
+</html>
