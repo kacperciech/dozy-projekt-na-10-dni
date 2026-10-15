@@ -36,3 +36,17 @@
   .menu-link:hover {
     color: #f9d71c;
   }
+  </style>
+</head>
+<body>
+<a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
+<canvas id="gra" width="960" height="540"></canvas>
+
+<script src="rowerek.js"></script>
+<script>
+// ---------- 0. GRACZ ----------
+// Nick wpisuje się na stronie głównej. Bez nicku wracamy do menu.
+const nick = localStorage.getItem("nick") || "";
+if (nick === "") location.replace("index.html");
+
+document.title = t("rajd_nazwa");
