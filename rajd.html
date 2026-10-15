@@ -123,3 +123,42 @@ function reset() {
     lapTimes = [];
     slad = [];
 }
+// ---------- 5. POMOCNICZE ----------
+function najblizszyPunkt(x, y) {
+    let best = Infinity;
+    for (let i = 0; i < trasa.length; i++) {
+        const d = Math.hypot(trasa[i].x - x, trasa[i].y - y);
+        if (d < best) best = d;
+    }
+    return best;
+}
+
+function wBlocie(x, y) {
+    return BLOTA.some(function (b) {
+        return Math.hypot(b.x - x, b.y - y) < b.r;
+    });
+}
+
+function powierzchnia(x, y) {
+    if (wBlocie(x, y)) return MAT.blato;
+    const d = najblizszyPunkt(x, y);
+    if (d <= PULA) return MAT.asfalt;
+    if (d <= PULA + ZWIR) return MAT.zwir;
+    return MAT.trawa;
+}
+
+function fmtCzas(s) {
+    const min = Math.floor(s / 60);
+    const sek = (s % 60).toFixed(2).padStart(5, "0");
+    return min + ":" + sek;
+}
+
+function wcisniete(kody) {
+    return kody.some(function (k) { return klawisze[k]; });
+}
+
+const GAZ = ["ArrowUp", "KeyW"];
+const HAMULEC = ["ArrowDown", "KeyS"];
+const LEWO = ["ArrowLeft", "KeyA"];
+const PRAWO = ["ArrowRight", "KeyD"];
+const RECZNY = ["Space"];
