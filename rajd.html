@@ -283,3 +283,196 @@ function koniec() {
         .sort(function (a, b) { return a[1] - b[1]; })
         .slice(0, 3);
 }
+// ---------- 7. RYSOWANIE ----------
+function sciezka(szer, kolor, cx, cy) {
+    ctx.beginPath();
+    ctx.moveTo(trasa[0].x - cx, trasa[0].y - cy);
+    for (let i = 1; i < trasa.length; i++) {
+        ctx.lineTo(trasa[i].x - cx, trasa[i].y - cy);
+    }
+    ctx.closePath();
+    ctx.lineWidth = szer;
+    ctx.strokeStyle = kolor;
+    ctx.lineJoin = "round";
+    ctx.stroke();
+}
+
+function rysujTrawe(cx, cy) {
+    ctx.fillStyle = "#4f7d2c";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    const gx0 = Math.floor(cx / 40), gx1 = Math.floor((cx + W) / 40);
+    const gy0 = Math.floor(cy / 40), gy1 = Math.floor((cy + H) / 40);
+    for (let gx = gx0; gx <= gx1; gx++) {
+        for (let gy = gy0; gy <= gy1; gy++) {
+            if ((gx * 31 + gy * 17) % 5 === 0) {
+                ctx.fillRect(gx * 40 - cx + 8, gy * 40 - cy + 10, 12, 6);
+            }
+        }
+    }
+}
+
+function rysujBloto(cx, cy) {
+    for (let i = 0; i < BLOTA.length; i++) {
+        const b = BLOTA[i];
+        ctx.fillStyle = "rgba(90, 59, 30, 0.85)";
+        ctx.beginPath();
+        ctx.arc(b.x - cx, b.y - cy, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(50, 30, 15, 0.6)";
+        ctx.beginPath();
+        ctx.arc(b.x - cx - 15, b.y - cy + 10, 8, 0, Math.PI * 2);
+        ctx.arc(b.x - cx + 18, b.y - cy - 12, 6, 0, Math.PI * 2);
+        ctx.arc(b.x - cx + 5, b.y - cy + 22, 5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function rysujAuto() {
+    ctx.save();
+    ctx.translate(auto.x - kamera.x, auto.y - kamera.y);
+    ctx.rotate(auto.ang);
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.3)";   // cień
+    ctx.fillRect(-14, -7, 36, 20);
+
+    ctx.fillStyle = "#222";                  // koła
+    ctx.fillRect(-15, -13, 9, 5);
+    ctx.fillRect(-15, 8, 9, 5);
+    ctx.fillRect(8, -13, 9, 5);
+    ctx.fillRect(8, 8, 9, 5);
+
+    ctx.fillStyle = "#e53935";               // karoseria
+    ctx.fillRect(-18, -10, 36, 20);
+
+    ctx.fillStyle = "#90caf9";               // szyba
+    ctx.fillRect(2, -7, 10, 14);
+
+    ctx.fillStyle = "#ffeb3b";               // światła z przodu
+    ctx.fillRect(16, -7, 3, 5);
+    ctx.fillRect(16, 2, 3, 5);
+
+    ctx.restore();
+}
+
+function rysuj() {
+    const cx = kamera.x, cy = kamera.y;
+
+    rysujTrawe(cx, cy);
+
+    // trasa: najpierw żwir, potem asfalt, na wierzchu przerywana linia
+    sciezka(2 * (PULA + ZWIR), "#b89b72", cx, cy);
+    sciezka(2 * PULA, "#4a4a4a", cx, cy);
+    ctx.setLineDash([18, 18]);
+    sciezka(3, "#f5f5f5", cx, cy);
+    ctx.setLineDash([]);
+
+    rysujBloto(cx, cy);
+
+    // ślad po poślizgu (im starszy, tym bledszy)
+    for (let i = 0; i < slad.length; i++) {
+        ctx.fillStyle = "rgba(20, 20, 20, " + (0.35 * (i / slad.length)) + ")";
+        ctx.beginPath();
+        ctx.arc(slad[i].x - cx, slad[i].y - cy, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // linia startu/mety
+    const p0 = trasa[0];
+    const nx = -Math.sin(startAng), ny = Math.cos(startAng);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 6;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(p0.x + nx * PULA - cx, p0.y + ny * PULA - cy);
+    ctx.lineTo(p0.x - nx * PULA - cx, p0.y - ny * PULA - cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // następny punkt kontrolny (żółte kółko)
+    const cp = trasa[PUNKTY_CP[nastepnyCP]];
+    ctx.strokeStyle = "#f9d71c";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.arc(cp.x - cx, cp.y - cy, CP_R, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    rysujAuto();
+    rysujHUD();
+}
+
+function rysujHUD() {
+    const mat = powierzchnia(auto.x, auto.y);
+    const kmh = Math.round(Math.hypot(auto.vx, auto.vy) * 0.3);
+
+    // panel z danymi
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.fillRect(10, 50, 260, 172);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "white";
+    ctx.font = "bold 18px Arial";
+    ctx.fillText(t("rajd_nazwa").toUpperCase() + " · " + nick, 20, 74);
+    ctx.font = "15px Arial";
+    ctx.fillText(t("rajd_czas") + " " + fmtCzas(czas), 20, 98);
+    ctx.fillText(t("rajd_okrazenie") + " " + Math.min(okrazenie + 1, OKRAZEN) + "/" + OKRAZEN, 20, 120);
+    ctx.fillText(t("rajd_predkosc") + " " + kmh + " km/h", 20, 142);
+    ctx.fillText(t("rajd_nawierzchnia") + " " + t(mat.nazwa), 20, 164);
+    ctx.fillText(t("rajd_najlepszy") + " " + (najlepszy !== null ? fmtCzas(najlepszy) : "--"), 20, 186);
+
+    // lista czasów okrążeń
+    if (lapTimes.length > 0) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+        ctx.fillRect(W - 190, 10, 180, 30 + lapTimes.length * 20);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 15px Arial";
+        ctx.fillText(t("rajd_okrazenia"), W - 180, 30);
+        ctx.font = "14px Arial";
+        for (let i = 0; i < lapTimes.length; i++) {
+            ctx.fillText((i + 1) + ". " + fmtCzas(lapTimes[i]), W - 180, 50 + i * 20);
+        }
+    }
+
+    // sterowanie na dole
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(10, H - 34, 600, 24);
+    ctx.fillStyle = "white";
+    ctx.font = "13px Arial";
+    ctx.fillText(t("rajd_sterowanie"), 18, H - 17);
+
+    // komunikaty na środku
+    ctx.textAlign = "center";
+    if (!running && !finished) {
+        ctx.font = "bold 22px Arial";
+        ctx.fillStyle = "white";
+        ctx.fillText(t("rajd_ruszaj"), W / 2, 80);
+    }
+    if (finished) {
+        const wysokosc = 230 + top3.length * 22;
+        const y0 = H / 2 - wysokosc / 2;
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(W / 2 - 230, y0, 460, wysokosc);
+
+        ctx.fillStyle = "#f9d71c";
+        ctx.font = "bold 40px Arial";
+        ctx.fillText(t("rajd_meta"), W / 2, y0 + 50);
+        ctx.fillStyle = "white";
+        ctx.font = "24px Arial";
+        ctx.fillText(t("rajd_czas") + " " + fmtCzas(czas), W / 2, y0 + 86);
+        ctx.font = "18px Arial";
+        ctx.fillText(t("rajd_najlepszy") + " " + fmtCzas(najlepszy), W / 2, y0 + 114);
+
+        ctx.fillStyle = "#f9d71c";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText(t("rajd_top3"), W / 2, y0 + 148);
+        ctx.fillStyle = "white";
+        ctx.font = "16px Arial";
+        for (let i = 0; i < top3.length; i++) {
+            ctx.fillText((i + 1) + ". " + top3[i][0] + "  " + fmtCzas(top3[i][1]), W / 2, y0 + 172 + i * 22);
+        }
+        ctx.font = "16px Arial";
+        ctx.fillText(t("rajd_jeszcze_raz"), W / 2, y0 + wysokosc - 18);
+    }
+    ctx.textAlign = "left";
+}
