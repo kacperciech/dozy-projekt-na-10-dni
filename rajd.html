@@ -162,3 +162,124 @@ const HAMULEC = ["ArrowDown", "KeyS"];
 const LEWO = ["ArrowLeft", "KeyA"];
 const PRAWO = ["ArrowRight", "KeyD"];
 const RECZNY = ["Space"];
+// ---------- 6. FIZYKA ----------
+function aktualizuj(dt) {
+    const mat = powierzchnia(auto.x, auto.y);
+
+    const gaz = wcisniete(GAZ);
+    const ham = wcisniete(HAMULEC);
+    const lewo = wcisniete(LEWO);
+    const prawo = wcisniete(PRAWO);
+    const reczny = wcisniete(RECZNY);
+
+    if (gaz || ham || lewo || prawo || reczny) running = true;
+
+    // przyspieszanie w kierunku, w którym patrzy auto
+    let fx = Math.cos(auto.ang);
+    let fy = Math.sin(auto.ang);
+    if (gaz) {
+        auto.vx += fx * 300 * dt;
+        auto.vy += fy * 300 * dt;
+    }
+
+    // hamowanie lub jazda wstecz
+    let wzdluz = auto.vx * fx + auto.vy * fy;
+    if (ham) {
+        if (wzdluz > 10) {
+            const k = Math.max(0, 1 - 3 * dt);
+            auto.vx *= k;
+            auto.vy *= k;
+        } else {
+            auto.vx -= fx * 120 * dt;
+            auto.vy -= fy * 120 * dt;
+        }
+    }
+
+    // opór toczenia
+    const opor = Math.max(0, 1 - 0.35 * dt);
+    auto.vx *= opor;
+    auto.vy *= opor;
+
+    // limit prędkości zależny od nawierzchni
+    let predkosc = Math.hypot(auto.vx, auto.vy);
+    if (predkosc > mat.vmax) {
+        const s = mat.vmax / predkosc;
+        auto.vx *= s;
+        auto.vy *= s;
+        predkosc = mat.vmax;
+    }
+
+    // skręcanie: im szybciej, tym mocniej, ale w mało szybkim aucie nie skręcisz
+    const sf = Math.min(1, predkosc / 150);
+    const kierunek = wzdluz >= 0 ? 1 : -1;
+    if (lewo) auto.ang -= 2.4 * sf * kierunek * dt;
+    if (prawo) auto.ang += 2.4 * sf * kierunek * dt;
+
+    // przyczepność: rozkładamy prędkość na "do przodu" i "w bok",
+    // bok z czasem wygasa. Na błocie wygasa wolno, więc auto ślizga.
+    fx = Math.cos(auto.ang);
+    fy = Math.sin(auto.ang);
+    let wz = auto.vx * fx + auto.vy * fy;
+    let latx = auto.vx - fx * wz;
+    let laty = auto.vy - fy * wz;
+
+    const przyczepnosc = mat.przyczepnosc * (reczny ? 0.25 : 1);
+    const tlum = Math.max(0, 1 - przyczepnosc * 8 * dt);
+    latx *= tlum;
+    laty *= tlum;
+
+    if (reczny) wz *= Math.max(0, 1 - 1.5 * dt);   // hamulec ręczny też hamuje
+
+    auto.vx = fx * wz + latx;
+    auto.vy = fy * wz + laty;
+
+    // ślad po poślizgu
+    const bok = Math.hypot(latx, laty);
+    if (bok > 70) {
+        slad.push({ x: auto.x, y: auto.y });
+        if (slad.length > 400) slad.shift();
+    }
+
+    // ruch
+    auto.x += auto.vx * dt;
+    auto.y += auto.vy * dt;
+
+    // granice świata
+    if (auto.x < 20) { auto.x = 20; auto.vx = 0; }
+    if (auto.x > SWIAT_W - 20) { auto.x = SWIAT_W - 20; auto.vx = 0; }
+    if (auto.y < 20) { auto.y = 20; auto.vy = 0; }
+    if (auto.y > SWIAT_H - 20) { auto.y = SWIAT_H - 20; auto.vy = 0; }
+
+    // punkty kontrolne i okrążenia
+    const cp = trasa[PUNKTY_CP[nastepnyCP]];
+    if (Math.hypot(auto.x - cp.x, auto.y - cp.y) < CP_R) {
+        nastepnyCP++;
+        if (nastepnyCP === PUNKTY_CP.length) {
+            nastepnyCP = 0;
+            okrazenie++;
+            lapTimes.push(czas - lapStart);
+            lapStart = czas;
+            if (okrazenie === OKRAZEN) koniec();
+        }
+    }
+}
+
+// Meta: zapisz czas gracza (tylko jeśli to jego najlepszy) i przygotuj TOP 3
+function koniec() {
+    finished = true;
+    running = false;
+
+    const wyniki = wczytajWyniki();
+    const wynik = Number(czas.toFixed(2));
+    if (wyniki[nick] === undefined || wynik < wyniki[nick]) {
+        wyniki[nick] = wynik;
+        try {
+            localStorage.setItem(KLUCZ, JSON.stringify(wyniki));
+        } catch (e) {}
+    }
+    najlepszy = wyniki[nick];
+
+    top3 = Object.entries(wyniki)
+        .sort(function (a, b) { return a[1] - b[1]; })
+        .slice(0, 3);
+}
