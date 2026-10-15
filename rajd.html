@@ -95,3 +95,11 @@ const BLOTA = [
 const PUNKTY_CP = [30, 60, 90, 0];
 
 const startAng = Math.atan2(trasa[1].y - trasa[0].y, trasa[1].x - trasa[0].x);
+// ---------- 3. WYNIKI (czas w sekundach, im mniej tym lepiej) ----------
+function wczytajWyniki() {
+    try {
+        return JSON.parse(localStorage.getItem(KLUCZ)) || {};
+    } catch (e) {
+        return {};
+    }
+}
