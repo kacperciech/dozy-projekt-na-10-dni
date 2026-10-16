@@ -164,11 +164,13 @@ let motyw = localStorage.getItem("motyw") === "jasny" ? "jasny" : "ciemny";
 
 // Zwraca tekst w aktualnym języku. Gdy brakuje tłumaczenia, bierze polski.
 function t(klucz) {
+    // Brak tłumaczenia w bieżącym języku nie blokuje strony: używamy polskiego tekstu.
     return TLUMACZENIA[jezyk][klucz] || TLUMACZENIA.pl[klucz] || klucz;
 }
 
 // Dopasowuje ikonę i nazwę przycisku do motywu, który można włączyć.
 function aktualizujPrzelacznikMotywu() {
+    // Etykieta i ikona opisują motyw, który można włączyć po kliknięciu.
     document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
         const jasnyMotyw = motyw === "ciemny";
         const etykieta = t(jasnyMotyw ? "motyw_jasny" : "motyw_ciemny");
@@ -182,6 +184,7 @@ function aktualizujPrzelacznikMotywu() {
 function przetlumaczStrone() {
     document.documentElement.lang = jezyk;
 
+    // Atrybuty data-i18n łączą element HTML z kluczami w tabeli tłumaczeń.
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
         el.textContent = t(el.dataset.i18n);
     });
@@ -213,6 +216,7 @@ document.querySelectorAll("[data-jezyk]").forEach(function (b) {
 
 document.documentElement.dataset.theme = motyw === "jasny" ? "light" : "dark";
 document.body.dataset.theme = motyw === "jasny" ? "light" : "dark";
+// Ustawiamy motyw na obu elementach, bo style stron mogą odwoływać się do html albo body.
 // Obsługuje zmianę motywu, zapisuje ją i aktualizuje kolory bieżącej strony.
 document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
     przycisk.addEventListener("click", function () {

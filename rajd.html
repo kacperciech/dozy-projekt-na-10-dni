@@ -145,6 +145,7 @@ function wczytajMape(indeks) {
     wybranaMapa = indeks;
     const mapa = MAPY[wybranaMapa];
     trasa = [];
+    // Kąt dzieli pełne okrążenie na punkty; fale zmieniają promień i tworzą zakręty.
     for (let i = 0; i < N; i++) {
         const th = (i / N) * Math.PI * 2;
         const r = mapa.baza +
@@ -157,6 +158,7 @@ function wczytajMape(indeks) {
 
 // Zwraca rodzaj nawierzchni przypisany do danego odcinka trasy.
 function nawierzchniaTrasy(indeks) {
+    // Indeks może wyjść poza koniec okrążenia, dlatego sprowadzamy go do zakresu 0..N-1.
     const punkt = ((indeks % N) + N) % N;
     const odcinki = MAPY[wybranaMapa].nawierzchnie;
     for (let i = 0; i < odcinki.length; i++) {
@@ -209,6 +211,7 @@ function najblizszyPunkt(x, y) {
         const b = trasa[(i + 1) % trasa.length];
         const dx = b.x - a.x, dy = b.y - a.y;
         const dlugosc2 = dx * dx + dy * dy;
+        // Rzut na odcinek daje dokładniejszą odległość niż sprawdzanie samych punktów trasy.
         const udzial = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / dlugosc2));
         const px = a.x + dx * udzial, py = a.y + dy * udzial;
         const odleglosc = Math.hypot(px - x, py - y);
@@ -222,6 +225,7 @@ function najblizszyPunkt(x, y) {
 // Określa nawierzchnię pod samochodem, by dobrać przyczepność i limit prędkości.
 function powierzchnia(x, y) {
     const najblizszy = najblizszyPunkt(x, y);
+    // Odległość od środka trasy rozróżnia jezdnię, żwirowe pobocze i trawę.
     if (najblizszy.odleglosc <= PULA) return nawierzchniaTrasy(najblizszy.indeks);
     if (najblizszy.odleglosc <= PULA + ZWIR) return MAT.zwir;
     return MAT.trawa;
@@ -247,6 +251,7 @@ const RECZNY = ["Space"];
 // ---------- 6. FIZYKA ----------
 // Aktualizuje fizykę auta, postęp okrążeń i stan wyścigu dla jednej klatki.
 function aktualizuj(dt) {
+    // dt to czas od poprzedniej klatki w sekundach, więc fizyka nie zależy od FPS.
     const mat = powierzchnia(auto.x, auto.y);
 
     const gaz = wcisniete(GAZ);
@@ -349,6 +354,7 @@ function aktualizuj(dt) {
     if (auto.y > SWIAT_H - 20) { auto.y = SWIAT_H - 20; auto.vy = 0; }
 
     // punkty kontrolne i okrążenia
+    // Okrążenie zalicza się dopiero po minięciu wszystkich punktów kontrolnych po kolei.
     const cp = trasa[PUNKTY_CP[nastepnyCP]];
     if (Math.hypot(auto.x - cp.x, auto.y - cp.y) < CP_R) {
         nastepnyCP++;
@@ -416,6 +422,7 @@ function rysujTrawe(cx, cy) {
 // Dodaje na jezdni oznaczenia fragmentów o odmiennej nawierzchni.
 function rysujOdcinkiNawierzchni(cx, cy) {
     const odcinki = MAPY[wybranaMapa].nawierzchnie;
+    // Każdy przedział mapy jest rysowany osobno na wierzchu asfaltu.
     for (let i = 0; i < odcinki.length; i++) {
         const poczatek = odcinki[i][0], koniec = odcinki[i][1];
         ctx.beginPath();
@@ -642,6 +649,7 @@ document.addEventListener("keyup", function (e) {
 let ostatni = 0;
 
 function petla(tCzas) {
+    // Ograniczenie dt zapobiega dużemu skokowi auta po chwilowym spowolnieniu karty.
     const dt = ostatni ? Math.min((tCzas - ostatni) / 1000, 0.05) : 0;
     ostatni = tCzas;
 

@@ -39,6 +39,7 @@ function wczytajWyniki() {
 
 function zapiszWynik() {
     let wyniki = wczytajWyniki();
+    // W Snake'u większa liczba zjedzonych jabłek oznacza lepszy wynik.
     if (wyniki[nick] === undefined || punkty > wyniki[nick]) {
         wyniki[nick] = punkty;
         localStorage.setItem("wyniki_snake", JSON.stringify(wyniki));
@@ -134,6 +135,7 @@ function reset() {
 
 // Losuje pozycję jedzenia w miejscach wolnych od ciała węża
 function losujJedzenie() {
+    // Najpierw zbieramy wolne pola, aby jedzenie nigdy nie pojawiło się na wężu.
     let wolne = [];
     for (let x = 0; x < SIATKA; x++) {
         for (let y = 0; y < SIATKA; y++) {
@@ -156,6 +158,7 @@ function ustawKierunek(dx, dy) {
 
 function akcja() {
     if (nick === "") return;
+    // Ta sama akcja rozpoczyna grę, wznawia pauzę albo przygotowuje nową rundę.
     if (stan === "start" || stan === "pauza") {
         stan = "gra";
     } else if (stan === "koniec") {
@@ -172,6 +175,7 @@ const KLAWISZE = {
 };
 
 document.addEventListener("keydown", function (e) {
+    // Nie przechwytujemy klawiszy, gdy gracz wpisuje nick w polu tekstowym.
     if (e.target.tagName === "INPUT") return;
     if (nick === "") return;
 
@@ -204,6 +208,7 @@ function koniecGry() {
 function aktualizuj() {
     kierunek = nastepny;
 
+    // Wąż porusza się po siatce całymi polami, a nie piksel po pikselu.
     let glowa = {
         x: waz[0].x + kierunek.x,
         y: waz[0].y + kierunek.y
@@ -218,6 +223,7 @@ function aktualizuj() {
     let zjada = jedzenie && glowa.x === jedzenie.x && glowa.y === jedzenie.y;
 
     // Sprawdzenie kolizji z samym sobą
+    // Gdy wąż nie je, ogon zaraz zniknie i można bezpiecznie wejść na jego pole.
     let przeszkody = zjada ? waz : waz.slice(0, -1);
     for (let i = 0; i < przeszkody.length; i++) {
         if (przeszkody[i].x === glowa.x && przeszkody[i].y === glowa.y) {
@@ -264,6 +270,7 @@ function zaokraglony(x, y, w, h, r) {
 }
 
 function rysujPlansze() {
+    // Naprzemienne kolory pól ułatwiają śledzenie ruchu po planszy.
     for (let x = 0; x < SIATKA; x++) {
         for (let y = 0; y < SIATKA; y++) {
             ctx.fillStyle = (x + y) % 2 === 0 ? "#a7d948" : "#8ecc39";
@@ -284,6 +291,7 @@ function rysujJedzenie() {
 }
 
 function rysujWaza() {
+    // Rysujemy od ogona do głowy, żeby głowa pozostała na wierzchu.
     for (let i = waz.length - 1; i >= 0; i--) {
         let s = waz[i];
         let jasnosc = 38 + (i / waz.length) * 22;
@@ -294,6 +302,7 @@ function rysujWaza() {
 }
 
 function rysuj() {
+    // Plansza i elementy gry są odświeżane również podczas startu, pauzy i końca rundy.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     rysujPlansze();
     rysujJedzenie();
@@ -333,6 +342,7 @@ if (nick !== "") {
 
 function petla(czas) {
     if (stan === "gra") {
+        // Odstęp między ruchami steruje prędkością niezależnie od liczby klatek ekranu.
         if (czas - ostatniKrok >= krok) {
             ostatniKrok = czas;
             aktualizuj();

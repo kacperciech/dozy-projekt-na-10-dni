@@ -87,12 +87,14 @@ function wczytajWyniki(gra) {
 
 // Czas w sekundach jako m:ss.cc (tylko dla rajdu)
 function fmtCzas(s) {
+    // Ranking rajdu przechowuje sekundy, a menu pokazuje je jako minuty i setne.
     const min = Math.floor(s / 60);
     const sek = (s % 60).toFixed(2).padStart(5, "0");
     return min + ":" + sek;
 }
 
 function formatuj(gra, wartosc) {
+    // Punkty gier są liczbami, natomiast wynik rajdu wymaga formatowania czasu.
     return gra === "rajd" ? fmtCzas(wartosc) : wartosc;
 }
 
@@ -102,6 +104,7 @@ function pokazTop(gra) {
     let nick = localStorage.getItem("nick") || "";
     ol.innerHTML = "";
 
+    // Kolejność zależy od gry: punkty sortujemy malejąco, a czas rajdu rosnąco.
     let lista = Object.entries(wczytajWyniki(gra))
         .sort(function (a, b) {
             return GRY[gra].rosnaco ? a[1] - b[1] : b[1] - a[1];
@@ -147,10 +150,12 @@ function pokazRekord(gra) {
 // ---------- CIEKAWOSTKI ----------
 let numerFaktu = {};
 LISTA_GIER.forEach(function (gra) {
+    // Losujemy początkową ciekawostkę osobno dla każdej karty.
     numerFaktu[gra] = Math.floor(Math.random() * FAKTY.pl[gra].length);
 });
 
 function pokazFakt(gra) {
+    // Ten sam numer wskazuje odpowiadający sobie fakt w wybranym języku.
     let lista = FAKTY[jezyk][gra]; // jezyk pochodzi z rowerek.js
     document.getElementById("fakt-" + gra).textContent = lista[numerFaktu[gra] % lista.length];
 }
@@ -169,6 +174,7 @@ document.querySelectorAll(".link-btn").forEach(function (przycisk) {
 function odswiez() {
     let nick = localStorage.getItem("nick") || "";
 
+    // Bez nicku widoczny jest formularz; po zalogowaniu uzupełniamy karty gier.
     if (nick === "") {
         loginBox.classList.remove("hidden");
         wybor.classList.add("hidden");

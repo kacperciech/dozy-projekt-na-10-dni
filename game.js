@@ -44,6 +44,7 @@ function wczytajWyniki() {
 // Zapisywanie rekordu gracza, jeśli pobił swój dotychczasowy wynik
 function zapiszWynik() {
     let wyniki = wczytajWyniki();
+    // Wynik Flappy rośnie, więc zapisujemy go tylko wtedy, gdy jest większy od rekordu.
     if (wyniki[nick] === undefined || punkty > wyniki[nick]) {
         wyniki[nick] = punkty;
         localStorage.setItem("wyniki", JSON.stringify(wyniki));
@@ -132,6 +133,7 @@ nickInput.addEventListener("keydown", function (e) {
 function stworzChmury() {
     chmury = [];
     for (let i = 0; i < 5; i++) {
+        // Każda chmura ma własną skalę i tempo, by tło wyglądało naturalniej.
         chmury.push({
             x: Math.random() * canvas.width,
             y: 30 + Math.random() * 200,
@@ -158,6 +160,7 @@ stworzChmury();
 function skok() {
     if (nick === "") return;
 
+    // Pierwsze naciśnięcie rozpoczyna grę, a kolejne utrzymują ptaka w powietrzu.
     if (stan === "start") {
         stan = "gra";
         ptak.predkosc = SKOK;
@@ -193,6 +196,7 @@ function koniecGry() {
 // ---------- 8. AKTUALIZACJA (Logika gry w klatce) ----------
 // Przesuwa obiekty, stosuje grawitację i wykrywa kolizje.
 function aktualizuj() {
+    // Chmury poruszają się także na ekranie startowym i po zakończeniu gry.
     // Ruch chmur w tle
     for (let i = 0; i < chmury.length; i++) {
         chmury[i].x -= chmury[i].predkosc;
@@ -216,6 +220,7 @@ function aktualizuj() {
     // Generowanie nowych rur co określoną liczbę klatek
     licznikKlatek++;
     if (licznikKlatek % CO_ILE_KLATEK === 0) {
+        // Szczelina rur jest losowa, ale zawsze zostaje miejsce nad ziemią i pod sufitem.
         let gora = 50 + Math.random() * (canvas.height - PRZERWA - WYSOKOSC_TRAWY - 100);
         rury.push({ x: canvas.width, gora: gora, zaliczona: false });
     }
@@ -270,6 +275,7 @@ function rysujNiebo() {
 }
 
 function rysujChmure(x, y, s) {
+    // Kilka nachodzących na siebie kół tworzy jedną miękką sylwetkę chmury.
     ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
     ctx.beginPath();
     ctx.arc(x, y, 25 * s, 0, Math.PI * 2);
@@ -280,6 +286,7 @@ function rysujChmure(x, y, s) {
 }
 
 function rysujTrawe() {
+    // Przesunięcie wzoru daje wrażenie ruchu podłoża bez przesuwania samej planszy.
     let y = canvas.height - WYSOKOSC_TRAWY;
     ctx.fillStyle = "#8B5A2B";
     ctx.fillRect(0, y, canvas.width, WYSOKOSC_TRAWY);
@@ -360,6 +367,7 @@ function rysujGolebia() {
 }
 
 function rysuj() {
+    // Całą klatkę rysujemy od nowa, w kolejności od tła do elementów pierwszego planu.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     rysujNiebo();
 
