@@ -24,9 +24,11 @@ const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEl = document.getElementById("tabela");
 
+// Przywraca nick zapamiętany wcześniej na stronie głównej.
 let nick = localStorage.getItem("nick") || "";
 
 // ---------- 2. WYNIKI (localStorage) ----------
+// Wczytuje wyniki Snake'a; przy nieprawidłowym zapisie zwraca pusty ranking.
 function wczytajWyniki() {
     try {
         return JSON.parse(localStorage.getItem("wyniki_snake")) || {};
@@ -44,6 +46,7 @@ function zapiszWynik() {
     rekord = wyniki[nick];
 }
 
+// Sortuje i wyświetla najlepsze wyniki, wyróżniając aktualnego gracza.
 function odswiezTabele() {
     let lista = Object.entries(wczytajWyniki());
     lista.sort(function (a, b) { return b[1] - a[1]; });
@@ -73,6 +76,7 @@ function odswiezTabele() {
 }
 
 // ---------- 3. LOGOWANIE ----------
+// Sprawdza nick i uruchamia rozgrywkę dla poprawnie zalogowanego gracza.
 function zaloguj() {
     let wpisany = nickInput.value.trim();
     if (wpisany.length < 2) {
@@ -96,6 +100,7 @@ function wyloguj() {
     nickInput.focus();
 }
 
+// Pokazuje planszę, przygotowuje nową rundę i aktualizuje ranking.
 function pokazGre() {
     loginEkran.classList.add("hidden");
     graKontener.classList.remove("hidden");
@@ -142,6 +147,7 @@ function losujJedzenie() {
 reset();
 
 // ---------- 5. STEROWANIE ----------
+// Zmienia kierunek ruchu i nie pozwala odwrócić się bezpośrednio do tyłu.
 function ustawKierunek(dx, dy) {
     // Blokada nagłego zawrócenia o 180 stopni w przeciwnym kierunku
     if (dx === -kierunek.x && dy === -kierunek.y) return;
@@ -186,6 +192,7 @@ document.addEventListener("keydown", function (e) {
 canvas.addEventListener("click", akcja);
 
 // ---------- 6. KONIEC GRY ----------
+// Kończy rundę, zapisuje wynik i odświeża tabelę rekordów.
 function koniecGry() {
     stan = "koniec";
     zapiszWynik();
@@ -193,6 +200,7 @@ function koniecGry() {
 }
 
 // ---------- 7. AKTUALIZACJA (Logika kroku węża) ----------
+// Przesuwa węża, sprawdza kolizje, obsługuje jedzenie i zwiększa trudność.
 function aktualizuj() {
     kierunek = nastepny;
 
@@ -234,6 +242,7 @@ function aktualizuj() {
 }
 
 // ---------- 8. RYSOWANIE PLANSZY I WĘŻA ----------
+// Rysuje tekst z obrysem, by był czytelny na każdej części planszy.
 function napis(tekst, x, y, rozmiar, wyrownanie) {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -315,6 +324,7 @@ function rysuj() {
 }
 
 // ---------- 9. URUCHOMIENIE I PĘTLA GRY ----------
+// Pętla animacji wykonuje ruch węża w ustalonych odstępach i odświeża planszę.
 if (nick !== "") {
     pokazGre();
 } else {

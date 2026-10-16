@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+<!-- Ustawienia dokumentu i style strony rajdu, w tym kolory przycisku motywu. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rajdówka</title>
@@ -66,13 +67,16 @@
   </style>
 </head>
 <body>
+<!-- Odnośnik powrotny do menu oraz globalny przełącznik motywu. -->
 <a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
 <button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
   <span aria-hidden="true">☀️</span>
   <span data-motyw-etykieta>Jasny motyw</span>
 </button>
+<!-- Plansza rajdu renderowana na elemencie Canvas przez poniższy skrypt. -->
 <canvas id="gra" width="960" height="540"></canvas>
 
+<!-- Wczytanie tłumaczeń, motywu oraz logiki gry rajdowej. -->
 <script src="rowerek.js"></script>
 <script>
 // ---------- 0. GRACZ ----------
@@ -109,6 +113,7 @@ const MAT = {
     blato:  { nazwa: "nawierz_blato",  przyczepnosc: 0.25, vmax: 220 }
 };
 // ---------- 2. TRASA ----------
+// Parametry map opisują kształt pętli i odcinki o różnych nawierzchniach.
 const MAPY = [
     {
         nazwa: "rajd_mapa_lesna",
@@ -135,6 +140,7 @@ let wybranaMapa = 0;
 let trasa = [];
 let startAng;
 
+// Tworzy punkty trasy na podstawie parametrów wybranej mapy.
 function wczytajMape(indeks) {
     wybranaMapa = indeks;
     const mapa = MAPY[wybranaMapa];
@@ -149,6 +155,7 @@ function wczytajMape(indeks) {
     startAng = Math.atan2(trasa[1].y - trasa[0].y, trasa[1].x - trasa[0].x);
 }
 
+// Zwraca rodzaj nawierzchni przypisany do danego odcinka trasy.
 function nawierzchniaTrasy(indeks) {
     const punkt = ((indeks % N) + N) % N;
     const odcinki = MAPY[wybranaMapa].nawierzchnie;
@@ -164,6 +171,7 @@ const PUNKTY_CP = [30, 60, 90, 0];
 
 wczytajMape(wybranaMapa);
 // ---------- 3. WYNIKI (czas w sekundach, im mniej tym lepiej) ----------
+// Odczytuje zapisane czasy graczy z pamięci przeglądarki.
 function wczytajWyniki() {
     try {
         return JSON.parse(localStorage.getItem(KLUCZ)) || {};
@@ -180,6 +188,7 @@ const klawisze = {};
 let najlepszy = wczytajWyniki()[nick];
 if (najlepszy === undefined) najlepszy = null;
 
+// Przygotowuje stan wyścigu od początku, zachowując wybraną mapę.
 function reset() {
     auto = { x: trasa[0].x, y: trasa[0].y, ang: startAng, vx: 0, vy: 0 };
     czas = 0;
@@ -192,6 +201,7 @@ function reset() {
     slad = [];
 }
 // ---------- 5. POMOCNICZE ----------
+// Wyszukuje najbliższy punkt trasy względem współrzędnych samochodu.
 function najblizszyPunkt(x, y) {
     let best = { odleglosc: Infinity, x: 0, y: 0, indeks: 0 };
     for (let i = 0; i < trasa.length; i++) {
@@ -209,6 +219,7 @@ function najblizszyPunkt(x, y) {
     return best;
 }
 
+// Określa nawierzchnię pod samochodem, by dobrać przyczepność i limit prędkości.
 function powierzchnia(x, y) {
     const najblizszy = najblizszyPunkt(x, y);
     if (najblizszy.odleglosc <= PULA) return nawierzchniaTrasy(najblizszy.indeks);
@@ -216,12 +227,14 @@ function powierzchnia(x, y) {
     return MAT.trawa;
 }
 
+// Zamienia czas w sekundach na czytelny zapis minut, sekund i setnych.
 function fmtCzas(s) {
     const min = Math.floor(s / 60);
     const sek = (s % 60).toFixed(2).padStart(5, "0");
     return min + ":" + sek;
 }
 
+// Sprawdza, czy dowolny klawisz z podanej grupy jest aktualnie wciśnięty.
 function wcisniete(kody) {
     return kody.some(function (k) { return klawisze[k]; });
 }
@@ -232,6 +245,7 @@ const LEWO = ["ArrowLeft", "KeyA"];
 const PRAWO = ["ArrowRight", "KeyD"];
 const RECZNY = ["Space"];
 // ---------- 6. FIZYKA ----------
+// Aktualizuje fizykę auta, postęp okrążeń i stan wyścigu dla jednej klatki.
 function aktualizuj(dt) {
     const mat = powierzchnia(auto.x, auto.y);
 
@@ -349,6 +363,7 @@ function aktualizuj(dt) {
 }
 
 // Meta: zapisz czas gracza (tylko jeśli to jego najlepszy) i przygotuj TOP 3
+// Zapisuje najlepszy czas kierowcy i kończy bieżący wyścig.
 function koniec() {
     finished = true;
     running = false;
@@ -368,6 +383,7 @@ function koniec() {
         .slice(0, 3);
 }
 // ---------- 7. RYSOWANIE ----------
+// Rysuje zamknięty obrys używany do elementów trasy.
 function sciezka(szer, kolor, cx, cy) {
     ctx.beginPath();
     ctx.moveTo(trasa[0].x - cx, trasa[0].y - cy);
@@ -381,6 +397,7 @@ function sciezka(szer, kolor, cx, cy) {
     ctx.stroke();
 }
 
+// Maluje tło terenu wokół widocznej części toru.
 function rysujTrawe(cx, cy) {
     ctx.fillStyle = "#4f7d2c";
     ctx.fillRect(0, 0, W, H);
@@ -396,6 +413,7 @@ function rysujTrawe(cx, cy) {
     }
 }
 
+// Dodaje na jezdni oznaczenia fragmentów o odmiennej nawierzchni.
 function rysujOdcinkiNawierzchni(cx, cy) {
     const odcinki = MAPY[wybranaMapa].nawierzchnie;
     for (let i = 0; i < odcinki.length; i++) {
@@ -413,6 +431,7 @@ function rysujOdcinkiNawierzchni(cx, cy) {
     }
 }
 
+// Rysuje elementy pobocza wzdłuż trasy.
 function rysujPloty(cx, cy) {
     for (let strona = -1; strona <= 1; strona += 2) {
         ctx.beginPath();
@@ -447,6 +466,7 @@ function rysujPloty(cx, cy) {
     }
 }
 
+// Rysuje samochód gracza w jego aktualnym położeniu i kierunku.
 function rysujAuto() {
     ctx.save();
     ctx.translate(auto.x - kamera.x, auto.y - kamera.y);
@@ -474,6 +494,7 @@ function rysujAuto() {
     ctx.restore();
 }
 
+// Czyści i odtwarza kompletny obraz aktualnej klatki rajdu.
 function rysuj() {
     const cx = kamera.x, cy = kamera.y;
 
@@ -522,6 +543,7 @@ function rysuj() {
     rysujHUD();
 }
 
+// Wyświetla informacje o czasie, okrążeniu, prędkości i wynikach.
 function rysujHUD() {
     const mat = powierzchnia(auto.x, auto.y);
     const kmh = Math.round(Math.hypot(auto.vx, auto.vy) * 0.3);
@@ -599,6 +621,7 @@ function rysujHUD() {
     ctx.textAlign = "left";
 }
 // ---------- 8. STEROWANIE ----------
+// Obsługa klawiatury: jazda, zmiana mapy, hamulec ręczny i restart.
 document.addEventListener("keydown", function (e) {
     klawisze[e.code] = true;
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) {
@@ -615,6 +638,7 @@ document.addEventListener("keyup", function (e) {
     klawisze[e.code] = false;
 });
 // ---------- 9. PĘTLA ----------
+// Pętla animacji mierzy czas klatki, aktualizuje grę i ponawia rysowanie.
 let ostatni = 0;
 
 function petla(tCzas) {

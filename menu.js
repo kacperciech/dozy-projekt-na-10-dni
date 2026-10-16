@@ -6,6 +6,7 @@ const GRY = {
     snake:  { klucz: "wyniki_snake", rosnaco: false },
     rajd:   { klucz: "wyniki_rajd",  rosnaco: true }
 };
+// Lista nazw gier utworzona z konfiguracji powyżej.
 const LISTA_GIER = Object.keys(GRY);
 
 // Ciekawostki w obu językach. Kolejność musi być taka sama w PL i EN,
@@ -75,6 +76,7 @@ const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 
 // ---------- WYNIKI ----------
+// Odczytuje wyniki danej gry z localStorage; uszkodzony zapis nie zatrzymuje menu.
 function wczytajWyniki(gra) {
     try {
         return JSON.parse(localStorage.getItem(GRY[gra].klucz)) || {};
@@ -153,6 +155,7 @@ function pokazFakt(gra) {
     document.getElementById("fakt-" + gra).textContent = lista[numerFaktu[gra] % lista.length];
 }
 
+// Każdy przycisk ciekawostki przechodzi do następnego faktu danej gry.
 document.querySelectorAll(".link-btn").forEach(function (przycisk) {
     przycisk.addEventListener("click", function () {
         let gra = przycisk.dataset.gra;
@@ -162,6 +165,7 @@ document.querySelectorAll(".link-btn").forEach(function (przycisk) {
 });
 
 // ---------- LOGOWANIE ----------
+// Pokazuje formularz logowania albo menu gracza i uzupełnia dane z rankingów.
 function odswiez() {
     let nick = localStorage.getItem("nick") || "";
 
@@ -201,6 +205,7 @@ function zaloguj() {
     odswiez();
 }
 
+// Podłączenie przycisków formularza, Entera oraz wylogowania.
 zalogujBtn.addEventListener("click", zaloguj);
 nickInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") zaloguj();

@@ -82,6 +82,7 @@ function odswiezTabele() {
 }
 
 // ---------- 3. LOGOWANIE ----------
+// Weryfikuje nick, zapisuje go i pokazuje ekran rozgrywki.
 function zaloguj() {
     let wpisany = nickInput.value.trim();
     if (wpisany.length < 2) {
@@ -95,6 +96,7 @@ function zaloguj() {
     document.activeElement.blur();
 }
 
+// Usuwa bieżącego gracza i wraca do formularza logowania.
 function wyloguj() {
     nick = "";
     localStorage.removeItem("nick");
@@ -105,6 +107,7 @@ function wyloguj() {
     nickInput.focus();
 }
 
+// Przygotowuje grę i wyświetla zapisany ranking dla zalogowanego gracza.
 function pokazGre() {
     loginEkran.classList.add("hidden");
     graKontener.classList.remove("hidden");
@@ -125,6 +128,7 @@ nickInput.addEventListener("keydown", function (e) {
 });
 
 // ---------- 4. CHMURY: tworzenie ----------
+// Losuje położenie, rozmiar i prędkość chmur na tle planszy.
 function stworzChmury() {
     chmury = [];
     for (let i = 0; i < 5; i++) {
@@ -138,6 +142,7 @@ function stworzChmury() {
 }
 
 // ---------- 5. RESET GRY ----------
+// Przywraca pozycję ptaka, rury i licznik punktów do wartości początkowych.
 function reset() {
     ptak = { x: 80, y: 250, w: 34, h: 26, predkosc: 0 };
     rury = [];
@@ -178,6 +183,7 @@ canvas.addEventListener("touchstart", function (e) {
 });
 
 // ---------- 7. KONIEC GRY ----------
+// Zmienia stan gry i zapisuje wynik, jeśli jest to nowy rekord.
 function koniecGry() {
     stan = "koniec";
     zapiszWynik();
@@ -185,6 +191,7 @@ function koniecGry() {
 }
 
 // ---------- 8. AKTUALIZACJA (Logika gry w klatce) ----------
+// Przesuwa obiekty, stosuje grawitację i wykrywa kolizje.
 function aktualizuj() {
     // Ruch chmur w tle
     for (let i = 0; i < chmury.length; i++) {
@@ -242,6 +249,7 @@ function aktualizuj() {
 }
 
 // ---------- 9. RYSOWANIE GRAFIKI ----------
+// Rysuje czytelny napis na planszy wraz z obrysem.
 function napis(tekst, x, y, rozmiar) {
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -252,6 +260,7 @@ function napis(tekst, x, y, rozmiar) {
     ctx.fillText(tekst, x, y);
 }
 
+// Rysuje gradientowe niebo jako tło rozgrywki.
 function rysujNiebo() {
     let niebo = ctx.createLinearGradient(0, 0, 0, canvas.height);
     niebo.addColorStop(0, "#4EC0CA");
@@ -384,6 +393,7 @@ function rysuj() {
 }
 
 // ---------- 10. START PROGRAMU I GŁÓWNA PĘTLA ----------
+// Odtwarza animację przez ciągłe aktualizowanie stanu i rysowanie planszy.
 if (nick !== "") {
     pokazGre();
 } else {

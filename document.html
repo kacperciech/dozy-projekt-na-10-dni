@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <!-- Ustawienia dokumentu oraz wspólny arkusz stylów ekranów gier. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GOŁOMP</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Przełącznik motywu jest wspólny dla menu i wszystkich gier. -->
     <button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
         <span aria-hidden="true">☀️</span>
         <span data-motyw-etykieta>Jasny motyw</span>
     </button>
 
-    <!-- EKRAN LOGOWANIA: Formularz wprowadzania nicku przed rozpoczęciem gry -->
+    <!-- Formularz nicku; gra rozpoczyna się po poprawnym zalogowaniu. -->
     <div id="login-ekran">
         <h1>GOŁOMP</h1>
         <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
@@ -21,12 +23,12 @@
         <p id="login-blad"></p>
     </div>
 
-    <!-- EKRAN GRY + TABELA WYNIKÓW -->
+    <!-- Obszar aktywnej gry: plansza Canvas oraz panel gracza i rankingu. -->
     <div id="gra-kontener" class="hidden">
-        <!-- Główna plansza gry renderowana w technologii HTML5 Canvas -->
+        <!-- Główna plansza Flappy Bird rysowana przez kod JavaScript. -->
         <canvas id="gra" width="400" height="600"></canvas>
 
-        <!-- Panel boczny z informacjami o graczu i tabelą TOP wyników -->
+        <!-- Panel boczny zawierający gracza, przycisk zmiany nicku i tabelę wyników. -->
         <aside id="panel">
             <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>
             <button id="wyloguj-btn" data-i18n="zmien_gracza">Zmień gracza</button>
@@ -37,7 +39,7 @@
         </aside>
     </div>
 
-    <!-- Dołączenie skryptu tłumaczeń oraz głównej logiki gry Flappy -->
+    <!-- Wspólny skrypt tłumaczeń i motywu musi załadować się przed logiką gry. -->
     <script src="rowerek.js"></script>
     <script src="game.js"></script>
 </body>

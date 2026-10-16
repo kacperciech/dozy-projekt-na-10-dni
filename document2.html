@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <!-- Ustawienia dokumentu oraz wspólny arkusz stylów ekranów gier. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Przełącznik motywu jest wspólny dla menu i wszystkich gier. -->
     <button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
         <span aria-hidden="true">☀️</span>
         <span data-motyw-etykieta>Jasny motyw</span>
     </button>
 
-    <!-- EKRAN LOGOWANIA DO GRY SNAKE -->
+    <!-- Formularz nicku wyświetlany przed uruchomieniem Snake'a. -->
     <div id="login-ekran">
         <h1>SNAKE</h1>
         <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
@@ -21,9 +23,9 @@
         <p id="login-blad"></p>
     </div>
 
-    <!-- EKRAN AKTYWNEJ GRY I PANEL BOCZNY -->
+    <!-- Obszar aktywnej gry: plansza Canvas oraz panel gracza i rankingu. -->
     <div id="gra-kontener" class="hidden">
-        <!-- Plansza węża -->
+        <!-- Plansza Snake'a rysowana i aktualizowana przez game2.js. -->
         <canvas id="gra" width="400" height="400"></canvas>
 
         <aside id="panel">
@@ -43,7 +45,7 @@
         </aside>
     </div>
 
-    <!-- Skrypty systemu tłumaczeń oraz logiki gry Snake -->
+    <!-- Wspólny skrypt tłumaczeń i motywu musi załadować się przed logiką gry. -->
     <script src="rowerek.js"></script>
     <script src="game2.js"></script>
 </body>

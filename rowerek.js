@@ -1,4 +1,4 @@
-// Wspólny plik tłumaczeń. Musi być ładowany PIERWSZY na każdej stronie.
+// Wspólny plik tłumaczeń i motywu. Musi być ładowany przed skryptami każdej strony.
 const TLUMACZENIA = {
     pl: {
         tytul_strony: "Arcade | Wybierz grę",
@@ -159,6 +159,7 @@ const TLUMACZENIA = {
 // Aktualny język (zapisany w przeglądarce, domyślnie polski)
 let jezyk = localStorage.getItem("jezyk");
 if (!TLUMACZENIA[jezyk]) jezyk = "pl";
+// Motyw jest wspólny dla wszystkich stron i domyślnie pozostaje ciemny.
 let motyw = localStorage.getItem("motyw") === "jasny" ? "jasny" : "ciemny";
 
 // Zwraca tekst w aktualnym języku. Gdy brakuje tłumaczenia, bierze polski.
@@ -166,6 +167,7 @@ function t(klucz) {
     return TLUMACZENIA[jezyk][klucz] || TLUMACZENIA.pl[klucz] || klucz;
 }
 
+// Dopasowuje ikonę i nazwę przycisku do motywu, który można włączyć.
 function aktualizujPrzelacznikMotywu() {
     document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
         const jasnyMotyw = motyw === "ciemny";
@@ -193,6 +195,7 @@ function przetlumaczStrone() {
     aktualizujPrzelacznikMotywu();
 }
 
+// Zapisuje wybór języka, odświeża teksty oraz dane menu głównego.
 function ustawJezyk(nowy) {
     jezyk = nowy;
     localStorage.setItem("jezyk", nowy);
@@ -210,6 +213,7 @@ document.querySelectorAll("[data-jezyk]").forEach(function (b) {
 
 document.documentElement.dataset.theme = motyw === "jasny" ? "light" : "dark";
 document.body.dataset.theme = motyw === "jasny" ? "light" : "dark";
+// Obsługuje zmianę motywu, zapisuje ją i aktualizuje kolory bieżącej strony.
 document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
     przycisk.addEventListener("click", function () {
         motyw = motyw === "ciemny" ? "jasny" : "ciemny";

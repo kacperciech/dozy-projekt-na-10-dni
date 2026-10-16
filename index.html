@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <!-- Ustawienia dokumentu: kodowanie, widok mobilny, tytuł i arkusz stylów menu. -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="tytul_strony">Arcade | Wybierz grę</title>
@@ -8,23 +9,25 @@
 </head>
 <body>
 
-    <!-- PRZEŁĄCZNIK JĘZYKA -->
+    <!-- Przyciski zmiany języka strony. Obsługuje je wspólny skrypt rowerek.js. -->
     <div class="jezyk-przelacznik">
         <button data-jezyk="pl">PL</button>
         <button data-jezyk="en">EN</button>
     </div>
+    <!-- Przełącznik jasnego i ciemnego motywu; wybrany motyw jest zapisywany w przeglądarce. -->
     <button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
         <span aria-hidden="true">☀️</span>
         <span data-motyw-etykieta>Jasny motyw</span>
     </button>
 
+    <!-- Tytuł strony i krótki opis salonu gier. -->
     <header class="naglowek">
         <h1>🎮ARCADE</h1>
         <p class="podtytul" data-i18n="podtytul">Trzy gry. Jeden gracz. Wybierz i pobij rekord!</p>
     </header>
 
     <main>
-        <!-- LOGOWANIE -->
+        <!-- Formularz logowania wyświetlany przed wyborem gry. -->
         <section id="login-box" class="panel">
             <h2 data-i18n="login_tytul">Kim jesteś?</h2>
             <p data-i18n="login_opis">Podaj nick, żeby Twoje wyniki trafiły do rankingu</p>
@@ -33,7 +36,7 @@
             <p id="login-blad"></p>
         </section>
 
-        <!-- WYBÓR GRY -->
+        <!-- Menu gier, ranking gracza oraz ciekawostki uzupełniane przez menu.js. -->
         <section id="wybor" class="hidden">
             <div class="gracz-pasek">
                 <span>👤 <span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></span>
@@ -42,7 +45,7 @@
 
             <div class="karty">
 
-                <!-- FLAPPY -->
+                <!-- Karta Flappy: opis, rekord, ranking i odnośnik do gry. -->
                 <article class="karta">
                     <div class="obrazek flappy-tlo">
                         <span class="chmurka c1">☁️</span>
@@ -70,7 +73,7 @@
                     </div>
                 </article>
 
-                <!-- SNAKE -->
+                <!-- Karta Snake: opis, rekord, ranking i odnośnik do gry. -->
                 <article class="karta">
                     <div class="obrazek snake-tlo">
                         <span class="jablko">🍎</span>
@@ -97,7 +100,7 @@
                     </div>
                 </article>
 
-                <!-- RAJD -->
+                <!-- Karta rajdu: opis, najlepszy czas, ranking i odnośnik do gry. -->
                 <article class="karta">
                     <div class="obrazek rajd-tlo">
                         <span class="postac">🏎️</span>
@@ -127,8 +130,10 @@
         </section>
     </main>
 
+    <!-- Stopka z opisem projektu. -->
     <footer data-i18n="stopka">Projekt na 10 dni · HTML + CSS + JavaScript</footer>
 
+    <!-- Najpierw ładowane są tłumaczenia i obsługa motywu, potem logika menu. -->
     <script src="rowerek.js"></script>
     <script src="menu.js"></script>
 </body>
