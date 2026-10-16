@@ -2,6 +2,8 @@
 const TLUMACZENIA = {
     pl: {
         tytul_strony: "Arcade | Wybierz grę",
+        motyw_jasny: "Jasny motyw",
+        motyw_ciemny: "Ciemny motyw",
         podtytul: "Trzy gry. Jeden gracz. Wybierz i pobij rekord!",
         login_tytul: "Kim jesteś?",
         login_opis: "Podaj nick, żeby Twoje wyniki trafiły do rankingu",
@@ -79,6 +81,8 @@ const TLUMACZENIA = {
 
     en: {
         tytul_strony: "Arcade | Choose a game",
+        motyw_jasny: "Light theme",
+        motyw_ciemny: "Dark theme",
         podtytul: "Three games. One player. Pick one and beat the record!",
         login_tytul: "Who are you?",
         login_opis: "Enter a nickname so your scores go on the leaderboard",
@@ -155,10 +159,21 @@ const TLUMACZENIA = {
 // Aktualny język (zapisany w przeglądarce, domyślnie polski)
 let jezyk = localStorage.getItem("jezyk");
 if (!TLUMACZENIA[jezyk]) jezyk = "pl";
+let motyw = localStorage.getItem("motyw") === "jasny" ? "jasny" : "ciemny";
 
 // Zwraca tekst w aktualnym języku. Gdy brakuje tłumaczenia, bierze polski.
 function t(klucz) {
     return TLUMACZENIA[jezyk][klucz] || TLUMACZENIA.pl[klucz] || klucz;
+}
+
+function aktualizujPrzelacznikMotywu() {
+    document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
+        const jasnyMotyw = motyw === "ciemny";
+        const etykieta = t(jasnyMotyw ? "motyw_jasny" : "motyw_ciemny");
+        przycisk.querySelector("[data-motyw-etykieta]").textContent = etykieta;
+        przycisk.setAttribute("aria-label", etykieta);
+        przycisk.querySelector("[aria-hidden]").textContent = jasnyMotyw ? "☀️" : "🌙";
+    });
 }
 
 // Podmienia wszystkie teksty oznaczone data-i18n na stronie
@@ -175,6 +190,7 @@ function przetlumaczStrone() {
     document.querySelectorAll("[data-jezyk]").forEach(function (b) {
         b.classList.toggle("aktywny", b.dataset.jezyk === jezyk);
     });
+    aktualizujPrzelacznikMotywu();
 }
 
 function ustawJezyk(nowy) {
@@ -189,6 +205,18 @@ function ustawJezyk(nowy) {
 document.querySelectorAll("[data-jezyk]").forEach(function (b) {
     b.addEventListener("click", function () {
         ustawJezyk(b.dataset.jezyk);
+    });
+});
+
+document.documentElement.dataset.theme = motyw === "jasny" ? "light" : "dark";
+document.body.dataset.theme = motyw === "jasny" ? "light" : "dark";
+document.querySelectorAll("[data-motyw-przelacz]").forEach(function (przycisk) {
+    przycisk.addEventListener("click", function () {
+        motyw = motyw === "ciemny" ? "jasny" : "ciemny";
+        localStorage.setItem("motyw", motyw);
+        document.documentElement.dataset.theme = motyw === "jasny" ? "light" : "dark";
+        document.body.dataset.theme = motyw === "jasny" ? "light" : "dark";
+        aktualizujPrzelacznikMotywu();
     });
 });
 

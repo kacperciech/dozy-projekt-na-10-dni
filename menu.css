@@ -9,6 +9,14 @@
     --tekst-przygaszony: #a9adc4;
 }
 
+body[data-theme="light"] {
+    --tlo: #f2f6fa;
+    --panel: #ffffff;
+    --panel-jasny: #e5ebf1;
+    --tekst: #20242b;
+    --tekst-przygaszony: #5c6572;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -46,12 +54,25 @@ body::before {
     animation: pozywajace-sie-swiatla 22s ease-in-out infinite alternate;
 }
 
+body[data-theme="light"]::before {
+    background:
+        radial-gradient(ellipse at 15% 10%, rgba(78, 192, 202, 0.24), transparent 42%),
+        radial-gradient(ellipse at 85% 85%, rgba(142, 204, 57, 0.2), transparent 42%),
+        radial-gradient(ellipse at 75% 15%, rgba(117, 91, 207, 0.12), transparent 38%),
+        linear-gradient(135deg, #f7f9fc, #eaf5f5 52%, #f4f0fa);
+}
+
 body::after {
     background-image: radial-gradient(rgba(255, 255, 255, 0.34) 1px, transparent 1.5px);
     background-size: 44px 44px;
     opacity: 0.16;
     mask-image: radial-gradient(ellipse at center, black, transparent 78%);
     animation: przesuwajaca-sie-siatka 45s linear infinite;
+}
+
+body[data-theme="light"]::after {
+    background-image: radial-gradient(rgba(39, 57, 76, 0.3) 1px, transparent 1.5px);
+    opacity: 0.1;
 }
 
 .hidden {
@@ -118,6 +139,30 @@ main {
     text-decoration: none;
     text-align: center;
     transition: transform 0.15s, background 0.15s;
+}
+
+.motyw-przelacznik {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 2px solid var(--panel-jasny);
+    border-radius: 20px;
+    background: var(--panel);
+    color: var(--tekst);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+}
+
+.motyw-przelacznik:hover {
+    border-color: var(--zolty);
+    transform: translateY(-1px);
 }
 
 .przycisk:hover, .graj:hover {
@@ -389,9 +434,9 @@ footer {
     .panel { padding: 28px 20px; }
 }
 .jezyk-przelacznik {
-    position: absolute;
+    position: fixed;
     top: 14px;
-    right: 14px;
+    right: 156px;
     display: flex;
     border: 2px solid #2a2e45;
     border-radius: 20px;

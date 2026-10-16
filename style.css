@@ -18,15 +18,50 @@ canvas {
     left: 10px;
     margin: 0;
 }
+:root {
+    --tlo-gry: #222;
+    --panel-gry: #2f3640;
+    --tekst-gry: #fff;
+    --obramowanie-gry: #fff;
+    --linia-tabeli: #444;
+}
+
+body[data-theme="light"] {
+    --tlo-gry: #f3f5f7;
+    --panel-gry: #fff;
+    --tekst-gry: #20242b;
+    --obramowanie-gry: #697586;
+    --linia-tabeli: #d5d9df;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #222;
+    background: var(--tlo-gry);
     font-family: Arial, sans-serif;
-    color: white;
+    color: var(--tekst-gry);
+}
+
+.motyw-przelacznik {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    padding: 8px 14px;
+    border: 2px solid #4EC0CA;
+    border-radius: 20px;
+    background: var(--panel-gry);
+    color: var(--tekst-gry);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.motyw-przelacznik:hover {
+    border-color: #f9d71c;
+    background: var(--panel-gry);
 }
 
 .hidden {
@@ -39,10 +74,10 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    background: #2f3640;
+    background: var(--panel-gry);
     padding: 40px 50px;
     border-radius: 12px;
-    border: 3px solid white;
+    border: 3px solid var(--obramowanie-gry);
 }
 
 #login-ekran h1 {
@@ -96,16 +131,16 @@ button:hover {
 }
 
 canvas {
-    border: 3px solid white;
+    border: 3px solid var(--obramowanie-gry);
     background: skyblue;
 }
 
 #panel {
     width: 230px;
-    background: #2f3640;
+    background: var(--panel-gry);
     padding: 16px;
     border-radius: 12px;
-    border: 3px solid white;
+    border: 3px solid var(--obramowanie-gry);
 }
 
 #panel h2 {
@@ -121,7 +156,7 @@ canvas {
 
 #tabela li {
     padding: 5px 0;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid var(--linia-tabeli);
 }
 
 #tabela li .pkt {

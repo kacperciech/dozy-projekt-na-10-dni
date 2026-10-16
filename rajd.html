@@ -8,11 +8,21 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #111;
+    background: var(--rajd-tlo, #111);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;
+  }
+  html {
+    --rajd-tlo: #111;
+    --rajd-przycisk-tlo: #252a33;
+    --rajd-przycisk-tekst: #f2f2f7;
+  }
+  html[data-theme="light"] {
+    --rajd-tlo: #f3f5f7;
+    --rajd-przycisk-tlo: #fff;
+    --rajd-przycisk-tekst: #20242b;
   }
   canvas {
     width: 960px;
@@ -36,10 +46,31 @@
   .menu-link:hover {
     color: #f9d71c;
   }
+  .motyw-przelacznik {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    padding: 8px 14px;
+    border: 1px solid #4EC0CA;
+    border-radius: 20px;
+    background: var(--rajd-przycisk-tlo);
+    color: var(--rajd-przycisk-tekst);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .motyw-przelacznik:hover {
+    border-color: #f9d71c;
+  }
   </style>
 </head>
 <body>
 <a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
+<button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
+  <span aria-hidden="true">☀️</span>
+  <span data-motyw-etykieta>Jasny motyw</span>
+</button>
 <canvas id="gra" width="960" height="540"></canvas>
 
 <script src="rowerek.js"></script>
