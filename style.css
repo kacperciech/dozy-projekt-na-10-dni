@@ -1,25 +1,5 @@
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #00f8f8;
-}
-
-canvas {
-    border: 3px solid white;
-    background: skyblue;
-}
-
-.lewo {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    margin: 0;
-}
 :root {
-    --tlo-gry: #222;
+    --tlo-gry: linear-gradient(135deg, #151825 0%, #1b2933 52%, #18352e 100%);
     --panel-gry: #2f3640;
     --tekst-gry: #fff;
     --obramowanie-gry: #fff;
@@ -27,7 +7,7 @@ canvas {
 }
 
 body[data-theme="light"] {
-    --tlo-gry: #f3f5f7;
+    --tlo-gry: linear-gradient(135deg, #f4f6fa 0%, #eaf5f4 52%, #eef4e9 100%);
     --panel-gry: #fff;
     --tekst-gry: #20242b;
     --obramowanie-gry: #697586;
@@ -40,7 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--tlo-gry);
+    background: var(--tlo-gry) fixed;
     font-family: Arial, sans-serif;
     color: var(--tekst-gry);
 }
