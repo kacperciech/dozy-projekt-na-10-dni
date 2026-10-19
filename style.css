@@ -119,6 +119,10 @@ canvas {
     touch-action: none;
 }
 
+.breakout-canvas {
+    background: #101827;
+}
+
 #panel {
     width: 230px;
     background: var(--panel-gry);

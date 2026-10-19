@@ -4,7 +4,8 @@
 const GRY = {
     flappy: { klucz: "wyniki",       rosnaco: false },
     snake:  { klucz: "wyniki_snake", rosnaco: false },
-    rajd:   { klucz: "wyniki_rajd",  rosnaco: true }
+    rajd:   { klucz: "wyniki_rajd",  rosnaco: true },
+    breakout: { klucz: "wyniki_breakout", rosnaco: false }
 };
 // Lista nazw gier utworzona z konfiguracji powyżej.
 const LISTA_GIER = Object.keys(GRY);
@@ -36,6 +37,11 @@ const FAKTY = {
             "Na żwirze i w błocie auto ma o wiele mniejszą przyczepność niż na asfalcie. W Twojej grze każda nawierzchnia ma własną przyczepność i limit prędkości.",
             "Hamulec ręczny w rajdach pomaga wprowadzić auto w poślizg w ciasnym zakręcie. W tej grze też: spacja zmniejsza przyczepność tylnych kół.",
             "W tej wersji o miejscu w rankingu decyduje łączny czas trzech okrążeń, liczony co do setnej części sekundy."
+        ],
+        breakout: [
+            "Breakout stworzył Atari w 1976 roku. Przy jego projektowaniu pomagał Steve Wozniak, późniejszy współzałożyciel Apple.",
+            "W Breakoucie odbijasz piłkę od paletki, żeby rozbić wszystkie cegiełki i nie pozwolić piłce wypaść poza planszę.",
+            "Gra Breakout zainspirowała wiele późniejszych gier zręcznościowych, w tym Arkanoida."
         ]
     },
     en: {
@@ -62,6 +68,11 @@ const FAKTY = {
             "On gravel and mud a car has far less grip than on asphalt. In your game every surface has its own grip and speed limit.",
             "In rallying the handbrake helps throw the car into a slide in a tight corner. It works that way here too: Space reduces grip.",
             "In this version your ranking depends on the total time of three laps, measured to a hundredth of a second."
+        ],
+        breakout: [
+            "Atari released Breakout in 1976. Steve Wozniak, later co-founder of Apple, helped design it.",
+            "In Breakout, bounce the ball off the paddle to smash every brick without letting the ball fall off the board.",
+            "Breakout inspired many later arcade games, including Arkanoid."
         ]
     }
 };
@@ -81,13 +92,15 @@ const wyzwanieOdliczanie = document.getElementById("wyzwanie-odliczanie");
 const WYZWANIA = [
     { nazwa: "flappy_nazwa", link: "document.html" },
     { nazwa: "snake_nazwa", link: "document2.html" },
-    { nazwa: "rajd_nazwa", link: "rajd.html" }
+    { nazwa: "rajd_nazwa", link: "rajd.html" },
+    { nazwa: "breakout_nazwa", link: "breakout.html" }
 ];
 
 const OSIAGNIECIA = [
     { gra: "flappy", cel: 10 },
     { gra: "snake", cel: 10 },
-    { gra: "rajd", cel: 1 }
+    { gra: "rajd", cel: 1 },
+    { gra: "breakout", cel: 300 }
 ];
 
 function aktualizujWyzwanie() {

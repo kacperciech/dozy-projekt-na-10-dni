@@ -95,6 +95,15 @@
                         <span class="osiagniecie-postep" id="postep-rajd">0/1</span>
                         <span class="osiagniecie-status" id="status-rajd"></span>
                     </li>
+                    <li class="osiagniecie" id="osiagniecie-breakout">
+                        <span class="osiagniecie-ikona" aria-hidden="true">🧱</span>
+                        <span class="osiagniecie-tresc">
+                            <strong data-i18n="osiagniecie_breakout">Mistrz cegiełek</strong>
+                            <span data-i18n="osiagniecie_breakout_opis">Zdobądź 300 punktów w Breakoucie.</span>
+                        </span>
+                        <span class="osiagniecie-postep" id="postep-breakout">0/300</span>
+                        <span class="osiagniecie-status" id="status-breakout"></span>
+                    </li>
                 </ul>
             </section>
 
@@ -178,6 +187,33 @@
                         </div>
 
                         <a class="graj" href="rajd.html" data-i18n="graj_rajd">▶ Jedź w Rajdzie</a>
+                    </div>
+                </article>
+
+                <!-- Karta Breakout: opis, rekord, ranking i odnośnik do gry. -->
+                <article class="karta" tabindex="0">
+                    <div class="obrazek breakout-tlo">
+                        <span class="cegielki" aria-hidden="true">🟥🟨🟩</span>
+                        <span class="postac">🏓</span>
+                    </div>
+                    <div class="tresc">
+                        <h2 data-i18n="breakout_nazwa">Breakout</h2>
+                        <p class="opis" data-i18n="breakout_opis">Odbijaj piłkę paletką, rozbij cegiełki i nie pozwól jej spaść!</p>
+                        <p class="sterowanie" data-i18n="breakout_ster">⌨️ Strzałki lub A/D, mysz albo dotyk</p>
+
+                        <div class="statystyki">
+                            <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-breakout">0</strong></p>
+                            <h3 data-i18n="top3">🏆 TOP 3</h3>
+                            <ol id="top-breakout"></ol>
+                        </div>
+
+                        <div class="ciekawostka">
+                            <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
+                            <p id="fakt-breakout"></p>
+                            <button class="link-btn" data-gra="breakout" data-i18n="kolejna">Kolejna ciekawostka ↻</button>
+                        </div>
+
+                        <a class="graj" href="breakout.html" data-i18n="graj_breakout">▶ Graj w Breakout</a>
                     </div>
                 </article>
 

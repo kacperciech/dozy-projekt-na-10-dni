@@ -343,7 +343,7 @@ body[data-theme="light"] .wyzwanie {
 
 .osiagniecia-lista {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
     margin: 0;
     padding: 0;
@@ -688,4 +688,13 @@ footer {
 }
 .rajd-tlo {
     background: linear-gradient(to bottom, #8b6b43, #c9a874);
+}
+.breakout-tlo {
+    background: linear-gradient(135deg, #17233b, #493d72 55%, #a54c5e);
+}
+.cegielki {
+    position: absolute;
+    top: 20px;
+    font-size: 28px;
+    letter-spacing: 5px;
 }
