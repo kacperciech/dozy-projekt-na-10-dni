@@ -22,7 +22,7 @@ const zalogujBtn = document.getElementById("zaloguj-btn");
 const wylogujBtn = document.getElementById("wyloguj-btn");
 const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
-const tabelaEl = document.getElementById("tabela");
+const tabelaEle = document.getElementById("tabela");
 
 // Przywraca nick zapamiętany wcześniej na stronie głównej.
 let nick = localStorage.getItem("nick") || "";
