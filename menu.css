@@ -299,6 +299,107 @@ body[data-theme="light"] .wyzwanie {
     background: linear-gradient(100deg, #ffe15c, #ff9e4d);
 }
 
+/* ---------- OSIAGNIECIA ---------- */
+.osiagniecia {
+    width: min(100%, 1060px);
+    margin: 0 auto 32px;
+    padding: 22px 26px;
+    border: 1px solid var(--panel-jasny);
+    border-radius: 18px;
+    background: var(--panel);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.osiagniecia-naglowek,
+.osiagniecie {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.osiagniecia-naglowek {
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.osiagniecia-naglowek h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+}
+
+.osiagniecia-naglowek p {
+    margin: 0;
+    color: var(--tekst-przygaszony);
+}
+
+#osiagniecia-licznik {
+    flex: 0 0 auto;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: var(--panel-jasny);
+    color: var(--zolty);
+    font-size: 14px;
+}
+
+.osiagniecia-lista {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.osiagniecie {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--panel-jasny);
+    border-radius: 12px;
+    background: var(--panel-jasny);
+    opacity: 0.78;
+}
+
+.osiagniecie.odblokowane {
+    border-color: rgba(249, 215, 28, 0.65);
+    opacity: 1;
+}
+
+.osiagniecie-ikona {
+    font-size: 26px;
+}
+
+.osiagniecie-tresc {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    font-size: 13px;
+}
+
+.osiagniecie-tresc > span {
+    color: var(--tekst-przygaszony);
+    line-height: 1.4;
+}
+
+.osiagniecie-postep {
+    color: var(--niebieski);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.osiagniecie-status {
+    color: var(--tekst-przygaszony);
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.osiagniecie.odblokowane .osiagniecie-status {
+    color: var(--zolty);
+}
+
 @keyframes blysk-wyzwania {
     0%, 100% { transform: scale(1) rotate(-3deg); }
     50%      { transform: scale(1.06) rotate(3deg); }
@@ -520,6 +621,8 @@ footer {
     .naglowek h1 { font-size: 40px; }
     .karta { width: 100%; }
     .panel { padding: 28px 20px; }
+    .osiagniecia { padding: 18px 14px; }
+    .osiagniecie { flex-wrap: wrap; }
 }
 
 @media (max-width: 700px) {
@@ -543,6 +646,9 @@ footer {
         flex-wrap: wrap;
         justify-content: space-between;
         width: 100%;
+    }
+    .osiagniecia-lista {
+        grid-template-columns: 1fr;
     }
 }
 

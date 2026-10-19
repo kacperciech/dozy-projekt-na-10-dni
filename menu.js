@@ -84,6 +84,12 @@ const WYZWANIA = [
     { nazwa: "rajd_nazwa", link: "rajd.html" }
 ];
 
+const OSIAGNIECIA = [
+    { gra: "flappy", cel: 10 },
+    { gra: "snake", cel: 10 },
+    { gra: "rajd", cel: 1 }
+];
+
 function aktualizujWyzwanie() {
     const teraz = new Date();
     const dzien = Math.floor(Date.UTC(teraz.getFullYear(), teraz.getMonth(), teraz.getDate()) / 86400000);
@@ -176,6 +182,30 @@ function pokazRekord(gra) {
     }
 }
 
+function pokazOsiagniecia() {
+    const nick = localStorage.getItem("nick") || "";
+    let odblokowane = 0;
+
+    OSIAGNIECIA.forEach(function (osiagniecie) {
+        const { gra, cel } = osiagniecie;
+        const wyniki = wczytajWyniki(gra);
+        const wartosc = Number(wyniki[nick]) || 0;
+        const postep = gra === "rajd" ? (wartosc > 0 ? 1 : 0) : Math.min(cel, wartosc);
+        const odblokowaneTeraz = postep >= cel;
+
+        if (odblokowaneTeraz) odblokowane++;
+        document.getElementById("osiagniecie-" + gra).classList.toggle("odblokowane", odblokowaneTeraz);
+        document.getElementById("postep-" + gra).textContent = postep + "/" + cel;
+        document.getElementById("status-" + gra).textContent = t(
+            odblokowaneTeraz ? "osiagniecie_odblokowane" : "osiagniecie_zamkniete"
+        );
+    });
+
+    document.getElementById("osiagniecia-licznik").textContent = t("osiagniecia_licznik")
+        .replace("{odblokowane}", String(odblokowane))
+        .replace("{razem}", String(OSIAGNIECIA.length));
+}
+
 // ---------- CIEKAWOSTKI ----------
 let numerFaktu = {};
 LISTA_GIER.forEach(function (gra) {
@@ -220,6 +250,7 @@ function odswiez() {
         pokazRekord(gra);
         pokazFakt(gra);
     });
+    pokazOsiagniecia();
 }
 
 // rowerek.js wywołuje tę funkcję po kliknięciu PL / EN
