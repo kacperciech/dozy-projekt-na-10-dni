@@ -53,9 +53,9 @@ function odswiezTabele() {
     lista.sort(function (a, b) { return b[1] - a[1]; });
     lista = lista.slice(0, 10);
 
-    tabelaEl.innerHTML = "";
+    tabelaEle.innerHTML = "";
     if (lista.length === 0) {
-        tabelaEl.textContent = t("brak_wynikow");
+        tabelaEle.textContent = t("brak_wynikow");
         return;
     }
 
@@ -72,7 +72,7 @@ function odswiezTabele() {
 
         li.appendChild(imie);
         li.appendChild(pkt);
-        tabelaEl.appendChild(li);
+        tabelaEle.appendChild(li);
     }
 }
 
@@ -194,6 +194,48 @@ document.addEventListener("keydown", function (e) {
 });
 
 canvas.addEventListener("click", akcja);
+
+// Obsługa gestów na ekranach dotykowych; krótkie stuknięcie działa jak klik.
+let poczatekDotyku = null;
+
+canvas.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) {
+        poczatekDotyku = null;
+        return;
+    }
+
+    poczatekDotyku = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+    };
+    e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchend", function (e) {
+    if (!poczatekDotyku) return;
+    e.preventDefault();
+
+    let dx = e.changedTouches[0].clientX - poczatekDotyku.x;
+    let dy = e.changedTouches[0].clientY - poczatekDotyku.y;
+    poczatekDotyku = null;
+
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) {
+        akcja();
+        return;
+    }
+    if (nick === "" || stan === "koniec") return;
+
+    if (stan === "start" || stan === "pauza") stan = "gra";
+    if (Math.abs(dx) > Math.abs(dy)) {
+        ustawKierunek(dx > 0 ? 1 : -1, 0);
+    } else {
+        ustawKierunek(0, dy > 0 ? 1 : -1);
+    }
+}, { passive: false });
+
+canvas.addEventListener("touchcancel", function () {
+    poczatekDotyku = null;
+});
 
 // ---------- 6. KONIEC GRY ----------
 // Kończy rundę, zapisuje wynik i odświeża tabelę rekordów.

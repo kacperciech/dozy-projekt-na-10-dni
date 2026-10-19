@@ -113,6 +113,10 @@ button:hover {
 canvas {
     border: 3px solid var(--obramowanie-gry);
     background: skyblue;
+    box-sizing: border-box;
+    max-width: calc(100vw - 32px);
+    height: auto;
+    touch-action: none;
 }
 
 #panel {

@@ -74,6 +74,35 @@ const zalogujBtn = document.getElementById("zaloguj-btn");
 const wylogujBtn = document.getElementById("wyloguj-btn");
 const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
+const wyzwanieGra = document.getElementById("wyzwanie-gra");
+const wyzwanieLink = document.getElementById("wyzwanie-link");
+const wyzwanieOdliczanie = document.getElementById("wyzwanie-odliczanie");
+
+const WYZWANIA = [
+    { nazwa: "flappy_nazwa", link: "document.html" },
+    { nazwa: "snake_nazwa", link: "document2.html" },
+    { nazwa: "rajd_nazwa", link: "rajd.html" }
+];
+
+function aktualizujWyzwanie() {
+    const teraz = new Date();
+    const dzien = Math.floor(Date.UTC(teraz.getFullYear(), teraz.getMonth(), teraz.getDate()) / 86400000);
+    const wyzwanie = WYZWANIA[dzien % WYZWANIA.length];
+    const jutro = new Date(teraz.getFullYear(), teraz.getMonth(), teraz.getDate() + 1);
+    const pozostalo = Math.max(0, jutro.getTime() - teraz.getTime());
+    const godziny = Math.floor(pozostalo / 3600000);
+    const minuty = Math.floor((pozostalo % 3600000) / 60000);
+    const sekundy = Math.floor((pozostalo % 60000) / 1000);
+
+    wyzwanieGra.textContent = t(wyzwanie.nazwa);
+    wyzwanieLink.href = wyzwanie.link;
+    wyzwanieOdliczanie.textContent = [godziny, minuty, sekundy]
+        .map(function (wartosc) { return String(wartosc).padStart(2, "0"); })
+        .join(":");
+}
+
+aktualizujWyzwanie();
+setInterval(aktualizujWyzwanie, 1000);
 
 // ---------- WYNIKI ----------
 // Odczytuje wyniki danej gry z localStorage; uszkodzony zapis nie zatrzymuje menu.
@@ -195,6 +224,7 @@ function odswiez() {
 
 // rowerek.js wywołuje tę funkcję po kliknięciu PL / EN
 function poZmianieJezyka() {
+    aktualizujWyzwanie();
     odswiez();
 }
 
