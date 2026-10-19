@@ -182,12 +182,18 @@ button.maly:hover {
     font-size: 18px;
 }
 
+#wybor {
+    width: 100%;
+}
+
 /* ---------- KARTY GIER ---------- */
 .karty {
     display: flex;
+    align-items: flex-start;
     gap: 30px;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
 }
 
 .karta {
@@ -299,12 +305,14 @@ button.maly:hover {
     margin: 0;
     color: var(--tekst-przygaszony);
     line-height: 1.5;
+    min-height: 4.5em;
 }
 
 .sterowanie {
     margin: 0;
     font-size: 14px;
     color: var(--niebieski);
+    min-height: 2.8em;
 }
 
 /* statystyki */
