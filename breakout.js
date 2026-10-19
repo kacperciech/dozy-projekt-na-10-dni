@@ -96,6 +96,7 @@ function zaloguj() {
 
 function wyloguj() {
     nick = "";
+    stan = "start";
     localStorage.removeItem("nick");
     nickInput.value = "";
     loginEkran.classList.remove("hidden");
@@ -231,7 +232,12 @@ function aktualizuj(dt) {
 
 function zaokraglony(x, y, w, h, r) {
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
     ctx.fill();
 }
 
@@ -293,7 +299,7 @@ function rysuj() {
         napis(stan === "wygrana" ? t("breakout_wygrana") : t("breakout_koniec"), canvas.width / 2, 245, 28);
         napis(t("wynik") + " " + punkty, canvas.width / 2, 290, 24);
         napis(t("rekord") + " " + rekord, canvas.width / 2, 330, 22);
-        napis(t("snake_ponownie"), canvas.width / 2, 380, 18);
+        napis(t("breakout_ponownie"), canvas.width / 2, 380, 18);
     }
 }
 
@@ -344,5 +350,4 @@ if (nick !== "") {
 } else {
     nickInput.focus();
 }
-reset();
 requestAnimationFrame(petla);
