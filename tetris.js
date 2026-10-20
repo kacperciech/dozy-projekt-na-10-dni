@@ -120,6 +120,7 @@ function wyloguj() {
 }
 
 function reset() {
+    dzwiekGier.muzykaTetris(false);
     plansza = Array.from({ length: WIERSZE }, function () {
         return Array(KOLUMNY).fill("");
     });
@@ -221,12 +222,14 @@ function aktualizujStatystyki() {
 
 function zakonczGre() {
     stan = "koniec";
+    dzwiekGier.muzykaTetris(false);
     zapiszWynik();
 }
 
 function rozpocznij() {
     if (stan === "koniec") reset();
     stan = "gra";
+    dzwiekGier.muzykaTetris(true);
     ostatniCzas = 0;
     canvas.focus();
 }
@@ -234,8 +237,10 @@ function rozpocznij() {
 function przelaczPauze() {
     if (stan === "gra") {
         stan = "pauza";
+        dzwiekGier.muzykaTetris(false);
     } else if (stan === "pauza") {
         stan = "gra";
+        dzwiekGier.muzykaTetris(true);
         ostatniCzas = 0;
     }
 }

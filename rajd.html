@@ -73,6 +73,10 @@
   <span aria-hidden="true">☀️</span>
   <span data-motyw-etykieta>Jasny motyw</span>
 </button>
+<!-- Nagranie Porsche Cayman S, autor: John64, licencja: https://creativecommons.org/licenses/by-sa/3.0/ -->
+<audio id="rajd-silnik" preload="auto" loop>
+  <source src="rally-engine.wav" type="audio/wav">
+</audio>
 <!-- Plansza rajdu renderowana na elemencie Canvas przez poniższy skrypt. -->
 <canvas id="gra" width="960" height="540"></canvas>
 
@@ -192,6 +196,7 @@ if (najlepszy === undefined) najlepszy = null;
 
 // Przygotowuje stan wyścigu od początku, zachowując wybraną mapę.
 function reset() {
+    dzwiekGier.zatrzymajSilnik();
     auto = { x: trasa[0].x, y: trasa[0].y, ang: startAng, vx: 0, vy: 0 };
     czas = 0;
     running = false;   // zegar rusza po pierwszym wciśnięciu klawisza
@@ -320,6 +325,8 @@ function aktualizuj(dt) {
 
     auto.vx = fx * wz + latx;
     auto.vy = fy * wz + laty;
+    if (running) dzwiekGier.silnik(Math.hypot(auto.vx, auto.vy), gaz, ham);
+    else dzwiekGier.zatrzymajSilnik();
 
     // ślad po poślizgu
     const bok = Math.hypot(latx, laty);
@@ -373,6 +380,7 @@ function aktualizuj(dt) {
 function koniec() {
     finished = true;
     running = false;
+    dzwiekGier.zatrzymajSilnik();
 
     const wyniki = wczytajWyniki();
     const wynik = Number(czas.toFixed(2));
@@ -589,6 +597,11 @@ function rysujHUD() {
     ctx.fillStyle = "white";
     ctx.font = "13px Arial";
     ctx.fillText(t("rajd_sterowanie"), 18, H - 20);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(W - 180, H - 40, 170, 30);
+    ctx.fillStyle = "white";
+    ctx.font = "10px Arial";
+    ctx.fillText("Audio: John64 / CC BY-SA 3.0", W - 174, H - 22);
 
     // komunikaty na środku
     ctx.textAlign = "center";
@@ -631,6 +644,9 @@ function rysujHUD() {
 // Obsługa klawiatury: jazda, zmiana mapy, hamulec ręczny i restart.
 document.addEventListener("keydown", function (e) {
     klawisze[e.code] = true;
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "KeyW", "KeyA", "KeyS", "KeyD"].includes(e.code)) {
+        dzwiekGier.odblokuj();
+    }
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) {
         e.preventDefault();
     }
@@ -643,6 +659,10 @@ document.addEventListener("keydown", function (e) {
 });
 document.addEventListener("keyup", function (e) {
     klawisze[e.code] = false;
+});
+window.addEventListener("blur", function () {
+    Object.keys(klawisze).forEach(function (kod) { klawisze[kod] = false; });
+    dzwiekGier.zatrzymajSilnik();
 });
 // ---------- 9. PĘTLA ----------
 // Pętla animacji mierzy czas klatki, aktualizuje grę i ponawia rysowanie.

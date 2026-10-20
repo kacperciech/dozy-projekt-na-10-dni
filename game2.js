@@ -158,6 +158,7 @@ function ustawKierunek(dx, dy) {
 
 function akcja() {
     if (nick === "") return;
+    dzwiekGier.odblokuj();
     // Ta sama akcja rozpoczyna grę, wznawia pauzę albo przygotowuje nową rundę.
     if (stan === "start" || stan === "pauza") {
         stan = "gra";
@@ -181,6 +182,7 @@ document.addEventListener("keydown", function (e) {
 
     if (KLAWISZE[e.code]) {
         e.preventDefault();
+        dzwiekGier.odblokuj();
         if (stan === "koniec") return;
         if (stan === "start" || stan === "pauza") stan = "gra";
         ustawKierunek(KLAWISZE[e.code][0], KLAWISZE[e.code][1]);
@@ -193,7 +195,10 @@ document.addEventListener("keydown", function (e) {
     }
 });
 
-canvas.addEventListener("click", akcja);
+canvas.addEventListener("click", function () {
+    dzwiekGier.odblokuj();
+    akcja();
+});
 
 // Obsługa gestów na ekranach dotykowych; krótkie stuknięcie działa jak klik.
 let poczatekDotyku = null;
@@ -208,6 +213,7 @@ canvas.addEventListener("touchstart", function (e) {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY
     };
+    dzwiekGier.odblokuj();
     e.preventDefault();
 }, { passive: false });
 
@@ -278,6 +284,7 @@ function aktualizuj() {
 
     if (zjada) {
         punkty++;
+        dzwiekGier.ugryzienie();
         krok = Math.max(KROK_MIN, KROK_START - punkty * 3); // Zwiększanie prędkości
         if (waz.length === SIATKA * SIATKA) {
             koniecGry();

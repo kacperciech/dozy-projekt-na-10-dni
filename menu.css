@@ -62,6 +62,27 @@ body {
     font-size: 18px;
 }
 
+.soundtrack-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 9px 16px;
+    border: 1px solid var(--niebieski);
+    border-radius: 24px;
+    background: var(--panel);
+    color: var(--tekst);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.soundtrack-btn:hover {
+    background: var(--panel-jasny);
+    transform: translateY(-1px);
+}
+
 main {
     width: 100%;
     display: flex;

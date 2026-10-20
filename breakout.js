@@ -203,6 +203,7 @@ function koniecGry(wygrana) {
 
 function akcja() {
     if (nick === "") return;
+    dzwiekGier.odblokuj();
     if (stan === "start") {
         stan = "gra";
         pierwszyStart = false;
@@ -280,6 +281,7 @@ function aktualizuj(dt) {
 
             cegielka.aktywna = false;
             punkty += PUNKTY_ZA_CEGIELKE;
+            dzwiekGier.cegla();
             pilka.dy = -pilka.dy;
             if (cegielka.booster) {
                 boostery.push({ x: cegielka.x + cegielka.w / 2, y: cegielka.y, dy: 150 });

@@ -164,8 +164,10 @@ function skok() {
     if (stan === "start") {
         stan = "gra";
         ptak.predkosc = SKOK;
+        dzwiekGier.gruchanie();
     } else if (stan === "gra") {
         ptak.predkosc = SKOK;
+        dzwiekGier.gruchanie();
     } else if (stan === "koniec") {
         reset();
         stan = "start";

@@ -99,6 +99,8 @@ const nickWyswietl = document.getElementById("nick-wyswietl");
 const wyzwanieGra = document.getElementById("wyzwanie-gra");
 const wyzwanieLink = document.getElementById("wyzwanie-link");
 const wyzwanieOdliczanie = document.getElementById("wyzwanie-odliczanie");
+const soundtrackBtn = document.getElementById("soundtrack-btn");
+const soundtrackLabel = document.getElementById("soundtrack-label");
 
 const WYZWANIA = [
     { nazwa: "flappy_nazwa", link: "document.html" },
@@ -283,6 +285,8 @@ function odswiez() {
 function poZmianieJezyka() {
     aktualizujWyzwanie();
     odswiez();
+    const muzykaWlaczona = soundtrackBtn.getAttribute("aria-pressed") === "true";
+    soundtrackLabel.textContent = t(muzykaWlaczona ? "soundtrack_stop" : "soundtrack_play");
 }
 
 function zaloguj() {
@@ -307,6 +311,13 @@ wylogujBtn.addEventListener("click", function () {
     localStorage.removeItem("nick");
     nickInput.value = "";
     odswiez();
+});
+
+soundtrackBtn.addEventListener("click", function () {
+    const wlacz = soundtrackBtn.getAttribute("aria-pressed") !== "true";
+    dzwiekGier.muzykaMenu(wlacz);
+    soundtrackBtn.setAttribute("aria-pressed", String(wlacz));
+    soundtrackLabel.textContent = t(wlacz ? "soundtrack_stop" : "soundtrack_play");
 });
 
 odswiez();

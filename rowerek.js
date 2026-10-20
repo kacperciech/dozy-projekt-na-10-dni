@@ -4,6 +4,8 @@ const TLUMACZENIA = {
         tytul_strony: "Arcade | Wybierz grę",
         motyw_jasny: "Jasny motyw",
         motyw_ciemny: "Ciemny motyw",
+        soundtrack_play: "Włącz spokojny soundtrack",
+        soundtrack_stop: "Wyłącz soundtrack",
         podtytul: "Pięć gier. Jeden gracz. Wybierz i pobij rekord!",
         wyzwanie_etykieta: "WYZWANIE DNIA",
         "wyzwanie-dzis": "Dziś na celowniku:",
@@ -138,6 +140,8 @@ const TLUMACZENIA = {
         tytul_strony: "Arcade | Choose a game",
         motyw_jasny: "Light theme",
         motyw_ciemny: "Dark theme",
+        soundtrack_play: "Play calm soundtrack",
+        soundtrack_stop: "Turn soundtrack off",
         podtytul: "Five games. One player. Pick one and beat the record!",
         wyzwanie_etykieta: "DAILY CHALLENGE",
         "wyzwanie-dzis": "Today's target:",
@@ -316,6 +320,246 @@ function ustawJezyk(nowy) {
     // strona główna odświeża dzięki temu ciekawostki i ranking
     if (typeof poZmianieJezyka === "function") poZmianieJezyka();
 }
+
+// Dźwięki są generowane lokalnie przez Web Audio, bez zewnętrznych plików.
+window.dzwiekGier = (function () {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        let audioContext = null;
+        let silnikAudio = document.getElementById("rajd-silnik");
+        let gruchanieAudio = document.getElementById("flappy-gruchanie");
+        let biegSilnika = 1;
+        let ostatniaZmianaBiegu = -Infinity;
+        let koniecZmianyBiegu = 0;
+        let korektaBiegu = 1;
+        let muzykaTimer = null;
+        let nutaMuzyki = 0;
+        let ambientBus = null;
+        let ambientTimer = null;
+        let ambientKrok = 0;
+        const melodia = [659, 494, 523, 587, 523, 494, 440, 440, 523, 659, 587, 523, 494, 523, 587, 659];
+        const ambientAkordy = [
+            [130.81, 164.81, 196.00, 246.94],
+            [110.00, 146.83, 164.81, 220.00],
+            [87.31, 130.81, 174.61, 220.00],
+            [98.00, 146.83, 196.00, 246.94]
+        ];
+        const PROGI_BIEGOW = [0, 90, 170, 255, 345, 440, 560];
+        const GORA_BIEGOW = [90, 170, 255, 345, 440, 560];
+
+        if (silnikAudio) {
+            silnikAudio.addEventListener("error", function () {
+                console.error("Nie udało się wczytać pliku rally-engine.wav.", silnikAudio.error);
+            });
+        }
+
+        function kontekst() {
+            if (!AudioContextClass) return null;
+            if (!audioContext) audioContext = new AudioContextClass();
+            if (audioContext.state === "suspended") audioContext.resume();
+            return audioContext;
+        }
+
+        function ton(czestotliwosc, czas, opcje) {
+            const audio = kontekst();
+            if (!audio) return;
+            const ustawienia = opcje || {};
+            const oscylator = audio.createOscillator();
+            const glosnosc = audio.createGain();
+            const start = audio.currentTime + (ustawienia.opoznienie || 0);
+            const koniec = start + czas;
+            oscylator.type = ustawienia.typ || "sine";
+            oscylator.frequency.setValueAtTime(czestotliwosc, start);
+            if (ustawienia.koniec) {
+                oscylator.frequency.exponentialRampToValueAtTime(ustawienia.koniec, koniec);
+            }
+            glosnosc.gain.setValueAtTime(0.0001, start);
+            glosnosc.gain.exponentialRampToValueAtTime(ustawienia.glosnosc || 0.08, start + 0.01);
+            glosnosc.gain.exponentialRampToValueAtTime(0.0001, koniec);
+            oscylator.connect(glosnosc);
+            glosnosc.connect(audio.destination);
+            oscylator.start(start);
+            oscylator.stop(koniec + 0.02);
+            oscylator.onended = function () {
+                oscylator.disconnect();
+                glosnosc.disconnect();
+            };
+        }
+
+        function szum(czas, glosnoscMaks, czestotliwosc) {
+            const audio = kontekst();
+            if (!audio) return;
+            const probki = Math.ceil(audio.sampleRate * czas);
+            const bufor = audio.createBuffer(1, probki, audio.sampleRate);
+            const dane = bufor.getChannelData(0);
+            for (let i = 0; i < probki; i++) dane[i] = Math.random() * 2 - 1;
+            const zrodlo = audio.createBufferSource();
+            const filtr = audio.createBiquadFilter();
+            const glosnosc = audio.createGain();
+            zrodlo.buffer = bufor;
+            filtr.type = "lowpass";
+            filtr.frequency.value = czestotliwosc;
+            glosnosc.gain.setValueAtTime(glosnoscMaks, audio.currentTime);
+            glosnosc.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + czas);
+            zrodlo.connect(filtr);
+            filtr.connect(glosnosc);
+            glosnosc.connect(audio.destination);
+            zrodlo.start();
+            zrodlo.onended = function () {
+                zrodlo.disconnect();
+                filtr.disconnect();
+                glosnosc.disconnect();
+            };
+        }
+
+        function nutaAmbientu(czestotliwosc, czas, maksGlosnosc, typ) {
+            const audio = kontekst();
+            if (!audio || !ambientBus) return;
+            const oscylator = audio.createOscillator();
+            const glosnosc = audio.createGain();
+            const start = audio.currentTime + 0.03;
+            const koniec = start + czas;
+            oscylator.type = typ;
+            oscylator.frequency.setValueAtTime(czestotliwosc, start);
+            glosnosc.gain.setValueAtTime(0.0001, start);
+            glosnosc.gain.exponentialRampToValueAtTime(maksGlosnosc, start + Math.min(0.8, czas * 0.25));
+            glosnosc.gain.setValueAtTime(maksGlosnosc, koniec - Math.min(0.8, czas * 0.25));
+            glosnosc.gain.exponentialRampToValueAtTime(0.0001, koniec);
+            oscylator.connect(glosnosc);
+            glosnosc.connect(ambientBus);
+            oscylator.start(start);
+            oscylator.stop(koniec + 0.02);
+            oscylator.onended = function () {
+                oscylator.disconnect();
+                glosnosc.disconnect();
+            };
+        }
+
+        function krokAmbientu() {
+            const numerAkordu = Math.floor(ambientKrok / 3) % ambientAkordy.length;
+            const akord = ambientAkordy[numerAkordu];
+            if (ambientKrok % 3 === 0) {
+                akord.forEach(function (czestotliwosc, indeks) {
+                    nutaAmbientu(czestotliwosc, 6.1, [0.012, 0.008, 0.006, 0.004][indeks], "sine");
+                });
+            }
+            const nuta = akord[(ambientKrok % 3 + 1) % akord.length];
+            nutaAmbientu(nuta * 2, 1.8, 0.007, "triangle");
+            ambientKrok++;
+        }
+
+        function zatrzymajSilnik() {
+            if (silnikAudio) {
+                silnikAudio.pause();
+                silnikAudio.currentTime = 0;
+            }
+            biegSilnika = 1;
+            ostatniaZmianaBiegu = -Infinity;
+            koniecZmianyBiegu = 0;
+            korektaBiegu = 1;
+        }
+
+        return {
+            odblokuj: kontekst,
+            gruchanie: function () {
+                if (gruchanieAudio) {
+                    gruchanieAudio.currentTime = 0;
+                    gruchanieAudio.play().catch(function (error) {
+                        if (error.name === "AbortError" && gruchanieAudio.paused) return;
+                        console.error("Nie udało się odtworzyć pliku flappy-coo.wav:", error);
+                    });
+                    return;
+                }
+                ton(390, 0.18, { typ: "triangle", koniec: 230, glosnosc: 0.12 });
+                ton(270, 0.24, { typ: "sine", koniec: 180, glosnosc: 0.1, opoznienie: 0.11 });
+            },
+            ugryzienie: function () {
+                ton(520, 0.09, { typ: "square", koniec: 760, glosnosc: 0.055 });
+                ton(760, 0.12, { typ: "triangle", koniec: 420, glosnosc: 0.07, opoznienie: 0.07 });
+            },
+            cegla: function () {
+                szum(0.1, 0.055, 1500);
+                ton(210, 0.12, { typ: "square", koniec: 95, glosnosc: 0.045 });
+            },
+            silnik: function (predkosc, gaz, hamulec) {
+                if (!silnikAudio) return;
+                const teraz = audioContext ? audioContext.currentTime : performance.now() / 1000;
+                const predkoscJazdy = Math.abs(predkosc);
+                let zmianaBiegu = 0;
+                if (teraz - ostatniaZmianaBiegu > 0.45) {
+                    if (biegSilnika < 6 && predkoscJazdy >= PROGI_BIEGOW[biegSilnika] * 0.96) {
+                        biegSilnika++;
+                        zmianaBiegu = 1;
+                    } else if (biegSilnika > 1 &&
+                        predkoscJazdy < PROGI_BIEGOW[biegSilnika - 1] * 0.72) {
+                        biegSilnika--;
+                        zmianaBiegu = -1;
+                    }
+                }
+
+                if (zmianaBiegu !== 0) {
+                    ostatniaZmianaBiegu = teraz;
+                    korektaBiegu = zmianaBiegu > 0 ? 0.72 : 1.16;
+                    koniecZmianyBiegu = teraz + 0.16;
+                }
+
+                const poprzedniProg = PROGI_BIEGOW[biegSilnika - 1];
+                const nastepnyProg = GORA_BIEGOW[biegSilnika - 1];
+                const obroty = Math.max(0, Math.min(1, (predkoscJazdy - poprzedniProg) / (nastepnyProg - poprzedniProg)));
+                const obrotySilnika = 0.72 + obroty * 0.78 + (gaz ? 0.12 : -0.08);
+                const biegAktywny = teraz < koniecZmianyBiegu ? korektaBiegu : 1;
+
+                silnikAudio.playbackRate = Math.max(0.65, Math.min(1.75, obrotySilnika * biegAktywny));
+                silnikAudio.volume = predkoscJazdy < 3 && !gaz
+                    ? 0.16
+                    : Math.max(0.18, Math.min(0.72, 0.28 + obroty * 0.2 + (gaz ? 0.24 : 0) - (hamulec ? 0.12 : 0)));
+                if (silnikAudio.paused) {
+                    silnikAudio.play().catch(function (error) {
+                        if (error.name === "AbortError" && silnikAudio.paused) return;
+                        console.error("Nie udało się odtworzyć dźwięku silnika:", error);
+                    });
+                }
+            },
+            zatrzymajSilnik: zatrzymajSilnik,
+            muzykaTetris: function (wlacz) {
+                if (!wlacz) {
+                    if (muzykaTimer !== null) window.clearInterval(muzykaTimer);
+                    muzykaTimer = null;
+                    return;
+                }
+                if (muzykaTimer !== null) return;
+                kontekst();
+                nutaMuzyki = 0;
+                muzykaTimer = window.setInterval(function () {
+                    ton(melodia[nutaMuzyki], 0.2, { typ: "triangle", glosnosc: 0.035 });
+                    nutaMuzyki = (nutaMuzyki + 1) % melodia.length;
+                }, 230);
+            },
+            muzykaMenu: function (wlacz) {
+                const audio = kontekst();
+                if (!audio) return;
+                if (!wlacz) {
+                    if (ambientTimer !== null) window.clearInterval(ambientTimer);
+                    ambientTimer = null;
+                    if (ambientBus) {
+                        const poprzedniaSzyna = ambientBus;
+                        poprzedniaSzyna.gain.cancelScheduledValues(audio.currentTime);
+                        poprzedniaSzyna.gain.setTargetAtTime(0.0001, audio.currentTime, 0.35);
+                        window.setTimeout(function () { poprzedniaSzyna.disconnect(); }, 1800);
+                        ambientBus = null;
+                    }
+                    return;
+                }
+                if (ambientTimer !== null) return;
+                ambientBus = audio.createGain();
+                ambientBus.gain.setValueAtTime(0.0001, audio.currentTime);
+                ambientBus.gain.exponentialRampToValueAtTime(0.22, audio.currentTime + 2.5);
+                ambientBus.connect(audio.destination);
+                ambientKrok = 0;
+                krokAmbientu();
+                ambientTimer = window.setInterval(krokAmbientu, 2000);
+            }
+        };
+})();
 
 // Przyciski PL / EN (istnieją tylko na stronie głównej)
 document.querySelectorAll("[data-jezyk]").forEach(function (b) {
