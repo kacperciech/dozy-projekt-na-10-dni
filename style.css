@@ -123,6 +123,57 @@ canvas {
     background: #101827;
 }
 
+.breakout-plansza {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: min(480px, calc(100vw - 32px));
+}
+
+.breakout-selektor {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid var(--obramowanie-gry);
+    border-radius: 12px;
+    background: var(--panel-gry);
+    text-align: center;
+}
+
+.breakout-selektor h2 {
+    margin: 0 0 12px;
+    color: #f9d71c;
+    font-size: 18px;
+}
+
+.breakout-poziomy {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+button.breakout-poziom-btn {
+    padding: 8px 12px;
+    border: 2px solid #4EC0CA;
+    background: transparent;
+    color: var(--tekst-gry);
+    font-size: 14px;
+}
+
+button.breakout-poziom-btn:hover,
+button.breakout-poziom-btn[aria-pressed="true"] {
+    border-color: #f9d71c;
+    background: #f9d71c;
+    color: #20242b;
+}
+
+.breakout-selektor p {
+    margin: 12px 0 0;
+    color: var(--tekst-gry);
+    font-size: 13px;
+}
+
 #panel {
     width: 230px;
     background: var(--panel-gry);

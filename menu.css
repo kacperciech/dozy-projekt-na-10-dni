@@ -43,6 +43,7 @@ body {
 .naglowek {
     text-align: center;
     margin-bottom: 30px;
+    animation: wejscie-strony 650ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
 .naglowek h1 {
@@ -140,6 +141,7 @@ button.maly:hover {
     border: 2px solid var(--panel-jasny);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     text-align: center;
+    animation: wejscie-strony 650ms cubic-bezier(0.2, 0.75, 0.3, 1) 100ms both;
 }
 
 .panel h2 {
@@ -184,6 +186,35 @@ button.maly:hover {
 
 #wybor {
     width: 100%;
+}
+
+#wybor:not(.hidden) > .gracz-pasek,
+#wybor:not(.hidden) > .wyzwanie,
+#wybor:not(.hidden) > .osiagniecia {
+    animation: wejscie-strony 600ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+#wybor:not(.hidden) > .gracz-pasek {
+    animation-delay: 60ms;
+}
+
+#wybor:not(.hidden) > .wyzwanie {
+    animation-delay: 140ms;
+}
+
+#wybor:not(.hidden) > .osiagniecia {
+    animation-delay: 220ms;
+}
+
+@keyframes wejscie-strony {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ---------- WYZWANIE DNIA ---------- */
@@ -425,6 +456,33 @@ body[data-theme="light"] .wyzwanie {
     transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
 }
 
+#wybor:not(.hidden) .karta {
+    animation: wejscie-karty 600ms cubic-bezier(0.2, 0.75, 0.3, 1) backwards;
+}
+
+#wybor:not(.hidden) .karta:nth-child(2) {
+    animation-delay: 80ms;
+}
+
+#wybor:not(.hidden) .karta:nth-child(3) {
+    animation-delay: 160ms;
+}
+
+#wybor:not(.hidden) .karta:nth-child(4) {
+    animation-delay: 240ms;
+}
+
+@keyframes wejscie-karty {
+    from {
+        opacity: 0;
+        transform: translateY(22px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .karta:hover {
     transform: translateY(-8px);
     border-color: var(--zolty);
@@ -659,7 +717,16 @@ footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .wyzwanie-ikona {
+    .naglowek,
+    #login-box,
+    #wybor:not(.hidden) > .gracz-pasek,
+    #wybor:not(.hidden) > .wyzwanie,
+    #wybor:not(.hidden) > .osiagniecia,
+    #wybor:not(.hidden) .karta,
+    .wyzwanie-ikona,
+    .postac,
+    .chmurka,
+    .jablko {
         animation: none;
     }
 }

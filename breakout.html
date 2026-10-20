@@ -21,7 +21,20 @@
     </div>
 
     <div id="gra-kontener" class="hidden">
-        <canvas id="gra" class="breakout-canvas" width="480" height="600"></canvas>
+        <div class="breakout-plansza">
+            <canvas id="gra" class="breakout-canvas" width="480" height="600"></canvas>
+            <section class="breakout-selektor" aria-labelledby="breakout-poziomy-tytul">
+                <h2 id="breakout-poziomy-tytul" data-i18n="breakout_wybierz_poziom">Wybierz poziom</h2>
+                <div class="breakout-poziomy" role="group" aria-labelledby="breakout-poziomy-tytul">
+                    <button type="button" class="breakout-poziom-btn" data-poziom="1" data-i18n="breakout_poziom_1">Poziom 1</button>
+                    <button type="button" class="breakout-poziom-btn" data-poziom="2" data-i18n="breakout_poziom_2">Poziom 2</button>
+                    <button type="button" class="breakout-poziom-btn" data-poziom="3" data-i18n="breakout_poziom_3">Poziom 3</button>
+                    <button type="button" class="breakout-poziom-btn" data-poziom="4" data-i18n="breakout_poziom_4">Poziom 4</button>
+                    <button type="button" class="breakout-poziom-btn" data-poziom="5" data-i18n="breakout_poziom_5">Poziom 5</button>
+                </div>
+                <p data-i18n="breakout_zmiana_poziomu">Zmiana poziomu rozpoczyna nową grę.</p>
+            </section>
+        </div>
 
         <aside id="panel">
             <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>

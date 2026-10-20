@@ -9,6 +9,7 @@ const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEl = document.getElementById("tabela");
 const zyciaEl = document.getElementById("zycia-wyswietl");
+const przyciskiPoziomow = document.querySelectorAll(".breakout-poziom-btn");
 
 const KOLUMNY = 8;
 const WIERSZE = 5;
@@ -21,12 +22,23 @@ let nick = localStorage.getItem("nick") || "";
 let rekord = 0;
 let punkty = 0;
 let zycia = 3;
+let poziom = 1;
 let stan = "start";
 let pierwszyStart = true;
 let paletkaX = (canvas.width - PALETKA.w) / 2;
-let pilka = { x: canvas.width / 2, y: PALETKA.y - PROMIEN, dx: 0, dy: 0 };
+let pilki = [];
 let cegielki = [];
+let boostery = [];
 let poprzedniCzas = 0;
+
+const UKLADY_POZIOMOW = [
+    ["########", "###+####", "########", "####+###", "########"],
+    ["..##....", ".######.", "########", ".##+##..", "..####.."],
+    ["########", "#..##..#", "##.++..#", "#..##..#", "########"],
+    ["...##...", "..####..", ".######.", "########", "###+.##."],
+    ["#+##.##+", "#.##.##.", "########", ".##++##.", "..####.."]
+];
+const KOLORY_CEGIELEK = ["#ff5c70", "#ffad42", "#ffe15b", "#62d990", "#56c7e8"];
 
 document.title = t("breakout_nazwa");
 
@@ -108,38 +120,75 @@ function wyloguj() {
 function reset() {
     punkty = 0;
     zycia = 3;
+    poziom = 1;
     stan = "start";
     pierwszyStart = true;
     paletkaX = (canvas.width - PALETKA.w) / 2;
     utworzPilke();
-    cegielki = [];
+    boostery = [];
+    utworzCegielki();
+    aktualizujZycia();
+    aktualizujSelektorPoziomu();
+}
 
+function aktualizujSelektorPoziomu() {
+    przyciskiPoziomow.forEach(function (przycisk) {
+        const aktywny = Number(przycisk.dataset.poziom) === poziom;
+        przycisk.setAttribute("aria-pressed", String(aktywny));
+    });
+}
+
+function wybierzPoziom(numerPoziomu) {
+    if (!Number.isInteger(numerPoziomu) ||
+        numerPoziomu < 1 ||
+        numerPoziomu > UKLADY_POZIOMOW.length ||
+        nick === "") return;
+
+    punkty = 0;
+    zycia = 3;
+    poziom = numerPoziomu;
+    stan = "start";
+    pierwszyStart = false;
+    paletkaX = (canvas.width - PALETKA.w) / 2;
+    utworzPilke();
+    boostery = [];
+    utworzCegielki();
+    aktualizujZycia();
+    aktualizujSelektorPoziomu();
+}
+
+function utworzPilke() {
+    pilki = [{
+        x: paletkaX + PALETKA.w / 2,
+        y: PALETKA.y - PROMIEN,
+        dx: 0,
+        dy: 0
+    }];
+}
+
+function utworzCegielki() {
+    cegielki = [];
     const szerokosc = 52;
     const wysokosc = 21;
     const odstep = 5;
     const startX = (canvas.width - KOLUMNY * szerokosc - (KOLUMNY - 1) * odstep) / 2;
-    for (let wiersz = 0; wiersz < WIERSZE; wiersz++) {
-        for (let kolumna = 0; kolumna < KOLUMNY; kolumna++) {
+    const uklad = UKLADY_POZIOMOW[poziom - 1];
+
+    for (let wiersz = 0; wiersz < uklad.length; wiersz++) {
+        for (let kolumna = 0; kolumna < uklad[wiersz].length; kolumna++) {
+            const typ = uklad[wiersz][kolumna];
+            if (typ === ".") continue;
             cegielki.push({
                 x: startX + kolumna * (szerokosc + odstep),
                 y: 76 + wiersz * 30,
                 w: szerokosc,
                 h: wysokosc,
-                kolor: ["#ff5c70", "#ffad42", "#ffe15b", "#62d990", "#56c7e8"][wiersz],
-                aktywna: true
+                kolor: KOLORY_CEGIELEK[wiersz],
+                aktywna: true,
+                booster: typ === "+"
             });
         }
     }
-    aktualizujZycia();
-}
-
-function utworzPilke() {
-    pilka = {
-        x: paletkaX + PALETKA.w / 2,
-        y: PALETKA.y - PROMIEN,
-        dx: 0,
-        dy: 0
-    };
 }
 
 function aktualizujZycia() {
@@ -157,8 +206,12 @@ function akcja() {
     if (stan === "start") {
         stan = "gra";
         pierwszyStart = false;
-        pilka.dx = PREDKOSC_PILKI * 0.42;
-        pilka.dy = -PREDKOSC_PILKI * 0.91;
+        pilki.forEach(function (pilka) {
+            if (pilka.dx === 0 && pilka.dy === 0) {
+                pilka.dx = PREDKOSC_PILKI * 0.42;
+                pilka.dy = -PREDKOSC_PILKI * 0.91;
+            }
+        });
     } else if (stan === "pauza") {
         stan = "gra";
     } else if (stan === "koniec" || stan === "wygrana") {
@@ -173,61 +226,114 @@ function ustawPaletke(clientX) {
     if (stan === "start") utworzPilke();
 }
 
+function dodajPilki(dodatkowaPilka) {
+    const liczbaNowychPilek = Math.min(2, 5 - pilki.length);
+    const kat = Math.atan2(dodatkowaPilka.dx, -dodatkowaPilka.dy);
+    for (let i = 0; i < liczbaNowychPilek; i++) {
+        const nowyKat = kat + (i === 0 ? -1 : 1) * Math.PI / 6;
+        pilki.push({
+            x: dodatkowaPilka.x,
+            y: dodatkowaPilka.y,
+            dx: PREDKOSC_PILKI * Math.sin(nowyKat),
+            dy: -PREDKOSC_PILKI * Math.cos(nowyKat)
+        });
+    }
+}
+
 function aktualizuj(dt) {
-    pilka.x += pilka.dx * dt;
-    pilka.y += pilka.dy * dt;
+    for (let p = pilki.length - 1; p >= 0; p--) {
+        const pilka = pilki[p];
+        pilka.x += pilka.dx * dt;
+        pilka.y += pilka.dy * dt;
 
-    if (pilka.x - PROMIEN <= 0) {
-        pilka.x = PROMIEN;
-        pilka.dx = Math.abs(pilka.dx);
-    } else if (pilka.x + PROMIEN >= canvas.width) {
-        pilka.x = canvas.width - PROMIEN;
-        pilka.dx = -Math.abs(pilka.dx);
-    }
-    if (pilka.y - PROMIEN <= 0) {
-        pilka.y = PROMIEN;
-        pilka.dy = Math.abs(pilka.dy);
-    }
-
-    if (pilka.dy > 0 &&
-        pilka.y + PROMIEN >= PALETKA.y &&
-        pilka.y - PROMIEN <= PALETKA.y + PALETKA.h &&
-        pilka.x >= paletkaX - PROMIEN &&
-        pilka.x <= paletkaX + PALETKA.w + PROMIEN) {
-        const trafienie = (pilka.x - (paletkaX + PALETKA.w / 2)) / (PALETKA.w / 2);
-        const kat = trafienie * Math.PI / 3;
-        pilka.dx = PREDKOSC_PILKI * Math.sin(kat);
-        pilka.dy = -PREDKOSC_PILKI * Math.cos(kat);
-        pilka.y = PALETKA.y - PROMIEN;
-    }
-
-    for (let i = 0; i < cegielki.length; i++) {
-        const cegielka = cegielki[i];
-        if (!cegielka.aktywna) continue;
-        if (pilka.x + PROMIEN < cegielka.x ||
-            pilka.x - PROMIEN > cegielka.x + cegielka.w ||
-            pilka.y + PROMIEN < cegielka.y ||
-            pilka.y - PROMIEN > cegielka.y + cegielka.h) continue;
-
-        cegielka.aktywna = false;
-        punkty += PUNKTY_ZA_CEGIELKE;
-        pilka.dy = -pilka.dy;
-        if (cegielki.every(function (cegla) { return !cegla.aktywna; })) {
-            koniecGry(true);
+        if (pilka.x - PROMIEN <= 0) {
+            pilka.x = PROMIEN;
+            pilka.dx = Math.abs(pilka.dx);
+        } else if (pilka.x + PROMIEN >= canvas.width) {
+            pilka.x = canvas.width - PROMIEN;
+            pilka.dx = -Math.abs(pilka.dx);
         }
-        break;
+        if (pilka.y - PROMIEN <= 0) {
+            pilka.y = PROMIEN;
+            pilka.dy = Math.abs(pilka.dy);
+        }
+
+        if (pilka.dy > 0 &&
+            pilka.y + PROMIEN >= PALETKA.y &&
+            pilka.y - PROMIEN <= PALETKA.y + PALETKA.h &&
+            pilka.x >= paletkaX - PROMIEN &&
+            pilka.x <= paletkaX + PALETKA.w + PROMIEN) {
+            const trafienie = (pilka.x - (paletkaX + PALETKA.w / 2)) / (PALETKA.w / 2);
+            const kat = trafienie * Math.PI / 3;
+            pilka.dx = PREDKOSC_PILKI * Math.sin(kat);
+            pilka.dy = -PREDKOSC_PILKI * Math.cos(kat);
+            pilka.y = PALETKA.y - PROMIEN;
+        }
+
+        for (let i = 0; i < cegielki.length; i++) {
+            const cegielka = cegielki[i];
+            if (!cegielka.aktywna) continue;
+            if (pilka.x + PROMIEN < cegielka.x ||
+                pilka.x - PROMIEN > cegielka.x + cegielka.w ||
+                pilka.y + PROMIEN < cegielka.y ||
+                pilka.y - PROMIEN > cegielka.y + cegielka.h) continue;
+
+            cegielka.aktywna = false;
+            punkty += PUNKTY_ZA_CEGIELKE;
+            pilka.dy = -pilka.dy;
+            if (cegielka.booster) {
+                boostery.push({ x: cegielka.x + cegielka.w / 2, y: cegielka.y, dy: 150 });
+            }
+            if (cegielki.every(function (cegla) { return !cegla.aktywna; })) {
+                if (poziom === UKLADY_POZIOMOW.length) {
+                    koniecGry(true);
+                } else {
+                    poziom++;
+                    boostery = [];
+                    utworzCegielki();
+                }
+                return;
+            }
+            break;
+        }
+
+        if (pilka.y - PROMIEN > canvas.height) {
+            pilki.splice(p, 1);
+        }
     }
 
-    if (pilka.y - PROMIEN > canvas.height) {
+    if (pilki.length === 0 && stan === "gra") {
         zycia--;
         aktualizujZycia();
         if (zycia <= 0) {
             koniecGry(false);
         } else {
             stan = "start";
+            boostery = [];
             utworzPilke();
         }
     }
+
+    if (stan !== "gra") return;
+
+    boostery.forEach(function (booster) {
+        booster.y += booster.dy * dt;
+        if (booster.y + 12 >= PALETKA.y &&
+            booster.y - 12 <= PALETKA.y + PALETKA.h &&
+            booster.x >= paletkaX - 12 &&
+            booster.x <= paletkaX + PALETKA.w + 12) {
+            booster.zlapany = true;
+            dodajPilki({
+                dx: pilki[0].dx,
+                dy: pilki[0].dy,
+                x: paletkaX + PALETKA.w / 2,
+                y: PALETKA.y - PROMIEN
+            });
+        }
+    });
+    boostery = boostery.filter(function (booster) {
+        return !booster.zlapany && booster.y - 12 <= canvas.height;
+    });
 }
 
 function zaokraglony(x, y, w, h, r) {
@@ -269,6 +375,9 @@ function rysuj() {
     ctx.fillText(t("wynik") + " " + punkty, 18, 36);
     ctx.textAlign = "right";
     ctx.fillText(t("breakout_zycia") + " " + zycia, canvas.width - 18, 36);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffe15b";
+    ctx.fillText(t("breakout_poziom") + " " + poziom, canvas.width / 2, 36);
 
     cegielki.forEach(function (cegielka) {
         if (!cegielka.aktywna) return;
@@ -276,14 +385,36 @@ function rysuj() {
         zaokraglony(cegielka.x, cegielka.y, cegielka.w, cegielka.h, 5);
         ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
         ctx.fillRect(cegielka.x + 5, cegielka.y + 3, cegielka.w - 10, 2);
+        if (cegielka.booster) {
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 16px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("+", cegielka.x + cegielka.w / 2, cegielka.y + 17);
+        }
+    });
+
+    boostery.forEach(function (booster) {
+        ctx.beginPath();
+        ctx.arc(booster.x, booster.y, 11, 0, Math.PI * 2);
+        ctx.fillStyle = "#4ec0ca";
+        ctx.shadowColor = "#4ec0ca";
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#101827";
+        ctx.font = "bold 16px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("+", booster.x, booster.y + 5);
     });
 
     ctx.fillStyle = "#4ec0ca";
     zaokraglony(paletkaX, PALETKA.y, PALETKA.w, PALETKA.h, 7);
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(pilka.x, pilka.y, PROMIEN, 0, Math.PI * 2);
-    ctx.fill();
+    pilki.forEach(function (pilka) {
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(pilka.x, pilka.y, PROMIEN, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
     if (stan === "gra") return;
     ctx.fillStyle = "rgba(5, 10, 20, 0.72)";
@@ -342,6 +473,12 @@ canvas.addEventListener("pointermove", function (e) {
 canvas.addEventListener("pointerdown", function (e) {
     ustawPaletke(e.clientX);
     akcja();
+});
+
+przyciskiPoziomow.forEach(function (przycisk) {
+    przycisk.addEventListener("click", function () {
+        wybierzPoziom(Number(przycisk.dataset.poziom));
+    });
 });
 
 if (nick !== "") {
