@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button type="button" class="motyw-przelacznik" data-motyw-przelacz aria-label="Jasny motyw">
+        <span aria-hidden="true">☀️</span>
+        <span data-motyw-etykieta>Jasny motyw</span>
+    </button>
+
+    <div id="login-ekran">
+        <h1>TETRIS</h1>
+        <p data-i18n="login_gra_opis">Podaj swój nick, żeby zagrać</p>
+        <input id="nick-input" type="text" maxlength="12" data-i18n-placeholder="nick_placeholder" placeholder="Twój nick" autocomplete="off">
+        <button id="zaloguj-btn" data-i18n="graj_btn">Graj</button>
+        <p id="login-blad"></p>
+    </div>
+
+    <div id="gra-kontener" class="hidden">
+        <section class="tetris-plansza" aria-label="Tetris">
+            <div class="tetris-statystyki" aria-live="polite">
+                <span><span data-i18n="tetris_wynik">Wynik:</span> <strong id="wynik-wyswietl">0</strong></span>
+                <span><span data-i18n="tetris_poziom">Poziom:</span> <strong id="poziom-wyswietl">1</strong></span>
+                <span><span data-i18n="tetris_rzedow">Rzędy:</span> <strong id="rzedy-wyswietl">0</strong></span>
+            </div>
+            <canvas id="gra" class="tetris-canvas" width="300" height="600" tabindex="0"
+                aria-label="Plansza Tetris"></canvas>
+            <div class="tetris-przyciski" aria-label="Sterowanie dotykowe">
+                <button type="button" data-ruch="lewo" aria-label="W lewo">←</button>
+                <button type="button" data-ruch="dol" aria-label="W dół">↓</button>
+                <button type="button" data-ruch="obrot" aria-label="Obróć klocek">↻</button>
+                <button type="button" data-ruch="zrzut" aria-label="Zrzuć klocek">⤓</button>
+                <button type="button" data-ruch="prawo" aria-label="W prawo">→</button>
+            </div>
+        </section>
+
+        <aside id="panel">
+            <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>
+            <button id="wyloguj-btn" data-i18n="zmien_gracza">Zmień gracza</button>
+            <a href="index.html" class="menu-link" data-i18n="menu">← Menu</a>
+            <p class="opis" data-i18n="tetris_sterowanie">← → ruch · ↑ obrót · ↓ szybciej · spacja: zrzut · P: pauza</p>
+            <button type="button" id="pauza-btn" class="tetris-pauza-btn" data-i18n="tetris_pauzuj">Pauzuj</button>
+            <p><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-wyswietl">0</strong></p>
+
+            <h2 data-i18n="tabela">Tabela wyników</h2>
+            <ol id="tabela"></ol>
+        </aside>
+    </div>
+
+    <script src="rowerek.js"></script>
+    <script src="tetris.js"></script>
+</body>
+</html>

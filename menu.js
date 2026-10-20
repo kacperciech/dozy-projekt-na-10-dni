@@ -5,7 +5,8 @@ const GRY = {
     flappy: { klucz: "wyniki",       rosnaco: false },
     snake:  { klucz: "wyniki_snake", rosnaco: false },
     rajd:   { klucz: "wyniki_rajd",  rosnaco: true },
-    breakout: { klucz: "wyniki_breakout", rosnaco: false }
+    breakout: { klucz: "wyniki_breakout", rosnaco: false },
+    tetris: { klucz: "wyniki_tetris", rosnaco: false }
 };
 // Lista nazw gier utworzona z konfiguracji powyżej.
 const LISTA_GIER = Object.keys(GRY);
@@ -42,6 +43,11 @@ const FAKTY = {
             "Breakout stworzył Atari w 1976 roku. Przy jego projektowaniu pomagał Steve Wozniak, późniejszy współzałożyciel Apple.",
             "W Breakoucie odbijasz piłkę od paletki, żeby rozbić wszystkie cegiełki i nie pozwolić piłce wypaść poza planszę.",
             "Gra Breakout zainspirowała wiele późniejszych gier zręcznościowych, w tym Arkanoida."
+        ],
+        tetris: [
+            "Tetris powstał w 1984 roku. Jego twórcą jest radziecki programista Aleksiej Pażytnow.",
+            "Nazwa Tetris łączy grecki przedrostek „tetra” (cztery) z ulubionym sportem twórcy — tenisem.",
+            "W Tetrisie każdy klocek składa się z czterech kwadratów, a pełne rzędy znikają z planszy."
         ]
     },
     en: {
@@ -73,6 +79,11 @@ const FAKTY = {
             "Atari released Breakout in 1976. Steve Wozniak, later co-founder of Apple, helped design it.",
             "In Breakout, bounce the ball off the paddle to smash every brick without letting the ball fall off the board.",
             "Breakout inspired many later arcade games, including Arkanoid."
+        ],
+        tetris: [
+            "Tetris was created in 1984 by Soviet software engineer Alexey Pajitnov.",
+            "The name Tetris combines the Greek prefix “tetra” (four) with the creator's favorite sport, tennis.",
+            "Every Tetris piece is made of four squares, and completed rows disappear from the board."
         ]
     }
 };
@@ -93,14 +104,16 @@ const WYZWANIA = [
     { nazwa: "flappy_nazwa", link: "document.html" },
     { nazwa: "snake_nazwa", link: "document2.html" },
     { nazwa: "rajd_nazwa", link: "rajd.html" },
-    { nazwa: "breakout_nazwa", link: "breakout.html" }
+    { nazwa: "breakout_nazwa", link: "breakout.html" },
+    { nazwa: "tetris_nazwa", link: "tetris.html" }
 ];
 
 const OSIAGNIECIA = [
     { gra: "flappy", cel: 10 },
     { gra: "snake", cel: 10 },
     { gra: "rajd", cel: 1 },
-    { gra: "breakout", cel: 300 }
+    { gra: "breakout", cel: 300 },
+    { gra: "tetris", cel: 500 }
 ];
 
 function aktualizujWyzwanie() {

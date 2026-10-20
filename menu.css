@@ -374,7 +374,7 @@ body[data-theme="light"] .wyzwanie {
 
 .osiagniecia-lista {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
     margin: 0;
     padding: 0;
@@ -470,6 +470,10 @@ body[data-theme="light"] .wyzwanie {
 
 #wybor:not(.hidden) .karta:nth-child(4) {
     animation-delay: 240ms;
+}
+
+#wybor:not(.hidden) .karta:nth-child(5) {
+    animation-delay: 320ms;
 }
 
 @keyframes wejscie-karty {
@@ -765,9 +769,18 @@ footer {
 .breakout-tlo {
     background: linear-gradient(135deg, #17233b, #493d72 55%, #a54c5e);
 }
+.tetris-tlo {
+    background: linear-gradient(135deg, #10243d, #344c93 55%, #8c49a8);
+}
 .cegielki {
     position: absolute;
     top: 20px;
     font-size: 28px;
+    letter-spacing: 5px;
+}
+.tetris-klocki {
+    position: absolute;
+    top: 20px;
+    font-size: 30px;
     letter-spacing: 5px;
 }

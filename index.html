@@ -23,7 +23,7 @@
     <!-- Tytuł strony i krótki opis salonu gier. -->
     <header class="naglowek">
         <h1>🎮ARCADE</h1>
-        <p class="podtytul" data-i18n="podtytul">Cztery gry. Jeden gracz. Wybierz i pobij rekord!</p>
+        <p class="podtytul" data-i18n="podtytul">Pięć gier. Jeden gracz. Wybierz i pobij rekord!</p>
     </header>
 
     <main>
@@ -65,7 +65,7 @@
                         <h2 id="osiagniecia-tytul" data-i18n="osiagniecia_tytul">Twoje osiągnięcia</h2>
                         <p data-i18n="osiagniecia_opis">Graj, zdobywaj punkty i odblokowuj odznaki.</p>
                     </div>
-                    <strong id="osiagniecia-licznik" aria-live="polite">0/3</strong>
+                    <strong id="osiagniecia-licznik" aria-live="polite">0/5</strong>
                 </div>
                 <ul class="osiagniecia-lista">
                     <li class="osiagniecie" id="osiagniecie-flappy">
@@ -103,6 +103,15 @@
                         </span>
                         <span class="osiagniecie-postep" id="postep-breakout">0/300</span>
                         <span class="osiagniecie-status" id="status-breakout"></span>
+                    </li>
+                    <li class="osiagniecie" id="osiagniecie-tetris">
+                        <span class="osiagniecie-ikona" aria-hidden="true">🧩</span>
+                        <span class="osiagniecie-tresc">
+                            <strong data-i18n="osiagniecie_tetris">Mistrz układania</strong>
+                            <span data-i18n="osiagniecie_tetris_opis">Zdobądź 500 punktów w Tetrisie.</span>
+                        </span>
+                        <span class="osiagniecie-postep" id="postep-tetris">0/500</span>
+                        <span class="osiagniecie-status" id="status-tetris"></span>
                     </li>
                 </ul>
             </section>
@@ -214,6 +223,33 @@
                         </div>
 
                         <a class="graj" href="breakout.html" data-i18n="graj_breakout">▶ Graj w Breakout</a>
+                    </div>
+                </article>
+
+                <!-- Karta Tetrisa: opis, rekord, ranking i odnośnik do gry. -->
+                <article class="karta" tabindex="0">
+                    <div class="obrazek tetris-tlo">
+                        <span class="tetris-klocki" aria-hidden="true">🟦🟪🟨</span>
+                        <span class="postac">🧩</span>
+                    </div>
+                    <div class="tresc">
+                        <h2 data-i18n="tetris_nazwa">Tetris</h2>
+                        <p class="opis" data-i18n="tetris_opis">Układaj spadające klocki, czyść rzędy i zdobywaj punkty.</p>
+                        <p class="sterowanie" data-i18n="tetris_ster">⌨️ ← → ruch, ↑ obrót, ↓ szybciej, spacja: zrzut, P: pauza</p>
+
+                        <div class="statystyki">
+                            <p class="rekord"><span data-i18n="twoj_rekord">Twój rekord:</span> <strong id="rekord-tetris">0</strong></p>
+                            <h3 data-i18n="top3">🏆 TOP 3</h3>
+                            <ol id="top-tetris"></ol>
+                        </div>
+
+                        <div class="ciekawostka">
+                            <span class="etykieta" data-i18n="czy_wiesz">💡 Czy wiesz, że...</span>
+                            <p id="fakt-tetris"></p>
+                            <button class="link-btn" data-gra="tetris" data-i18n="kolejna">Kolejna ciekawostka ↻</button>
+                        </div>
+
+                        <a class="graj" href="tetris.html" data-i18n="graj_tetris">▶ Graj w Tetrisa</a>
                     </div>
                 </article>
 

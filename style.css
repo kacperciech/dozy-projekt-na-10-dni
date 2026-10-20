@@ -123,6 +123,57 @@ canvas {
     background: #101827;
 }
 
+.tetris-plansza {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: min(300px, calc(100vw - 32px));
+}
+
+.tetris-statystyki {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--obramowanie-gry);
+    border-radius: 10px;
+    background: var(--panel-gry);
+    font-size: 13px;
+}
+
+.tetris-statystyki strong {
+    color: #f9d71c;
+    font-variant-numeric: tabular-nums;
+}
+
+.tetris-canvas {
+    display: block;
+    width: min(300px, calc(100vw - 32px));
+    background: #101827;
+    outline: none;
+}
+
+.tetris-przyciski {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    width: 100%;
+}
+
+.tetris-przyciski button {
+    padding: 8px 4px;
+    border: 2px solid #4EC0CA;
+    background: var(--panel-gry);
+    font-size: 20px;
+    touch-action: manipulation;
+}
+
+.tetris-pauza-btn {
+    margin: 8px 0;
+}
+
 .breakout-plansza {
     display: flex;
     flex-direction: column;
