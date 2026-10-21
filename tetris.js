@@ -36,7 +36,6 @@ let poziom = 1;
 let rzedy = 0;
 let stan = "start";
 let czasOpadania = 0;
-let ostatniCzas = 0;
 
 document.title = t("tetris_nazwa");
 
@@ -230,18 +229,18 @@ function rozpocznij() {
     if (stan === "koniec") reset();
     stan = "gra";
     dzwiekGier.muzykaTetris(true);
-    ostatniCzas = 0;
+    czasOpadania = 0;
     canvas.focus();
 }
 
 function przelaczPauze() {
     if (stan === "gra") {
         stan = "pauza";
+        czasOpadania = 0;
         dzwiekGier.muzykaTetris(false);
     } else if (stan === "pauza") {
         stan = "gra";
         dzwiekGier.muzykaTetris(true);
-        ostatniCzas = 0;
     }
 }
 
@@ -300,6 +299,7 @@ function rysujNakladke(tytul, opis) {
 }
 
 function rysuj() {
+    pauzaBtn.textContent = t(stan === "pauza" ? "tetris_wznow" : "tetris_pauzuj");
     ctx.fillStyle = "#101827";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
@@ -333,20 +333,16 @@ function rysuj() {
     if (stan === "koniec") rysujNakladke(t("tetris_koniec"), t("tetris_ponownie"));
 }
 
-function petla(czas) {
+function aktualizujZegar(dt) {
     if (stan === "gra") {
-        const delta = ostatniCzas ? Math.min(czas - ostatniCzas, 100) : 0;
-        czasOpadania += delta;
-        ostatniCzas = czas;
+        czasOpadania += dt * 1000;
         const interwal = Math.max(90, 800 - (poziom - 1) * 65);
-        if (czasOpadania >= interwal) {
-            czasOpadania = 0;
+        while (czasOpadania >= interwal && stan === "gra") {
+            czasOpadania -= interwal;
             if (!przesun(0, 1)) zablokujKlocek();
             aktualizujStatystyki();
         }
-        rysuj();
     }
-    requestAnimationFrame(petla);
 }
 
 document.addEventListener("keydown", function (e) {
@@ -401,4 +397,4 @@ wylogujBtn.addEventListener("click", wyloguj);
 if (nick !== "") pokazGre();
 else nickInput.focus();
 
-requestAnimationFrame(petla);
+uruchomPetleGry(aktualizujZegar, rysuj);

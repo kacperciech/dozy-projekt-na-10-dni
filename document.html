@@ -28,8 +28,11 @@
 
     <!-- Obszar aktywnej gry: plansza Canvas oraz panel gracza i rankingu. -->
     <div id="gra-kontener" class="hidden">
-        <!-- Główna plansza Flappy Bird rysowana przez kod JavaScript. -->
-        <canvas id="gra" width="400" height="600"></canvas>
+        <section class="plansza-kontener" aria-label="Flappy">
+            <!-- Główna plansza Flappy Bird rysowana przez kod JavaScript. -->
+            <canvas id="gra" width="400" height="600"></canvas>
+            <button type="button" id="skok-btn" class="sterowanie-przycisk flappy-skok" data-i18n="flappy_skok">Skok</button>
+        </section>
 
         <!-- Panel boczny zawierający gracza, przycisk zmiany nicku i tabelę wyników. -->
         <aside id="panel">

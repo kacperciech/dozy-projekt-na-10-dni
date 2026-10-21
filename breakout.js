@@ -10,6 +10,7 @@ const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEl = document.getElementById("tabela");
 const zyciaEl = document.getElementById("zycia-wyswietl");
 const przyciskiPoziomow = document.querySelectorAll(".breakout-poziom-btn");
+const pauzaBtn = document.getElementById("breakout-pauza-btn");
 
 const KOLUMNY = 8;
 const WIERSZE = 5;
@@ -29,7 +30,6 @@ let paletkaX = (canvas.width - PALETKA.w) / 2;
 let pilki = [];
 let cegielki = [];
 let boostery = [];
-let poprzedniCzas = 0;
 
 const UKLADY_POZIOMOW = [
     ["########", "###+####", "########", "####+###", "########"],
@@ -360,6 +360,7 @@ function napis(tekst, x, y, rozmiar) {
 }
 
 function rysuj() {
+    pauzaBtn.textContent = t(stan === "pauza" ? "breakout_wznow" : "breakout_pauzuj");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#101827";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -436,14 +437,6 @@ function rysuj() {
     }
 }
 
-function petla(czas) {
-    const dt = poprzedniCzas ? Math.min((czas - poprzedniCzas) / 1000, 0.032) : 0;
-    poprzedniCzas = czas;
-    if (stan === "gra") aktualizuj(dt);
-    rysuj();
-    requestAnimationFrame(petla);
-}
-
 zalogujBtn.addEventListener("click", zaloguj);
 wylogujBtn.addEventListener("click", wyloguj);
 nickInput.addEventListener("keydown", function (e) {
@@ -477,6 +470,21 @@ canvas.addEventListener("pointerdown", function (e) {
     akcja();
 });
 
+document.querySelectorAll("[data-ruch-paletki]").forEach(function (przycisk) {
+    przycisk.addEventListener("click", function () {
+        const kierunek = Number(przycisk.dataset.ruchPaletki);
+        paletkaX = Math.max(0, Math.min(canvas.width - PALETKA.w, paletkaX + kierunek * 48));
+        if (stan === "start") utworzPilke();
+    });
+});
+
+pauzaBtn.addEventListener("click", function () {
+    if (stan === "gra") stan = "pauza";
+    else if (stan === "pauza") stan = "gra";
+    else akcja();
+    rysuj();
+});
+
 przyciskiPoziomow.forEach(function (przycisk) {
     przycisk.addEventListener("click", function () {
         wybierzPoziom(Number(przycisk.dataset.poziom));
@@ -489,4 +497,6 @@ if (nick !== "") {
 } else {
     nickInput.focus();
 }
-requestAnimationFrame(petla);
+uruchomPetleGry(function (dt) {
+    if (stan === "gra") aktualizuj(dt);
+}, rysuj);

@@ -37,6 +37,7 @@ const TLUMACZENIA = {
         flappy_nazwa: "Flappy Gołąb",
         flappy_opis: "Leć między rurami i nie dotknij niczego. Proste zasady, trudne wykonanie.",
         flappy_ster: "⌨️ Spacja, klik lub dotyk",
+        flappy_skok: "↑ Skok",
         twoj_rekord: "Twój rekord:",
         twoj_czas: "Twój najlepszy czas:",
         top3: "🏆 TOP 3",
@@ -45,14 +46,16 @@ const TLUMACZENIA = {
         kolejna: "Kolejna ciekawostka ↻",
         graj_flappy: "▶ Graj we Flappy",
         snake_opis: "Zjadaj jabłka, rośnij i nie wjedź w siebie. Z każdym punktem jest szybciej.",
-        snake_ster: "⌨️ Strzałki lub WASD, P to pauza",
+        snake_ster: "⌨️ Strzałki lub WASD, P to pauza · 📱 gesty i przyciski",
         graj_snake: "▶ Graj w Snake",
         rajd_opis: "Wybierz jedną z 4 długich tras i przejedź 3 okrążenia. Uważaj na piasek, żwir i błoto!",
-        rajd_ster: "⌨️ Strzałki lub WASD, Q/E zmienia trasę, spacja to hamulec ręczny",
+        rajd_ster: "⌨️ Strzałki lub WASD, Q/E zmienia trasę · 📱 przyciski na ekranie",
         graj_rajd: "▶ Jedź w Rajdzie",
         breakout_nazwa: "Breakout",
         breakout_opis: "Odbijaj piłkę paletką, rozbij cegiełki i nie pozwól jej spaść!",
         breakout_ster: "⌨️ Strzałki lub A/D, mysz albo dotyk · P: pauza",
+        breakout_pauzuj: "Pauza",
+        breakout_wznow: "Wznów",
         breakout_poziom: "Poziom",
         breakout_wybierz_poziom: "Wybierz poziom",
         breakout_poziom_1: "Poziom 1",
@@ -64,7 +67,7 @@ const TLUMACZENIA = {
         graj_breakout: "▶ Graj w Breakout",
         tetris_nazwa: "Tetris",
         tetris_opis: "Układaj spadające klocki, czyść rzędy i zdobywaj punkty.",
-        tetris_ster: "⌨️ ← → ruch, ↑ obrót, ↓ szybciej, spacja: zrzut, P: pauza",
+        tetris_ster: "⌨️ ← → ruch, ↑ obrót, ↓ szybciej, spacja: zrzut, P: pauza · 📱 przyciski",
         graj_tetris: "▶ Graj w Tetrisa",
         stopka: "Projekt na 10 dni · HTML + CSS + JavaScript",
         blad_nick: "Nick musi mieć co najmniej 2 znaki.",
@@ -77,7 +80,13 @@ const TLUMACZENIA = {
         menu: "← Menu",
         snake_panel_1: "Sterowanie: strzałki lub WASD",
         snake_panel_2: "P: pauza",
-        snake_panel_3: "Telefon: przesuń palcem",
+        snake_panel_3: "Telefon: przesuń palcem lub użyj przycisków",
+        snake_pauzuj: "Pauza",
+        snake_wznow: "Wznów",
+        kontrolka_gora: "W górę",
+        kontrolka_dol: "W dół",
+        kontrolka_lewo: "W lewo",
+        kontrolka_prawo: "W prawo",
 
         // napisy na canvasie (Flappy i Snake)
         flappy_start: "Kliknij lub spacja",
@@ -104,11 +113,12 @@ const TLUMACZENIA = {
         tetris_rzedow: "Rzędy:",
         tetris_start: "Spacja lub kliknij, aby zacząć",
         tetris_pauzuj: "Pauzuj",
+        tetris_wznow: "Wznów",
         tetris_pauza: "PAUZA",
         tetris_pauza_info: "Naciśnij P, aby wrócić do gry",
         tetris_koniec: "KONIEC GRY",
         tetris_ponownie: "Spacja lub kliknij: jeszcze raz",
-        tetris_sterowanie: "← → ruch · ↑ obrót · ↓ szybciej · spacja: zrzut · P: pauza",
+        tetris_sterowanie: "← → ruch · ↑ obrót · ↓ szybciej · spacja: zrzut · P: pauza · przyciski dotykowe",
 
         // rajdówka
         rajd_nazwa: "Rajd",
@@ -119,6 +129,12 @@ const TLUMACZENIA = {
         rajd_nawierzchnia: "Nawierzchnia:",
         rajd_najlepszy: "Najlepszy:",
         rajd_sterowanie: "Strzałki / WASD: jazda   Q/E: trasa   Spacja: ręczny   R: restart",
+        rajd_gaz: "↑ Gaz",
+        rajd_hamulec: "↓ Hamulec",
+        rajd_reczny: "Ręczny",
+        rajd_poprzednia_trasa: "◀ Trasa",
+        rajd_nastepna_trasa: "Trasa ▶",
+        rajd_restart: "Restart",
         rajd_wybor_mapy: "Q / E: wybierz trasę",
         rajd_mapa: "Trasa:",
         rajd_mapa_lesna: "Leśna",
@@ -173,6 +189,7 @@ const TLUMACZENIA = {
         flappy_nazwa: "Flappy Pigeon",
         flappy_opis: "Fly between the pipes and don't touch anything. Simple rules, hard to master.",
         flappy_ster: "⌨️ Space, click or tap",
+        flappy_skok: "↑ Flap",
         twoj_rekord: "Your record:",
         twoj_czas: "Your best time:",
         top3: "🏆 TOP 3",
@@ -181,14 +198,16 @@ const TLUMACZENIA = {
         kolejna: "Next fact ↻",
         graj_flappy: "▶ Play Flappy",
         snake_opis: "Eat apples, grow longer and don't run into yourself. Every point makes it faster.",
-        snake_ster: "⌨️ Arrow keys or WASD, P to pause",
+        snake_ster: "⌨️ Arrows or WASD, P to pause · 📱 swipe or buttons",
         graj_snake: "▶ Play Snake",
         rajd_opis: "Choose from 4 long tracks and race 3 laps. Watch out for sand, gravel and mud!",
-        rajd_ster: "⌨️ Arrows or WASD, Q/E changes track, Space is the handbrake",
+        rajd_ster: "⌨️ Arrows or WASD, Q/E changes track · 📱 on-screen buttons",
         graj_rajd: "▶ Play Rally",
         breakout_nazwa: "Breakout",
         breakout_opis: "Bounce the ball with your paddle, smash the bricks and keep the ball in play!",
         breakout_ster: "⌨️ Arrows or A/D, mouse or touch · P: pause",
+        breakout_pauzuj: "Pause",
+        breakout_wznow: "Resume",
         breakout_poziom: "Level",
         breakout_wybierz_poziom: "Choose a level",
         breakout_poziom_1: "Level 1",
@@ -200,7 +219,7 @@ const TLUMACZENIA = {
         graj_breakout: "▶ Play Breakout",
         tetris_nazwa: "Tetris",
         tetris_opis: "Stack falling blocks, clear rows and score points.",
-        tetris_ster: "⌨️ ← → move, ↑ rotate, ↓ faster, Space: drop, P: pause",
+        tetris_ster: "⌨️ ← → move, ↑ rotate, ↓ faster, Space: drop, P: pause · 📱 buttons",
         graj_tetris: "▶ Play Tetris",
         stopka: "10-day project · HTML + CSS + JavaScript",
         blad_nick: "Nickname must be at least 2 characters long.",
@@ -212,7 +231,13 @@ const TLUMACZENIA = {
         menu: "← Menu",
         snake_panel_1: "Controls: arrow keys or WASD",
         snake_panel_2: "P: pause",
-        snake_panel_3: "Phone: swipe",
+        snake_panel_3: "Phone: swipe or use the buttons",
+        snake_pauzuj: "Pause",
+        snake_wznow: "Resume",
+        kontrolka_gora: "Up",
+        kontrolka_dol: "Down",
+        kontrolka_lewo: "Left",
+        kontrolka_prawo: "Right",
 
         flappy_start: "Click or press Space",
         flappy_ponownie: "Click to play again",
@@ -238,11 +263,12 @@ const TLUMACZENIA = {
         tetris_rzedow: "Lines:",
         tetris_start: "Press Space or click to start",
         tetris_pauzuj: "Pause",
+        tetris_wznow: "Resume",
         tetris_pauza: "PAUSED",
         tetris_pauza_info: "Press P to resume",
         tetris_koniec: "GAME OVER",
         tetris_ponownie: "Space or click: play again",
-        tetris_sterowanie: "← → move · ↑ rotate · ↓ faster · Space: drop · P: pause",
+        tetris_sterowanie: "← → move · ↑ rotate · ↓ faster · Space: drop · P: pause · touch buttons",
 
         rajd_nazwa: "Rally",
         rajd_czas: "Time:",
@@ -252,6 +278,12 @@ const TLUMACZENIA = {
         rajd_nawierzchnia: "Surface:",
         rajd_najlepszy: "Best:",
         rajd_sterowanie: "Arrows / WASD: drive   Q/E: track   Space: handbrake   R: restart",
+        rajd_gaz: "↑ Gas",
+        rajd_hamulec: "↓ Brake",
+        rajd_reczny: "Handbrake",
+        rajd_poprzednia_trasa: "◀ Track",
+        rajd_nastepna_trasa: "Track ▶",
+        rajd_restart: "Restart",
         rajd_wybor_mapy: "Q / E: choose a track",
         rajd_mapa: "Track:",
         rajd_mapa_lesna: "Forest",
@@ -269,6 +301,36 @@ const TLUMACZENIA = {
         nawierz_blato: "mud"
     }
 };
+
+// Wspólny zegar aktualizuje logikę 60 razy na sekundę, niezależnie od odświeżania ekranu.
+function uruchomPetleGry(aktualizuj, rysuj) {
+    const krok = 1000 / 60;
+    let poprzedniCzas = 0;
+    let akumulator = 0;
+
+    function klatka(czas) {
+        if (poprzedniCzas) {
+            akumulator += Math.min(czas - poprzedniCzas, 250);
+        }
+        poprzedniCzas = czas;
+
+        while (akumulator >= krok) {
+            aktualizuj(krok / 1000);
+            akumulator -= krok;
+        }
+
+        rysuj();
+        requestAnimationFrame(klatka);
+    }
+
+    // Po powrocie do karty nie nadrabiamy czasu, gdy gra była niewidoczna.
+    document.addEventListener("visibilitychange", function () {
+        poprzedniCzas = 0;
+        akumulator = 0;
+    });
+
+    requestAnimationFrame(klatka);
+}
 
 // Aktualny język (zapisany w przeglądarce, domyślnie polski)
 let jezyk = localStorage.getItem("jezyk");
@@ -304,6 +366,9 @@ function przetlumaczStrone() {
     });
     document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
         el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach(function (el) {
+        el.setAttribute("aria-label", t(el.dataset.i18nAriaLabel));
     });
     // podświetl aktywny przycisk języka (jeśli strona go ma)
     document.querySelectorAll("[data-jezyk]").forEach(function (b) {

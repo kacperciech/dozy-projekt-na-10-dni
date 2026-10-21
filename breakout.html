@@ -23,6 +23,11 @@
     <div id="gra-kontener" class="hidden">
         <div class="breakout-plansza">
             <canvas id="gra" class="breakout-canvas" width="480" height="600"></canvas>
+            <div class="sterowanie-dotykowe breakout-przyciski" aria-label="Sterowanie Breakout">
+                <button type="button" data-ruch-paletki="-1" data-i18n-aria-label="kontrolka_lewo">←</button>
+                <button type="button" id="breakout-pauza-btn" data-i18n="breakout_pauzuj">Pauza</button>
+                <button type="button" data-ruch-paletki="1" data-i18n-aria-label="kontrolka_prawo">→</button>
+            </div>
             <section class="breakout-selektor" aria-labelledby="breakout-poziomy-tytul">
                 <h2 id="breakout-poziomy-tytul" data-i18n="breakout_wybierz_poziom">Wybierz poziom</h2>
                 <div class="breakout-poziomy" role="group" aria-labelledby="breakout-poziomy-tytul">

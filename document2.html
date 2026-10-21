@@ -25,8 +25,17 @@
 
     <!-- Obszar aktywnej gry: plansza Canvas oraz panel gracza i rankingu. -->
     <div id="gra-kontener" class="hidden">
-        <!-- Plansza Snake'a rysowana i aktualizowana przez game2.js. -->
-        <canvas id="gra" width="400" height="400"></canvas>
+        <section class="plansza-kontener snake-plansza" aria-label="Snake">
+            <!-- Plansza Snake'a rysowana i aktualizowana przez game2.js. -->
+            <canvas id="gra" width="400" height="400"></canvas>
+            <div class="sterowanie-dotykowe snake-przyciski" aria-label="Sterowanie Snake">
+                <button type="button" data-kierunek="ArrowUp" data-i18n-aria-label="kontrolka_gora">↑</button>
+                <button type="button" data-kierunek="ArrowLeft" data-i18n-aria-label="kontrolka_lewo">←</button>
+                <button type="button" data-kierunek="ArrowDown" data-i18n-aria-label="kontrolka_dol">↓</button>
+                <button type="button" data-kierunek="ArrowRight" data-i18n-aria-label="kontrolka_prawo">→</button>
+                <button type="button" id="snake-pauza-btn" class="snake-pauza-btn" data-i18n="snake_pauzuj">Pauza</button>
+            </div>
+        </section>
 
         <aside id="panel">
             <p><span data-i18n="gracz">Gracz:</span> <strong id="nick-wyswietl"></strong></p>

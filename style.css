@@ -119,6 +119,64 @@ canvas {
     touch-action: none;
 }
 
+.plansza-kontener {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: min(400px, calc(100vw - 32px));
+}
+
+.sterowanie-dotykowe {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.sterowanie-dotykowe button {
+    min-width: 56px;
+    min-height: 48px;
+    padding: 8px 12px;
+    border: 2px solid #4EC0CA;
+    background: var(--panel-gry);
+    font-size: 20px;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.flappy-skok {
+    width: min(100%, 240px);
+}
+
+.snake-przyciski {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(2, 48px) auto;
+}
+
+.snake-przyciski [data-kierunek="ArrowUp"] {
+    grid-column: 2;
+}
+
+.snake-przyciski [data-kierunek="ArrowLeft"] {
+    grid-column: 1;
+}
+
+.snake-przyciski [data-kierunek="ArrowDown"] {
+    grid-column: 2;
+}
+
+.snake-przyciski [data-kierunek="ArrowRight"] {
+    grid-column: 3;
+}
+
+.snake-przyciski .snake-pauza-btn {
+    grid-column: 1 / -1;
+    font-size: 16px;
+}
+
 .breakout-canvas {
     background: #101827;
 }
@@ -180,6 +238,10 @@ canvas {
     align-items: center;
     gap: 14px;
     width: min(480px, calc(100vw - 32px));
+}
+
+.breakout-przyciski {
+    justify-content: space-between;
 }
 
 .breakout-selektor {

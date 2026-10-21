@@ -13,7 +13,7 @@ let punkty = 0;
 let rekord = 0;
 let krok = KROK_START;
 let stan = "start";                 // Stan gry: "start", "gra", "pauza", "koniec"
-let ostatniKrok = 0;
+let akumulatorRuchu = 0;
 
 const loginEkran = document.getElementById("login-ekran");
 const graKontener = document.getElementById("gra-kontener");
@@ -23,6 +23,7 @@ const wylogujBtn = document.getElementById("wyloguj-btn");
 const loginBlad = document.getElementById("login-blad");
 const nickWyswietl = document.getElementById("nick-wyswietl");
 const tabelaEle = document.getElementById("tabela");
+const pauzaBtn = document.getElementById("snake-pauza-btn");
 
 // Przywraca nick zapamiętany wcześniej na stronie głównej.
 let nick = localStorage.getItem("nick") || "";
@@ -130,6 +131,7 @@ function reset() {
     nastepny = { x: 1, y: 0 };
     punkty = 0;
     krok = KROK_START;
+    akumulatorRuchu = 0;
     losujJedzenie();
 }
 
@@ -243,6 +245,27 @@ canvas.addEventListener("touchcancel", function () {
     poczatekDotyku = null;
 });
 
+// Przyciski dotykowe korzystają z tej samej blokady zawracania co klawiatura i gesty.
+document.querySelectorAll("[data-kierunek]").forEach(function (przycisk) {
+    przycisk.addEventListener("click", function () {
+        const ruch = KLAWISZE[przycisk.dataset.kierunek];
+        if (nick === "" || stan === "koniec" || !ruch) return;
+        dzwiekGier.odblokuj();
+        if (stan === "start" || stan === "pauza") stan = "gra";
+        ustawKierunek(ruch[0], ruch[1]);
+    });
+});
+
+pauzaBtn.addEventListener("click", function () {
+    if (stan === "gra") {
+        stan = "pauza";
+        akumulatorRuchu = 0;
+    } else if (stan === "pauza") {
+        stan = "gra";
+    }
+    rysuj();
+});
+
 // ---------- 6. KONIEC GRY ----------
 // Kończy rundę, zapisuje wynik i odświeża tabelę rekordów.
 function koniecGry() {
@@ -351,6 +374,7 @@ function rysujWaza() {
 }
 
 function rysuj() {
+    pauzaBtn.textContent = t(stan === "pauza" ? "snake_wznow" : "snake_pauzuj");
     // Plansza i elementy gry są odświeżane również podczas startu, pauzy i końca rundy.
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     rysujPlansze();
@@ -389,17 +413,16 @@ if (nick !== "") {
     nickInput.focus();
 }
 
-function petla(czas) {
+function aktualizujZegar(dt) {
     if (stan === "gra") {
-        // Odstęp między ruchami steruje prędkością niezależnie od liczby klatek ekranu.
-        if (czas - ostatniKrok >= krok) {
-            ostatniKrok = czas;
+        akumulatorRuchu += dt * 1000;
+        while (akumulatorRuchu >= krok && stan === "gra") {
+            akumulatorRuchu -= krok;
             aktualizuj();
         }
     } else {
-        ostatniKrok = czas;
+        akumulatorRuchu = 0;
     }
-    rysuj();
-    requestAnimationFrame(petla);
 }
-requestAnimationFrame(petla);
+
+uruchomPetleGry(aktualizujZegar, rysuj);

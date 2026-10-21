@@ -182,10 +182,7 @@ document.addEventListener("keydown", function (e) {
     }
 });
 canvas.addEventListener("click", skok);
-canvas.addEventListener("touchstart", function (e) {
-    e.preventDefault();
-    skok();
-});
+document.getElementById("skok-btn").addEventListener("click", skok);
 
 // ---------- 7. KONIEC GRY ----------
 // Zmienia stan gry i zapisuje wynik, jeśli jest to nowy rekord.
@@ -410,9 +407,4 @@ if (nick !== "") {
     nickInput.focus();
 }
 
-function petla() {
-    aktualizuj();
-    rysuj();
-    requestAnimationFrame(petla);
-}
-petla();
+uruchomPetleGry(aktualizuj, rysuj);
